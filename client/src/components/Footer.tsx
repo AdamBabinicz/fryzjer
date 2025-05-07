@@ -131,7 +131,7 @@ const Footer = ({
               <li>
                 <button 
                   onClick={onServicesClick} 
-                  className="text-gray-400 hover:text-accent transition duration-300 ease-in-out"
+                  className="text-gray-500 dark:text-gray-400 hover:text-accent transition duration-300 ease-in-out"
                 >
                   {t('nav.services')}
                 </button>
@@ -139,7 +139,7 @@ const Footer = ({
               <li>
                 <button 
                   onClick={onGalleryClick} 
-                  className="text-gray-400 hover:text-accent transition duration-300 ease-in-out"
+                  className="text-gray-500 dark:text-gray-400 hover:text-accent transition duration-300 ease-in-out"
                 >
                   {t('nav.gallery')}
                 </button>
@@ -147,7 +147,7 @@ const Footer = ({
               <li>
                 <button 
                   onClick={onContactClick} 
-                  className="text-gray-400 hover:text-accent transition duration-300 ease-in-out"
+                  className="text-gray-500 dark:text-gray-400 hover:text-accent transition duration-300 ease-in-out"
                 >
                   {t('nav.contact')}
                 </button>
@@ -171,7 +171,7 @@ const Footer = ({
                   placeholder={t('footer.yourEmail')}
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="px-4 py-2 flex-grow bg-gray-800 border border-gray-700 rounded-l-md focus:outline-none focus:ring-1 focus:ring-accent text-white" 
+                  className="px-4 py-2 flex-grow bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-l-md focus:outline-none focus:ring-1 focus:ring-accent text-gray-800 dark:text-white" 
                 />
                 <button 
                   type="submit" 

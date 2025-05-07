@@ -2,6 +2,7 @@ import { forwardRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
 import heroBgSrc from '../assets/hero-bg.svg';
+import heroBgSimpleSrc from '../assets/hero-bg-simple.svg';
 
 interface HomeProps {
   onContactClick: () => void;
@@ -18,14 +19,22 @@ const Home = forwardRef<HTMLDivElement, HomeProps>(({ onContactClick }, ref) => 
         <div
           style={{ 
             backgroundColor: '#6b5b95', 
-            backgroundImage: `url(${heroBgSrc})`,
+            backgroundImage: `url(${heroBgSimpleSrc})`,
             backgroundSize: 'cover',
             backgroundPosition: 'center',
             width: '100%',
             height: '100%'
           }}
           aria-label={t('home.heroAlt')}
-        />
+        >
+          {/* Fallback for SVG loading */}
+          <img 
+            src={heroBgSimpleSrc} 
+            alt={t('home.heroAlt')}
+            className="w-full h-full object-cover opacity-0 absolute"
+            onError={(e) => console.error("Image loading error:", e)}
+          />
+        </div>
         
         {/* Content Overlay */}
         <div className="absolute inset-0 bg-primary bg-opacity-40 flex flex-col items-center justify-center px-4 text-center">
