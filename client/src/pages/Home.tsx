@@ -1,7 +1,6 @@
 import { forwardRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
-import heroImagePath from '@assets/hero-bg.svg';
 
 interface HomeProps {
   onContactClick: () => void;
@@ -13,10 +12,14 @@ const Home = forwardRef<HTMLDivElement, HomeProps>(({ onContactClick }, ref) => 
   return (
     <section ref={ref} id="home" className="pt-24 md:pt-32 relative bg-white dark:bg-[#121212]">
       <div className="w-full h-[85vh] relative overflow-hidden">
-        <img 
-          src={heroImagePath} 
-          alt={t('home.heroAlt')} 
-          className="w-full h-full object-cover"
+        <div
+          style={{ 
+            backgroundColor: '#6b5b95', 
+            backgroundImage: 'linear-gradient(135deg, #6b5b95 0%, #7e57c2 100%)',
+            width: '100%',
+            height: '100%'
+          }}
+          className="w-full h-full"
         />
         <div className="absolute inset-0 bg-primary bg-opacity-40 flex flex-col items-center justify-center px-4 text-center">
           <motion.h1 
