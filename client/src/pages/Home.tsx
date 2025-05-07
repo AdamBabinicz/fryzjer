@@ -1,9 +1,7 @@
 import { forwardRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
-import heroBgSrc from '../assets/hero-bg.svg';
-import heroBgSimpleSrc from '../assets/hero-bg-simple.svg';
-import heroBgAttachedSrc from '../assets/hero-bg-attached.svg';
+import HeroBackground from '../components/HeroBackground';
 
 interface HomeProps {
   onContactClick: () => void;
@@ -17,21 +15,7 @@ const Home = forwardRef<HTMLDivElement, HomeProps>(({ onContactClick }, ref) => 
       {/* Hero section z szerokością 100% - wyjątek od paddingu bocznego */}
       <div className="w-full h-[85vh] relative overflow-hidden">
         {/* Hero Background */}
-        <div className="w-full h-full" aria-label={t('home.heroAlt')}>
-          <div
-            style={{ 
-              backgroundColor: '#6b5b95', 
-              backgroundImage: `url('/hero-background.svg')`,
-              backgroundSize: 'cover',
-              backgroundPosition: 'center',
-              width: '100%',
-              height: '100%',
-              position: 'absolute',
-              top: 0,
-              left: 0
-            }}
-          ></div>
-        </div>
+        <HeroBackground />
         
         {/* Content Overlay */}
         <div className="absolute inset-0 bg-primary bg-opacity-40 flex flex-col items-center justify-center px-4 text-center">
