@@ -34,6 +34,7 @@ function App() {
 
   return (
     <>
+      {/* SEO metadata - temporarily commented out
       <Helmet>
         <html lang={language} />
         <title>{t("meta.title")}</title>
@@ -41,6 +42,7 @@ function App() {
         <meta property="og:title" content={t("meta.ogTitle")} />
         <meta property="og:description" content={t("meta.ogDescription")} />
       </Helmet>
+      */}
       
       {/* Skip Link for Accessibility */}
       <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:p-4 focus:bg-accent focus:text-white focus:z-50">
