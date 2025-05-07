@@ -190,7 +190,7 @@ const Contact = forwardRef<HTMLDivElement, {}>((_, ref) => {
                   name="name"
                   value={formData.name}
                   onChange={handleInputChange}
-                  className={`w-full px-4 py-2 border ${errors.name ? 'border-red-500' : 'border-gray-300 dark:border-gray-700'} rounded-md focus:outline-none focus:ring-2 focus:ring-accent dark:bg-[#142030] dark:text-white`}
+                  className={`w-full px-4 py-2 border ${errors.name ? 'border-red-500' : 'border-gray-300 dark:border-gray-700'} rounded-md focus:outline-none focus:ring-2 focus:ring-accent dark:bg-[#1e2e44] dark:text-white`}
                   aria-invalid={errors.name}
                   aria-describedby={errors.name ? "name-error" : undefined}
                 />
@@ -212,7 +212,7 @@ const Contact = forwardRef<HTMLDivElement, {}>((_, ref) => {
                   name="email"
                   value={formData.email}
                   onChange={handleInputChange}
-                  className={`w-full px-4 py-2 border ${errors.email ? 'border-red-500' : 'border-gray-300 dark:border-gray-700'} rounded-md focus:outline-none focus:ring-2 focus:ring-accent dark:bg-[#142030] dark:text-white`}
+                  className={`w-full px-4 py-2 border ${errors.email ? 'border-red-500' : 'border-gray-300 dark:border-gray-700'} rounded-md focus:outline-none focus:ring-2 focus:ring-accent dark:bg-[#1e2e44] dark:text-white`}
                   aria-invalid={errors.email}
                   aria-describedby={errors.email ? "email-error" : undefined}
                 />
@@ -234,7 +234,7 @@ const Contact = forwardRef<HTMLDivElement, {}>((_, ref) => {
                   name="phone"
                   value={formData.phone}
                   onChange={handleInputChange}
-                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-accent dark:bg-[#142030] dark:text-white" 
+                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-accent dark:bg-[#1e2e44] dark:text-white" 
                 />
                 <ValidationError prefix="Phone" field="phone" errors={formState.errors} />
               </div>
@@ -249,7 +249,7 @@ const Contact = forwardRef<HTMLDivElement, {}>((_, ref) => {
                   value={formData.message}
                   onChange={handleInputChange}
                   rows={4}
-                  className={`w-full px-4 py-2 border ${errors.message ? 'border-red-500' : 'border-gray-300 dark:border-gray-700'} rounded-md focus:outline-none focus:ring-2 focus:ring-accent dark:bg-[#142030] dark:text-white`}
+                  className={`w-full px-4 py-2 border ${errors.message ? 'border-red-500' : 'border-gray-300 dark:border-gray-700'} rounded-md focus:outline-none focus:ring-2 focus:ring-accent dark:bg-[#1e2e44] dark:text-white`}
                   aria-invalid={errors.message}
                   aria-describedby={errors.message ? "message-error" : undefined}
                 />
