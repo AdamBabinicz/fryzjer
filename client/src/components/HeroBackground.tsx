@@ -1,5 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+// Import directly from assets folder using Vite's alias
+import heroBg from '@assets/hero-bg.svg';
 
 interface HeroBackgroundProps {
   className?: string;
@@ -9,8 +11,11 @@ const HeroBackground: React.FC<HeroBackgroundProps> = ({ className = '' }) => {
   const { t } = useTranslation();
   
   const bgStyle = {
+    backgroundImage: `url(${heroBg})`,
+    backgroundSize: 'cover',
+    backgroundPosition: 'center',
+    backgroundRepeat: 'no-repeat',
     backgroundColor: '#6b5b95',
-    background: `url('/hero-background.svg') center center / cover no-repeat`,
     width: '100%',
     height: '100%',
     position: 'absolute' as const,
