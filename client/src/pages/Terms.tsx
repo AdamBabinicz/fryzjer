@@ -12,7 +12,7 @@ const Terms = () => {
   }, []);
 
   return (
-    <section className="py-16 px-4 bg-white dark:bg-[#121212]">
+    <section className="py-16 px-4 bg-white dark:bg-transparent">
       <Helmet>
         <title>{t('terms.pageTitle')} - AGILERA</title>
         <meta name="description" content={t('terms.pageDescription')} />
