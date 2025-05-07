@@ -1,10 +1,23 @@
-import { forwardRef } from 'react';
+import { forwardRef, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
-import { teamData } from '@/data/teamData';
+import { teamData as teamDataPL } from '@/data/teamData';
+import { teamData as teamDataEN } from '@/data/teamDataEn';
 
 const About = forwardRef<HTMLDivElement, {}>((_, ref) => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  
+  // Use appropriate team data based on current language
+  const teamMembers = useMemo(() => {
+    return i18n.language === 'en' ? teamDataEN : teamDataPL;
+  }, [i18n.language]);
+  
+  // Add TypeScript type annotations for team members
+  type TeamMember = {
+    name: string;
+    position: string;
+    image: string;
+  };
   
   // Animation variants
   const containerVariants = {
@@ -109,7 +122,7 @@ const About = forwardRef<HTMLDivElement, {}>((_, ref) => {
             viewport={{ once: true }}
             className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8"
           >
-            {teamData.map((member, index) => (
+            {teamMembers.map((member: TeamMember, index: number) => (
               <motion.div 
                 key={`team-member-${index}`}
                 variants={itemVariants}

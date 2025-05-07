@@ -14,7 +14,7 @@ const HeroBackground: React.FC<HeroBackgroundProps> = ({ className = '' }) => {
   
   // Replit works better with assets directly in the public folder
   const bgStyle = {
-    backgroundImage: `url('/hero-bg.svg')`,
+    backgroundImage: `url('/salon-6964527_1280.jpg')`,
     backgroundSize: 'cover',
     backgroundPosition: 'center',
     backgroundRepeat: 'no-repeat',
