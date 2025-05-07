@@ -28,6 +28,9 @@ const Footer = ({
   
   // Formspree form hook - replace with your newsletter form ID
   const [formState, handleFormspreeSubmit] = useForm("mnqeovvr");
+  
+  // Debug formState
+  console.log("Newsletter form state:", formState);
 
   const handleNewsletterSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();

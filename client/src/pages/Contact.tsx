@@ -10,8 +10,11 @@ const Contact = forwardRef<HTMLDivElement, {}>((_, ref) => {
   const { t } = useTranslation();
   const { toast } = useToast();
   
-  // Formspree form hook - replace with your form ID
+  // Formspree form hook
   const [formState, handleFormspreeSubmit] = useForm("xayrzkgq");
+  
+  // Console log formState to debug
+  console.log("Contact form state:", formState);
   
   const [formData, setFormData] = useState({
     name: '',
