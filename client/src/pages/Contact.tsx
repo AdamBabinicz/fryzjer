@@ -119,7 +119,7 @@ const Contact = forwardRef<HTMLDivElement, {}>((_, ref) => {
             viewport={{ once: true }}
             transition={{ duration: 0.8 }}
           >
-            <div className="bg-white dark:bg-[#121212] rounded-lg shadow-lg p-8 mb-8">
+            <div className="bg-white dark:bg-[#1a2536] rounded-lg shadow-lg p-8 mb-8">
               <h3 className="text-2xl font-bold playfair mb-6">{t('contact.contactInfo')}</h3>
               <div className="space-y-4">
                 <div className="flex items-start">
@@ -150,7 +150,7 @@ const Contact = forwardRef<HTMLDivElement, {}>((_, ref) => {
               </div>
             </div>
             
-            <div className="bg-white dark:bg-[#121212] rounded-lg shadow-lg p-8">
+            <div className="bg-white dark:bg-[#1a2536] rounded-lg shadow-lg p-8">
               <h3 className="text-2xl font-bold playfair mb-6">{t('contact.openingHours')}</h3>
               <div className="space-y-3">
                 <div className="flex justify-between">
@@ -174,7 +174,7 @@ const Contact = forwardRef<HTMLDivElement, {}>((_, ref) => {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8 }}
-            className="bg-white dark:bg-[#121212] rounded-lg shadow-lg p-8"
+            className="bg-white dark:bg-[#1a2536] rounded-lg shadow-lg p-8"
           >
             <h3 className="text-2xl font-bold playfair mb-6">{t('contact.writeToUs')}</h3>
             <form onSubmit={handleSubmit} className="space-y-6">
@@ -190,7 +190,7 @@ const Contact = forwardRef<HTMLDivElement, {}>((_, ref) => {
                   name="name"
                   value={formData.name}
                   onChange={handleInputChange}
-                  className={`w-full px-4 py-2 border ${errors.name ? 'border-red-500' : 'border-gray-300 dark:border-gray-700'} rounded-md focus:outline-none focus:ring-2 focus:ring-accent dark:bg-[#1e1e1e] dark:text-white`}
+                  className={`w-full px-4 py-2 border ${errors.name ? 'border-red-500' : 'border-gray-300 dark:border-gray-700'} rounded-md focus:outline-none focus:ring-2 focus:ring-accent dark:bg-[#142030] dark:text-white`}
                   aria-invalid={errors.name}
                   aria-describedby={errors.name ? "name-error" : undefined}
                 />
@@ -212,7 +212,7 @@ const Contact = forwardRef<HTMLDivElement, {}>((_, ref) => {
                   name="email"
                   value={formData.email}
                   onChange={handleInputChange}
-                  className={`w-full px-4 py-2 border ${errors.email ? 'border-red-500' : 'border-gray-300 dark:border-gray-700'} rounded-md focus:outline-none focus:ring-2 focus:ring-accent dark:bg-[#1e1e1e] dark:text-white`}
+                  className={`w-full px-4 py-2 border ${errors.email ? 'border-red-500' : 'border-gray-300 dark:border-gray-700'} rounded-md focus:outline-none focus:ring-2 focus:ring-accent dark:bg-[#142030] dark:text-white`}
                   aria-invalid={errors.email}
                   aria-describedby={errors.email ? "email-error" : undefined}
                 />
@@ -234,7 +234,7 @@ const Contact = forwardRef<HTMLDivElement, {}>((_, ref) => {
                   name="phone"
                   value={formData.phone}
                   onChange={handleInputChange}
-                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-accent dark:bg-[#1e1e1e] dark:text-white" 
+                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-accent dark:bg-[#142030] dark:text-white" 
                 />
                 <ValidationError prefix="Phone" field="phone" errors={formState.errors} />
               </div>
@@ -249,7 +249,7 @@ const Contact = forwardRef<HTMLDivElement, {}>((_, ref) => {
                   value={formData.message}
                   onChange={handleInputChange}
                   rows={4}
-                  className={`w-full px-4 py-2 border ${errors.message ? 'border-red-500' : 'border-gray-300 dark:border-gray-700'} rounded-md focus:outline-none focus:ring-2 focus:ring-accent dark:bg-[#1e1e1e] dark:text-white`}
+                  className={`w-full px-4 py-2 border ${errors.message ? 'border-red-500' : 'border-gray-300 dark:border-gray-700'} rounded-md focus:outline-none focus:ring-2 focus:ring-accent dark:bg-[#142030] dark:text-white`}
                   aria-invalid={errors.message}
                   aria-describedby={errors.message ? "message-error" : undefined}
                 />
@@ -282,7 +282,7 @@ const Contact = forwardRef<HTMLDivElement, {}>((_, ref) => {
           transition={{ duration: 0.8, delay: 0.2 }}
           className="mt-12"
         >
-          <div className="bg-white dark:bg-[#121212] rounded-lg shadow-lg p-4 h-64 md:h-96">
+          <div className="bg-white dark:bg-[#1a2536] rounded-lg shadow-lg p-4 h-64 md:h-96">
             <iframe
               src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2443.3151954985895!2d21.00717661593672!3d52.23178017976199!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x471eccf695420895%3A0xcb0e27f11ace068!2sWarsaw%2C%20Poland!5e0!3m2!1sen!2sus!4v1627654835981!5m2!1sen!2sus"
               width="100%"
