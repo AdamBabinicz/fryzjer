@@ -20,20 +20,37 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     const savedTheme = localStorage.getItem('theme') as Theme | null;
     const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
     
+    console.log("ThemeContext: Initializing theme", { savedTheme, prefersDark });
+    
     if (savedTheme) {
+      console.log("ThemeContext: Using saved theme", savedTheme);
       setTheme(savedTheme);
       document.documentElement.classList.toggle('dark', savedTheme === 'dark');
     } else if (prefersDark) {
+      console.log("ThemeContext: Using system preference (dark)");
       setTheme('dark');
       document.documentElement.classList.add('dark');
+    } else {
+      console.log("ThemeContext: Using default (light)");
+      document.documentElement.classList.remove('dark');
     }
   }, []);
   
   const toggleTheme = () => {
+    console.log("ThemeContext: Toggle theme called, current theme:", theme);
+    
     setTheme(prevTheme => {
       const newTheme = prevTheme === 'light' ? 'dark' : 'light';
+      console.log("ThemeContext: Setting new theme:", newTheme);
       localStorage.setItem('theme', newTheme);
-      document.documentElement.classList.toggle('dark', newTheme === 'dark');
+      
+      // Ensure proper class toggling
+      if (newTheme === 'dark') {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
+      
       return newTheme;
     });
   };
