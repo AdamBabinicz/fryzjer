@@ -50,10 +50,16 @@ const Footer = ({
   
   // Reset form and show success message when form is successfully submitted
   useEffect(() => {
+    // Show console logs for debugging
+    console.log("Newsletter form useEffect running, succeeded:", formState.succeeded);
+    
     if (formState.succeeded) {
+      console.log("Newsletter form succeeded, showing toast");
+      
       toast({
         title: t('toast.success'),
         description: t('toast.newsletterSuccess'),
+        variant: 'default',
       });
       
       setEmail('');
