@@ -12,7 +12,7 @@ const PrivacyPolicy = () => {
   }, []);
 
   return (
-    <section className="py-16 px-4 bg-white dark:bg-[#121212]">
+    <section className="py-16 px-4 bg-white dark:bg-transparent">
       <Helmet>
         <title>{t('privacyPolicy.pageTitle')} - AGILERA</title>
         <meta name="description" content={t('privacyPolicy.pageDescription')} />

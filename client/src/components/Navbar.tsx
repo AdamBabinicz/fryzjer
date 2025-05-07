@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { cn } from '@/lib/utils';
 import LanguageSelector from './LanguageSelector';
 import ThemeToggle from './ThemeToggle';
-import { FaScissors } from 'react-icons/fa6';
+import { FaSprayCan } from 'react-icons/fa6';
 import { FaBars, FaChevronDown } from 'react-icons/fa';
 
 interface NavbarProps {
@@ -59,14 +59,14 @@ const Navbar = ({
     <header className={cn(
       "fixed top-0 left-0 right-0 z-50 transition duration-300 ease-in-out",
       isScrolled 
-        ? "bg-white dark:bg-[#121212] shadow-md" 
-        : "bg-white/90 dark:bg-[#121212]/90"
+        ? "bg-white dark:bg-[#121e33] shadow-md" 
+        : "bg-white/90 dark:bg-[#121e33]/90"
     )}>
       <nav className="max-w-[1400px] mx-auto px-4 sm:px-6 md:px-8 py-4 flex items-center justify-between">
         {/* Logo */}
         <div className="flex items-center">
           <button onClick={onHomeClick} className="flex items-center">
-            <FaScissors className="text-accent mr-2" />
+            <FaSprayCan className="text-accent mr-2" />
             <span className="text-2xl font-bold playfair tracking-wider">AGILERA</span>
           </button>
         </div>
@@ -103,7 +103,7 @@ const Navbar = ({
             >
               {t('nav.services')} <FaChevronDown className="ml-1 text-xs" />
             </button>
-            <div className="absolute left-0 mt-2 w-48 bg-white dark:bg-[#1e1e1e] rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition duration-300 ease-in-out">
+            <div className="absolute left-0 mt-2 w-48 bg-white dark:bg-[#1a2536] rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition duration-300 ease-in-out">
               <button 
                 onClick={() => scrollToServiceSection('services-haircut')}
                 className="block px-4 py-2 text-sm text-primary dark:text-white hover:bg-neutral dark:hover:bg-gray-700 w-full text-left"
@@ -148,7 +148,7 @@ const Navbar = ({
       
       {/* Mobile Navigation */}
       <div className={`md:hidden ${isMobileMenuOpen ? 'block' : 'hidden'}`}>
-        <div className="px-2 pt-2 pb-3 space-y-1 bg-white dark:bg-[#1e1e1e] shadow-md">
+        <div className="px-2 pt-2 pb-3 space-y-1 bg-white dark:bg-[#1a2536] shadow-md">
           <button 
             onClick={() => handleLinkClick(onHomeClick)}
             className="block w-full text-left px-3 py-2 text-primary dark:text-white hover:bg-neutral dark:hover:bg-gray-700 rounded-md"
