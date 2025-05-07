@@ -91,7 +91,7 @@ const Contact = forwardRef<HTMLDivElement, {}>((_, ref) => {
   }, [formState.succeeded, t, toast]);
   
   return (
-    <section ref={ref} id="contact" className="py-20 bg-neutral dark:bg-[#1e1e1e]">
+    <section ref={ref} id="contact" className="py-20 bg-neutral dark:bg-transparent section-contact">
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
           <motion.h2 
