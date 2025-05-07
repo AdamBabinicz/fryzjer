@@ -25,7 +25,8 @@ if (!i18n.isInitialized) {
     // Init i18next
     .init({
       resources,
-      fallbackLng: 'pl',
+      fallbackLng: 'en',
+      lng: 'en',
       debug: false,
       
       interpolation: {

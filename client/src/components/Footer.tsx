@@ -67,7 +67,7 @@ const Footer = ({
   }, [formState.succeeded, t, toast]);
 
   return (
-    <footer className="bg-primary text-white py-12">
+    <footer className="bg-background/95 text-foreground dark:bg-[#1a1a1a] dark:text-white py-12">
       <div className="max-w-[1400px] mx-auto px-4 sm:px-6 md:px-8">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div>
@@ -75,7 +75,7 @@ const Footer = ({
               <FaScissors className="text-accent mr-2" />
               <span className="text-2xl font-bold playfair tracking-wider">AGILERA</span>
             </div>
-            <p className="text-gray-400 mb-6">
+            <p className="text-gray-500 dark:text-gray-400 mb-6">
               {t('footer.description')}
             </p>
             <div className="flex space-x-4">
@@ -83,7 +83,7 @@ const Footer = ({
                 href="https://facebook.com" 
                 target="_blank" 
                 rel="noopener noreferrer" 
-                className="text-white hover:text-accent transition duration-300 ease-in-out" 
+                className="text-gray-500 dark:text-white hover:text-accent transition duration-300 ease-in-out" 
                 aria-label="Facebook"
               >
                 <FaFacebookF />
@@ -92,7 +92,7 @@ const Footer = ({
                 href="https://instagram.com" 
                 target="_blank" 
                 rel="noopener noreferrer" 
-                className="text-white hover:text-accent transition duration-300 ease-in-out" 
+                className="text-gray-500 dark:text-white hover:text-accent transition duration-300 ease-in-out" 
                 aria-label="Instagram"
               >
                 <FaInstagram />
@@ -101,7 +101,7 @@ const Footer = ({
                 href="https://twitter.com" 
                 target="_blank" 
                 rel="noopener noreferrer" 
-                className="text-white hover:text-accent transition duration-300 ease-in-out" 
+                className="text-gray-500 dark:text-white hover:text-accent transition duration-300 ease-in-out" 
                 aria-label="Twitter"
               >
                 <FaTwitter />

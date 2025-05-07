@@ -8,7 +8,7 @@ interface LanguageContextType {
 }
 
 const LanguageContext = createContext<LanguageContextType>({
-  language: i18n.language || 'pl',
+  language: i18n.language || 'en',
   changeLanguage: (lang: string) => {
     i18n.changeLanguage(lang);
   }
@@ -16,7 +16,7 @@ const LanguageContext = createContext<LanguageContextType>({
 
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
   const { i18n } = useTranslation();
-  const [language, setLanguage] = useState(i18n.language || 'pl');
+  const [language, setLanguage] = useState(i18n.language || 'en');
   
   // Initialize language from i18n
   useEffect(() => {
