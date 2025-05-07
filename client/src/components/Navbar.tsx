@@ -69,13 +69,13 @@ const Navbar = ({
         <div className="flex items-center">
           <button onClick={onHomeClick} className="flex items-center">
             <img 
-              src={theme === 'dark' ? '/assets/g-j.png' : '/assets/g.png'} 
+              src={theme === 'dark' ? '/attached_assets/g-j.png' : '/attached_assets/g.png'} 
               alt="Agilera Salon Logo" 
               className="h-8 mr-2" 
             />
             <span className="text-2xl font-bold playfair tracking-wider flex items-center">
               <img 
-                src={theme === 'dark' ? '/assets/a-j.png' : '/assets/a.png'} 
+                src={theme === 'dark' ? '/attached_assets/a-j.png' : '/attached_assets/a.png'} 
                 alt="A letter" 
                 className="h-7 inline" 
               />
