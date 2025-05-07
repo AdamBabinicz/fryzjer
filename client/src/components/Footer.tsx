@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Link } from 'wouter';
 import { FaScissors } from 'react-icons/fa6';
 import { FaFacebookF, FaInstagram, FaTwitter, FaPaperPlane } from 'react-icons/fa';
 import { useToast } from '@/hooks/use-toast';
@@ -195,8 +196,8 @@ const Footer = ({
             &copy; {getCurrentYear()} {t('footer.copyright')}
           </p>
           <div className="flex space-x-4">
-            <a href="#" className="text-gray-500 hover:text-accent text-sm transition duration-300 ease-in-out">{t('footer.privacyPolicy')}</a>
-            <a href="#" className="text-gray-500 hover:text-accent text-sm transition duration-300 ease-in-out">{t('footer.terms')}</a>
+            <Link href="/privacy-policy" className="text-gray-500 hover:text-accent text-sm transition duration-300 ease-in-out">{t('footer.privacyPolicy')}</Link>
+            <Link href="/terms" className="text-gray-500 hover:text-accent text-sm transition duration-300 ease-in-out">{t('footer.terms')}</Link>
           </div>
         </div>
       </div>

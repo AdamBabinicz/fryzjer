@@ -19,6 +19,7 @@ import { useLanguage } from "@/context/LanguageContext";
 function App() {
   const { t } = useTranslation();
   const { language } = useLanguage();
+  const [location] = useLocation();
   
   // References for scrolling to sections
   const homeRef = useRef<HTMLDivElement>(null);
@@ -36,9 +37,22 @@ function App() {
     }
   };
 
+  // Check if we're on a special page (privacy policy, terms, etc.)
+  const isSpecialPage = location === '/privacy-policy' || location === '/terms';
+
+  // Main page content with all sections
+  const MainContent = () => (
+    <>
+      <Home ref={homeRef} onContactClick={() => scrollToSection(contactRef)} />
+      <About ref={aboutRef} />
+      <Services ref={servicesRef} />
+      <Gallery ref={galleryRef} />
+      <Contact ref={contactRef} />
+    </>
+  );
+
   return (
     <>
-      {/* SEO metadata - temporarily commented out
       <Helmet>
         <html lang={language} />
         <title>{t("meta.title")}</title>
@@ -46,7 +60,6 @@ function App() {
         <meta property="og:title" content={t("meta.ogTitle")} />
         <meta property="og:description" content={t("meta.ogDescription")} />
       </Helmet>
-      */}
       
       {/* Skip Link for Accessibility */}
       <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:p-4 focus:bg-accent focus:text-white focus:z-50">
@@ -54,27 +67,58 @@ function App() {
       </a>
       
       <Navbar
-        onHomeClick={() => scrollToSection(homeRef)}
-        onAboutClick={() => scrollToSection(aboutRef)}
-        onServicesClick={() => scrollToSection(servicesRef)}
-        onGalleryClick={() => scrollToSection(galleryRef)}
-        onContactClick={() => scrollToSection(contactRef)}
+        onHomeClick={() => {
+          if (isSpecialPage) window.location.href = '/';
+          else scrollToSection(homeRef);
+        }}
+        onAboutClick={() => {
+          if (isSpecialPage) window.location.href = '/#about';
+          else scrollToSection(aboutRef);
+        }}
+        onServicesClick={() => {
+          if (isSpecialPage) window.location.href = '/#services';
+          else scrollToSection(servicesRef);
+        }}
+        onGalleryClick={() => {
+          if (isSpecialPage) window.location.href = '/#gallery';
+          else scrollToSection(galleryRef);
+        }}
+        onContactClick={() => {
+          if (isSpecialPage) window.location.href = '/#contact';
+          else scrollToSection(contactRef);
+        }}
       />
       
       <main id="main-content" className="max-w-[1400px] mx-auto px-4 sm:px-6 md:px-8">
-        <Home ref={homeRef} onContactClick={() => scrollToSection(contactRef)} />
-        <About ref={aboutRef} />
-        <Services ref={servicesRef} />
-        <Gallery ref={galleryRef} />
-        <Contact ref={contactRef} />
+        <Switch>
+          <Route path="/" component={MainContent} />
+          <Route path="/privacy-policy" component={PrivacyPolicy} />
+          <Route path="/terms" component={Terms} />
+          <Route component={NotFound} />
+        </Switch>
       </main>
       
       <Footer 
-        onHomeClick={() => scrollToSection(homeRef)}
-        onAboutClick={() => scrollToSection(aboutRef)}
-        onServicesClick={() => scrollToSection(servicesRef)}
-        onGalleryClick={() => scrollToSection(galleryRef)}
-        onContactClick={() => scrollToSection(contactRef)}
+        onHomeClick={() => {
+          if (isSpecialPage) window.location.href = '/';
+          else scrollToSection(homeRef);
+        }}
+        onAboutClick={() => {
+          if (isSpecialPage) window.location.href = '/#about';
+          else scrollToSection(aboutRef);
+        }}
+        onServicesClick={() => {
+          if (isSpecialPage) window.location.href = '/#services';
+          else scrollToSection(servicesRef);
+        }}
+        onGalleryClick={() => {
+          if (isSpecialPage) window.location.href = '/#gallery';
+          else scrollToSection(galleryRef);
+        }}
+        onContactClick={() => {
+          if (isSpecialPage) window.location.href = '/#contact';
+          else scrollToSection(contactRef);
+        }}
       />
       
       {/* Modals */}

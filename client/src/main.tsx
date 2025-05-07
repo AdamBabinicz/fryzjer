@@ -8,7 +8,8 @@ import { GalleryProvider } from "./context/GalleryContext";
 import { ServiceProvider } from "./context/ServiceContext";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
-// import { HelmetProvider } from "react-helmet-async"; // Temporarily disabled
+import { HelmetProvider } from "react-helmet-async";
+import { Router } from "wouter";
 import "./index.css";
 
 // Import and explicitly initialize i18n before rendering
@@ -17,19 +18,21 @@ setupI18n(); // Ensure i18n is properly initialized once
 
 createRoot(document.getElementById("root")!).render(
   <QueryClientProvider client={queryClient}>
-    {/* <HelmetProvider> - Temporarily disabled */}
-    <LanguageProvider>
-      <ThemeProvider>
-        <GalleryProvider>
-          <ServiceProvider>
-            <TooltipProvider>
-              <Toaster />
-              <App />
-            </TooltipProvider>
-          </ServiceProvider>
-        </GalleryProvider>
-      </ThemeProvider>
-    </LanguageProvider>
-    {/* </HelmetProvider> */}
+    <HelmetProvider>
+      <Router>
+        <LanguageProvider>
+          <ThemeProvider>
+            <GalleryProvider>
+              <ServiceProvider>
+                <TooltipProvider>
+                  <Toaster />
+                  <App />
+                </TooltipProvider>
+              </ServiceProvider>
+            </GalleryProvider>
+          </ThemeProvider>
+        </LanguageProvider>
+      </Router>
+    </HelmetProvider>
   </QueryClientProvider>
 );
