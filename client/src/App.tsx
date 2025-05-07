@@ -1,5 +1,5 @@
 import { useRef } from "react";
-import { Helmet } from "react-helmet-async";
+// import { Helmet } from "react-helmet-async";  // Temporarily commented out
 import { useTranslation } from "react-i18next";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
