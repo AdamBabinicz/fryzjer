@@ -1,0 +1,79 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 0 0% 10.2%;
+    --muted: 60 4.8% 95.9%;
+    --muted-foreground: 25 5.3% 44.7%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 10.2%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 10.2%;
+    --border: 20 5.9% 90%;
+    --input: 20 5.9% 90%;
+    --primary: 0 0% 10.2%; /* #1a1a1a */
+    --primary-foreground: 0 0% 100%;
+    --secondary: 0 0% 100%; /* #ffffff */
+    --secondary-foreground: 0 0% 10.2%;
+    --accent: 36 77% 55%; /* #c4a15a */
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 60 9.1% 97.8%;
+    --ring: 0 0% 10.2%;
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: 0 0% 7.1%;    /* #121212 */
+    --foreground: 0 0% 100%;
+    --muted: 0 0% 12%;          /* #1e1e1e */
+    --muted-foreground: 240 5% 64.9%;
+    --popover: 0 0% 7.1%;
+    --popover-foreground: 0 0% 100%;
+    --card: 0 0% 12%;           /* #1e1e1e */
+    --card-foreground: 0 0% 100%;
+    --border: 240 3.7% 15.9%;
+    --input: 240 3.7% 15.9%;
+    --primary: 0 0% 100%;       /* #ffffff */
+    --primary-foreground: 0 0% 7.1%;
+    --secondary: 0 0% 7.1%;     /* #121212 */
+    --secondary-foreground: 0 0% 100%;
+    --accent: 36 77% 55%;       /* #c4a15a */
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --ring: 240 4.9% 83.9%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply antialiased bg-background text-foreground;
+    font-family: 'Inter', sans-serif;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Playfair Display', serif;
+  }
+
+  .playfair {
+    font-family: 'Playfair Display', serif;
+  }
+
+  /* Smooth scrolling for the entire page */
+  html {
+    scroll-behavior: smooth;
+  }
+
+  /* Transition for hover effects */
+  .custom-transition {
+    @apply transition duration-300 ease-in-out;
+  }
+}

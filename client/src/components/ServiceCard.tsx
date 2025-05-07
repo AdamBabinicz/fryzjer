@@ -1,0 +1,49 @@
+import { useTranslation } from 'react-i18next';
+import { cn } from '@/lib/utils';
+import { useServiceModal } from '@/context/ServiceContext';
+import { ServiceType } from '@/data/serviceData';
+
+interface ServiceCardProps {
+  service: ServiceType;
+  className?: string;
+}
+
+const ServiceCard = ({ service, className }: ServiceCardProps) => {
+  const { t } = useTranslation();
+  const { openServiceModal } = useServiceModal();
+  
+  const handleLearnMore = () => {
+    openServiceModal(service);
+  };
+  
+  return (
+    <div className={cn(
+      "bg-white dark:bg-[#1e1e1e] rounded-lg shadow-lg overflow-hidden transition duration-300 ease-in-out hover:shadow-xl",
+      className
+    )}>
+      <img 
+        src={service.image} 
+        alt={service.title} 
+        className="w-full h-48 object-cover"
+        loading="lazy"
+      />
+      <div className="p-6">
+        <h4 className="text-xl font-semibold playfair mb-2">{service.title}</h4>
+        <p className="text-gray-600 dark:text-gray-400 mb-4">
+          {service.shortDescription}
+        </p>
+        <div className="flex justify-between items-center">
+          <span className="text-accent font-bold text-xl">{service.price}</span>
+          <button 
+            onClick={handleLearnMore}
+            className="text-sm px-4 py-2 border border-accent text-accent hover:bg-accent hover:text-white transition duration-300 ease-in-out"
+          >
+            {t('services.learnMore')}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default ServiceCard;

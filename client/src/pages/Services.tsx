@@ -1,0 +1,126 @@
+import { forwardRef } from 'react';
+import { useTranslation } from 'react-i18next';
+import { motion } from 'framer-motion';
+import ServiceCard from '@/components/ServiceCard';
+import { haircutServices, stylingServices, coloringServices } from '@/data/serviceData';
+
+const Services = forwardRef<HTMLDivElement, {}>((_, ref) => {
+  const { t } = useTranslation();
+  
+  // Animation variants
+  const serviceVariants = {
+    hidden: { opacity: 0, y: 50 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.8 }
+    }
+  };
+  
+  return (
+    <section ref={ref} id="services" className="py-20 bg-neutral dark:bg-[#1e1e1e]">
+      <div className="container mx-auto px-4">
+        <div className="text-center mb-16">
+          <motion.h2 
+            initial={{ opacity: 0, y: -20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="text-3xl md:text-4xl font-bold playfair mb-4"
+          >
+            {t('services.title')}
+          </motion.h2>
+          <motion.div 
+            initial={{ opacity: 0, width: 0 }}
+            whileInView={{ opacity: 1, width: 96 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
+            className="h-1 bg-accent mx-auto"
+          />
+        </div>
+        
+        <div id="services-haircut" className="mb-20">
+          <motion.h3
+            initial={{ opacity: 0, x: -20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="text-2xl font-bold playfair mb-8 text-center"
+          >
+            {t('services.haircut')}
+          </motion.h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {haircutServices.map((service, index) => (
+              <motion.div
+                key={`haircut-${index}`}
+                variants={serviceVariants}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true }}
+                custom={index}
+              >
+                <ServiceCard service={service} />
+              </motion.div>
+            ))}
+          </div>
+        </div>
+        
+        <div id="services-styling" className="mb-20">
+          <motion.h3
+            initial={{ opacity: 0, x: -20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="text-2xl font-bold playfair mb-8 text-center"
+          >
+            {t('services.styling')}
+          </motion.h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {stylingServices.map((service, index) => (
+              <motion.div
+                key={`styling-${index}`}
+                variants={serviceVariants}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true }}
+                custom={index}
+              >
+                <ServiceCard service={service} />
+              </motion.div>
+            ))}
+          </div>
+        </div>
+        
+        <div id="services-coloring">
+          <motion.h3
+            initial={{ opacity: 0, x: -20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="text-2xl font-bold playfair mb-8 text-center"
+          >
+            {t('services.coloring')}
+          </motion.h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {coloringServices.map((service, index) => (
+              <motion.div
+                key={`coloring-${index}`}
+                variants={serviceVariants}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true }}
+                custom={index}
+              >
+                <ServiceCard service={service} />
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+});
+
+Services.displayName = 'Services';
+
+export default Services;

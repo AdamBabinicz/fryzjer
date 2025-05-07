@@ -1,0 +1,95 @@
+{
+  "meta": {
+    "title": "AGILERA Hair Salon | Style. Class. Precision.",
+    "description": "Professional hair salon for women and men, AGILERA offers cutting, styling, and coloring in an elegant setting.",
+    "ogTitle": "AGILERA Hair Salon",
+    "ogDescription": "Professional hair salon for women and men offering cutting, styling, and coloring in an elegant setting."
+  },
+  "accessibility": {
+    "skipToContent": "Skip to content",
+    "toggleMenu": "Toggle menu",
+    "toggleTheme": "Toggle light/dark mode",
+    "changeLanguage": "Change language",
+    "previousSlide": "Previous slide",
+    "nextSlide": "Next slide",
+    "goToSlide": "Go to slide {{number}}",
+    "closeModal": "Close modal"
+  },
+  "nav": {
+    "home": "Home",
+    "about": "About",
+    "services": "Services",
+    "gallery": "Gallery",
+    "contact": "Contact"
+  },
+  "home": {
+    "heroAlt": "AGILERA hair salon interior",
+    "motto": "Style. Class. Precision.",
+    "knowUs": "About Us",
+    "bookAppointment": "Book Appointment"
+  },
+  "about": {
+    "title": "About Us",
+    "ourStory": "Our Story",
+    "storyParagraph1": "AGILERA Hair Salon is a place where passion meets professionalism. Since 2010, we have been providing top-quality hairdressing services for clients who value elegance and precision.",
+    "storyParagraph2": "Our team is a group of experienced stylists who continuously improve their skills by participating in international training sessions and hairdressing shows.",
+    "yearsExperience": "Years of experience",
+    "happyClients": "Happy clients",
+    "industryAwards": "Industry awards",
+    "ourTeam": "Our Team",
+    "stylistWorkingImage": "Stylist working with client",
+    "salonInteriorImage": "AGILERA salon interior"
+  },
+  "services": {
+    "title": "Our Services",
+    "haircut": "Haircut",
+    "styling": "Styling",
+    "coloring": "Coloring",
+    "learnMore": "Learn More",
+    "bookAppointment": "Book Appointment"
+  },
+  "gallery": {
+    "title": "Gallery"
+  },
+  "contact": {
+    "title": "Contact",
+    "contactInfo": "Contact Information",
+    "address": "Address",
+    "phone": "Phone",
+    "email": "Email",
+    "openingHours": "Opening Hours",
+    "mondayFriday": "Monday - Friday",
+    "saturday": "Saturday",
+    "sunday": "Sunday",
+    "closed": "Closed",
+    "writeToUs": "Write to Us",
+    "nameLabel": "Full Name",
+    "emailLabel": "Email",
+    "phoneLabel": "Phone (optional)",
+    "messageLabel": "Message",
+    "sendMessage": "Send Message",
+    "nameRequired": "Full name is required",
+    "validEmailRequired": "Please enter a valid email address",
+    "messageRequired": "Message is required",
+    "mapTitle": "AGILERA Hair Salon Location"
+  },
+  "footer": {
+    "description": "Professional hair salon offering comprehensive services for women and men in an elegant atmosphere.",
+    "quickLinks": "Quick Links",
+    "newsletter": "Newsletter",
+    "newsletterText": "Subscribe to receive information about promotions and news.",
+    "yourEmail": "Your email",
+    "subscribe": "Subscribe",
+    "copyright": "AGILERA Hair Salon. All rights reserved.",
+    "privacyPolicy": "Privacy Policy",
+    "terms": "Terms & Conditions"
+  },
+  "toast": {
+    "success": "Success!",
+    "error": "Error!",
+    "messageSent": "Your message has been sent. Thank you!",
+    "newsletterSuccess": "Thank you for subscribing to our newsletter!",
+    "formErrors": "Please fill in all required form fields.",
+    "invalidEmail": "Please enter a valid email address."
+  }
+}

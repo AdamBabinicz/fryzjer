@@ -1,0 +1,95 @@
+{
+  "meta": {
+    "title": "Salon Fryzjerski AGILERA | Styl. Klasa. Precyzja.",
+    "description": "Profesjonalny salon fryzjerski damsko-męski AGILERA oferujący strzyżenie, stylizację i koloryzację w eleganckim wydaniu.",
+    "ogTitle": "Salon Fryzjerski AGILERA",
+    "ogDescription": "Profesjonalny salon fryzjerski damsko-męski oferujący strzyżenie, stylizację i koloryzację w eleganckim wydaniu."
+  },
+  "accessibility": {
+    "skipToContent": "Przejdź do treści",
+    "toggleMenu": "Przełącz menu",
+    "toggleTheme": "Przełącz tryb jasny/ciemny",
+    "changeLanguage": "Zmień język",
+    "previousSlide": "Poprzedni slajd",
+    "nextSlide": "Następny slajd",
+    "goToSlide": "Przejdź do slajdu {{number}}",
+    "closeModal": "Zamknij okno"
+  },
+  "nav": {
+    "home": "Start",
+    "about": "O nas",
+    "services": "Usługi",
+    "gallery": "Galeria",
+    "contact": "Kontakt"
+  },
+  "home": {
+    "heroAlt": "Wnętrze salonu fryzjerskiego AGILERA",
+    "motto": "Styl. Klasa. Precyzja.",
+    "knowUs": "Poznaj nas",
+    "bookAppointment": "Umów wizytę"
+  },
+  "about": {
+    "title": "O Nas",
+    "ourStory": "Nasza Historia",
+    "storyParagraph1": "Salon Fryzjerski AGILERA to miejsce, gdzie pasja spotyka się z profesjonalizmem. Od 2010 roku zapewniamy najwyższej jakości usługi fryzjerskie dla klientów ceniących sobie elegancję i precyzję.",
+    "storyParagraph2": "Nasz zespół to grupa doświadczonych stylistów, którzy nieustannie doskonalą swoje umiejętności, uczestnicząc w międzynarodowych szkoleniach i pokazach fryzjerskich.",
+    "yearsExperience": "Lat doświadczenia",
+    "happyClients": "Zadowolonych klientów",
+    "industryAwards": "Nagród branżowych",
+    "ourTeam": "Nasz Zespół",
+    "stylistWorkingImage": "Stylistka pracująca z klientką",
+    "salonInteriorImage": "Wnętrze salonu AGILERA"
+  },
+  "services": {
+    "title": "Nasze Usługi",
+    "haircut": "Strzyżenie",
+    "styling": "Stylizacja",
+    "coloring": "Koloryzacja",
+    "learnMore": "Dowiedz się więcej",
+    "bookAppointment": "Umów wizytę"
+  },
+  "gallery": {
+    "title": "Galeria"
+  },
+  "contact": {
+    "title": "Kontakt",
+    "contactInfo": "Informacje kontaktowe",
+    "address": "Adres",
+    "phone": "Telefon",
+    "email": "Email",
+    "openingHours": "Godziny otwarcia",
+    "mondayFriday": "Poniedziałek - Piątek",
+    "saturday": "Sobota",
+    "sunday": "Niedziela",
+    "closed": "Zamknięte",
+    "writeToUs": "Napisz do nas",
+    "nameLabel": "Imię i nazwisko",
+    "emailLabel": "Email",
+    "phoneLabel": "Telefon (opcjonalnie)",
+    "messageLabel": "Wiadomość",
+    "sendMessage": "Wyślij wiadomość",
+    "nameRequired": "Imię i nazwisko jest wymagane",
+    "validEmailRequired": "Proszę podać poprawny adres email",
+    "messageRequired": "Wiadomość jest wymagana",
+    "mapTitle": "Lokalizacja Salonu Fryzjerskiego AGILERA"
+  },
+  "footer": {
+    "description": "Profesjonalny salon fryzjerski oferujący kompleksowe usługi dla kobiet i mężczyzn w eleganckiej atmosferze.",
+    "quickLinks": "Szybki dostęp",
+    "newsletter": "Newsletter",
+    "newsletterText": "Zapisz się, aby otrzymywać informacje o promocjach i nowościach.",
+    "yourEmail": "Twój email",
+    "subscribe": "Zapisz się",
+    "copyright": "Salon Fryzjerski AGILERA. Wszelkie prawa zastrzeżone.",
+    "privacyPolicy": "Polityka prywatności",
+    "terms": "Regulamin"
+  },
+  "toast": {
+    "success": "Sukces!",
+    "error": "Błąd!",
+    "messageSent": "Twoja wiadomość została wysłana. Dziękujemy!",
+    "newsletterSuccess": "Dziękujemy za zapisanie się do newslettera!",
+    "formErrors": "Proszę wypełnić wszystkie wymagane pola formularza.",
+    "invalidEmail": "Proszę podać poprawny adres email."
+  }
+}
