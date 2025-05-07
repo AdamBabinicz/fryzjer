@@ -3,8 +3,8 @@ import { useTranslation } from 'react-i18next';
 import { cn } from '@/lib/utils';
 import LanguageSelector from './LanguageSelector';
 import ThemeToggle from './ThemeToggle';
-import { GiMirrorMirror } from 'react-icons/gi';
 import { FaBars, FaChevronDown } from 'react-icons/fa';
+import { useTheme } from '@/context/ThemeContext';
 
 interface NavbarProps {
   onHomeClick: () => void;
@@ -55,6 +55,8 @@ const Navbar = ({
     setIsMobileMenuOpen(false);
   };
   
+  const { theme } = useTheme();
+  
   return (
     <header className={cn(
       "fixed top-0 left-0 right-0 z-50 transition duration-300 ease-in-out",
@@ -66,8 +68,19 @@ const Navbar = ({
         {/* Logo */}
         <div className="flex items-center">
           <button onClick={onHomeClick} className="flex items-center">
-            <GiMirrorMirror className="text-accent mr-2" />
-            <span className="text-2xl font-bold playfair tracking-wider">AGILERA</span>
+            <img 
+              src={theme === 'dark' ? '/assets/g-j.png' : '/assets/g.png'} 
+              alt="Agilera Salon Logo" 
+              className="h-8 mr-2" 
+            />
+            <span className="text-2xl font-bold playfair tracking-wider flex items-center">
+              <img 
+                src={theme === 'dark' ? '/assets/a-j.png' : '/assets/a.png'} 
+                alt="A letter" 
+                className="h-7 inline" 
+              />
+              GILERA
+            </span>
           </button>
         </div>
         
