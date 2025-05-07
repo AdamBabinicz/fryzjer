@@ -91,5 +91,28 @@
     "newsletterSuccess": "Thank you for subscribing to our newsletter!",
     "formErrors": "Please fill in all required form fields.",
     "invalidEmail": "Please enter a valid email address."
+  },
+  "contact": {
+    "title": "Contact",
+    "contactInfo": "Contact Information",
+    "address": "Address",
+    "phone": "Phone",
+    "email": "Email",
+    "openingHours": "Opening Hours",
+    "mondayFriday": "Monday - Friday",
+    "saturday": "Saturday",
+    "sunday": "Sunday",
+    "closed": "Closed",
+    "writeToUs": "Write to Us",
+    "nameLabel": "Full Name",
+    "emailLabel": "Email",
+    "phoneLabel": "Phone (optional)",
+    "messageLabel": "Message",
+    "sendMessage": "Send Message",
+    "sending": "Sending...",
+    "nameRequired": "Full name is required",
+    "validEmailRequired": "Please enter a valid email address",
+    "messageRequired": "Message is required",
+    "mapTitle": "AGILERA Hair Salon Location"
   }
 }

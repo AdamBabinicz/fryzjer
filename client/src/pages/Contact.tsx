@@ -68,10 +68,16 @@ const Contact = forwardRef<HTMLDivElement, {}>((_, ref) => {
   
   // Reset form and show success message when form is successfully submitted
   useEffect(() => {
+    // Show console logs for debugging
+    console.log("Contact form useEffect running, succeeded:", formState.succeeded);
+    
     if (formState.succeeded) {
+      console.log("Form succeeded, showing toast");
+      
       toast({
         title: t('toast.success'),
         description: t('toast.messageSent'),
+        variant: 'default',
       });
       
       // Reset form after successful submission

@@ -68,6 +68,7 @@
     "phoneLabel": "Telefon (opcjonalnie)",
     "messageLabel": "Wiadomość",
     "sendMessage": "Wyślij wiadomość",
+    "sending": "Wysyłanie...",
     "nameRequired": "Imię i nazwisko jest wymagane",
     "validEmailRequired": "Proszę podać poprawny adres email",
     "messageRequired": "Wiadomość jest wymagana",

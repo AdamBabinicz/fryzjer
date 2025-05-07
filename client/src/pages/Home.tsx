@@ -1,8 +1,7 @@
 import { forwardRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
-// Używamy ścieżki z aliasem @assets
-import heroImage from '@assets/hero-bg.svg';
+import heroImagePath from '../assets/images/hero-bg.svg';
 
 interface HomeProps {
   onContactClick: () => void;
@@ -15,7 +14,7 @@ const Home = forwardRef<HTMLDivElement, HomeProps>(({ onContactClick }, ref) => 
     <section ref={ref} id="home" className="pt-24 md:pt-32 relative bg-white dark:bg-[#121212]">
       <div className="w-full h-[85vh] relative overflow-hidden">
         <img 
-          src="https://images.unsplash.com/photo-1562322140-8baeececf3df?ixlib=rb-4.0.3&auto=format&fit=crop&w=1950&h=1100&q=80" 
+          src={heroImagePath} 
           alt={t('home.heroAlt')} 
           className="w-full h-full object-cover"
         />
