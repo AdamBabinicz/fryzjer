@@ -40,7 +40,7 @@ const About = forwardRef<HTMLDivElement, {}>((_, ref) => {
   };
   
   return (
-    <section ref={ref} id="about" className="py-20 bg-white dark:bg-[#121212]">
+    <section ref={ref} id="about" className="py-20 bg-white dark:bg-transparent section-about">
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
           <motion.h2 

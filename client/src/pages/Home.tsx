@@ -11,7 +11,7 @@ const Home = forwardRef<HTMLDivElement, HomeProps>(({ onContactClick }, ref) => 
   const { t } = useTranslation();
   
   return (
-    <section ref={ref} id="home" className="pt-24 md:pt-32 relative bg-white dark:bg-[#121212]">
+    <section ref={ref} id="home" className="pt-24 md:pt-32 relative bg-white dark:bg-transparent section-home">
       {/* Hero section z szerokością 100% - wyjątek od paddingu bocznego */}
       <div className="w-full h-[85vh] relative overflow-hidden">
         {/* Hero Background */}

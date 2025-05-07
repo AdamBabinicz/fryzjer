@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { cn } from '@/lib/utils';
 import LanguageSelector from './LanguageSelector';
 import ThemeToggle from './ThemeToggle';
-import { FaSprayCan } from 'react-icons/fa6';
+import { GiMirrorMirror } from 'react-icons/gi';
 import { FaBars, FaChevronDown } from 'react-icons/fa';
 
 interface NavbarProps {
@@ -66,7 +66,7 @@ const Navbar = ({
         {/* Logo */}
         <div className="flex items-center">
           <button onClick={onHomeClick} className="flex items-center">
-            <FaSprayCan className="text-accent mr-2" />
+            <GiMirrorMirror className="text-accent mr-2" />
             <span className="text-2xl font-bold playfair tracking-wider">AGILERA</span>
           </button>
         </div>

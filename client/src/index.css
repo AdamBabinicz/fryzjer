@@ -48,9 +48,30 @@
     --ring: 240 4.9% 83.9%;
   }
   
-  /* Add subtle gradient to dark mode background */
+  /* Add subtle gradients to dark mode sections */
   .dark body {
     background: linear-gradient(135deg, hsl(220, 30%, 10%) 0%, hsl(225, 30%, 8%) 100%);
+  }
+  
+  /* Different background gradients for each section */
+  .dark .section-home {
+    background: linear-gradient(135deg, hsl(220, 30%, 10%) 0%, hsl(225, 30%, 8%) 100%);
+  }
+  
+  .dark .section-about {
+    background: linear-gradient(135deg, hsl(222, 30%, 12%) 0%, hsl(220, 28%, 10%) 100%);
+  }
+  
+  .dark .section-services {
+    background: linear-gradient(135deg, hsl(225, 28%, 14%) 0%, hsl(220, 28%, 12%) 100%);
+  }
+  
+  .dark .section-gallery {
+    background: linear-gradient(135deg, hsl(228, 30%, 12%) 0%, hsl(225, 30%, 10%) 100%);
+  }
+  
+  .dark .section-contact {
+    background: linear-gradient(135deg, hsl(215, 30%, 14%) 0%, hsl(220, 30%, 10%) 100%);
   }
 }
 
