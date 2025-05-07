@@ -96,33 +96,13 @@ const Navbar = ({
             {t('nav.about')}
           </button>
           
-          <div className="relative group">
+          <div className="relative">
             <button 
               onClick={onServicesClick}
               className="flex items-center text-primary dark:text-white hover:text-accent dark:hover:text-accent transition duration-300 ease-in-out"
             >
-              {t('nav.services')} <FaChevronDown className="ml-1 text-xs" />
+              {t('nav.services')}
             </button>
-            <div className="absolute left-0 mt-2 w-48 bg-white dark:bg-[#1a2536] rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition duration-300 ease-in-out">
-              <button 
-                onClick={() => scrollToServiceSection('services-haircut')}
-                className="block px-4 py-2 text-sm text-primary dark:text-white hover:bg-neutral dark:hover:bg-gray-700 w-full text-left"
-              >
-                {t('services.haircut')}
-              </button>
-              <button 
-                onClick={() => scrollToServiceSection('services-styling')}
-                className="block px-4 py-2 text-sm text-primary dark:text-white hover:bg-neutral dark:hover:bg-gray-700 w-full text-left"
-              >
-                {t('services.styling')}
-              </button>
-              <button 
-                onClick={() => scrollToServiceSection('services-coloring')}
-                className="block px-4 py-2 text-sm text-primary dark:text-white hover:bg-neutral dark:hover:bg-gray-700 w-full text-left"
-              >
-                {t('services.coloring')}
-              </button>
-            </div>
           </div>
           
           <button 

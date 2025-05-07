@@ -27,19 +27,19 @@
   }
 
   .dark {
-    --background: 220 30% 10%;  /* #121e33 - navy blue */
+    --background: 220 30% 15%;  /* #1c2a42 - lighter navy blue */
     --foreground: 0 0% 100%;
-    --muted: 220 25% 15%;       /* #1a2536 */
+    --muted: 220 25% 20%;       /* #253754 */
     --muted-foreground: 240 5% 64.9%;
-    --popover: 220 30% 10%;
+    --popover: 220 30% 15%;
     --popover-foreground: 0 0% 100%;
-    --card: 220 25% 15%;        /* #1a2536 */
+    --card: 220 25% 20%;        /* #253754 */
     --card-foreground: 0 0% 100%;
-    --border: 220 20% 20%;
-    --input: 220 20% 20%;
+    --border: 220 20% 25%;
+    --input: 220 20% 25%;
     --primary: 0 0% 100%;       /* #ffffff */
-    --primary-foreground: 220 30% 10%;
-    --secondary: 220 30% 10%;   /* #121e33 */
+    --primary-foreground: 220 30% 15%;
+    --secondary: 220 30% 15%;   /* #1c2a42 */
     --secondary-foreground: 0 0% 100%;
     --accent: 36 77% 55%;       /* #c4a15a */
     --accent-foreground: 0 0% 100%;
@@ -48,30 +48,30 @@
     --ring: 240 4.9% 83.9%;
   }
   
-  /* Add subtle gradients to dark mode sections */
+  /* Add pronounced gradients to dark mode sections */
   .dark body {
-    background: linear-gradient(135deg, hsl(220, 30%, 10%) 0%, hsl(225, 30%, 8%) 100%);
+    background: linear-gradient(135deg, hsl(220, 40%, 18%) 0%, hsl(225, 40%, 12%) 100%);
   }
   
   /* Different background gradients for each section */
   .dark .section-home {
-    background: linear-gradient(135deg, hsl(220, 30%, 10%) 0%, hsl(225, 30%, 8%) 100%);
+    background: linear-gradient(145deg, hsl(220, 40%, 18%) 0%, hsl(225, 45%, 12%) 100%);
   }
   
   .dark .section-about {
-    background: linear-gradient(135deg, hsl(222, 30%, 12%) 0%, hsl(220, 28%, 10%) 100%);
+    background: linear-gradient(145deg, hsl(212, 45%, 20%) 0%, hsl(220, 40%, 14%) 100%);
   }
   
   .dark .section-services {
-    background: linear-gradient(135deg, hsl(225, 28%, 14%) 0%, hsl(220, 28%, 12%) 100%);
+    background: linear-gradient(145deg, hsl(225, 45%, 22%) 0%, hsl(220, 40%, 16%) 100%);
   }
   
   .dark .section-gallery {
-    background: linear-gradient(135deg, hsl(228, 30%, 12%) 0%, hsl(225, 30%, 10%) 100%);
+    background: linear-gradient(145deg, hsl(228, 45%, 20%) 0%, hsl(225, 40%, 14%) 100%);
   }
   
   .dark .section-contact {
-    background: linear-gradient(135deg, hsl(215, 30%, 14%) 0%, hsl(220, 30%, 10%) 100%);
+    background: linear-gradient(145deg, hsl(215, 40%, 22%) 0%, hsl(220, 45%, 16%) 100%);
   }
 }
 
