@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
 import heroBgSrc from '../assets/hero-bg.svg';
 import heroBgSimpleSrc from '../assets/hero-bg-simple.svg';
+import heroBgAttachedSrc from '../assets/hero-bg-attached.svg';
 
 interface HomeProps {
   onContactClick: () => void;
@@ -19,7 +20,7 @@ const Home = forwardRef<HTMLDivElement, HomeProps>(({ onContactClick }, ref) => 
         <div
           style={{ 
             backgroundColor: '#6b5b95', 
-            backgroundImage: `url(${heroBgSimpleSrc})`,
+            backgroundImage: `url(${heroBgAttachedSrc})`,
             backgroundSize: 'cover',
             backgroundPosition: 'center',
             width: '100%',
@@ -29,7 +30,7 @@ const Home = forwardRef<HTMLDivElement, HomeProps>(({ onContactClick }, ref) => 
         >
           {/* Fallback for SVG loading */}
           <img 
-            src={heroBgSimpleSrc} 
+            src={heroBgAttachedSrc} 
             alt={t('home.heroAlt')}
             className="w-full h-full object-cover opacity-0 absolute"
             onError={(e) => console.error("Image loading error:", e)}
