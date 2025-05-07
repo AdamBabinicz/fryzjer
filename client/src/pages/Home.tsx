@@ -20,7 +20,7 @@ const Home = forwardRef<HTMLDivElement, HomeProps>(({ onContactClick }, ref) => 
         <div
           style={{ 
             backgroundColor: '#6b5b95', 
-            backgroundImage: `url(${heroBgAttachedSrc})`,
+            backgroundImage: `url('/hero-bg.svg')`,
             backgroundSize: 'cover',
             backgroundPosition: 'center',
             width: '100%',
@@ -30,7 +30,7 @@ const Home = forwardRef<HTMLDivElement, HomeProps>(({ onContactClick }, ref) => 
         >
           {/* Fallback for SVG loading */}
           <img 
-            src={heroBgAttachedSrc} 
+            src="/hero-bg.svg" 
             alt={t('home.heroAlt')}
             className="w-full h-full object-cover opacity-0 absolute"
             onError={(e) => console.error("Image loading error:", e)}
