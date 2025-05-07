@@ -17,24 +17,20 @@ const Home = forwardRef<HTMLDivElement, HomeProps>(({ onContactClick }, ref) => 
       {/* Hero section z szerokością 100% - wyjątek od paddingu bocznego */}
       <div className="w-full h-[85vh] relative overflow-hidden">
         {/* Hero Background */}
-        <div
-          style={{ 
-            backgroundColor: '#6b5b95', 
-            backgroundImage: `url('/hero-bg.svg')`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            width: '100%',
-            height: '100%'
-          }}
-          aria-label={t('home.heroAlt')}
-        >
-          {/* Fallback for SVG loading */}
-          <img 
-            src="/hero-bg.svg" 
-            alt={t('home.heroAlt')}
-            className="w-full h-full object-cover opacity-0 absolute"
-            onError={(e) => console.error("Image loading error:", e)}
-          />
+        <div className="w-full h-full" aria-label={t('home.heroAlt')}>
+          <div
+            style={{ 
+              backgroundColor: '#6b5b95', 
+              backgroundImage: `url('/hero-background.svg')`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+              width: '100%',
+              height: '100%',
+              position: 'absolute',
+              top: 0,
+              left: 0
+            }}
+          ></div>
         </div>
         
         {/* Content Overlay */}
