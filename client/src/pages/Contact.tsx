@@ -1,13 +1,17 @@
-import { forwardRef, useState } from 'react';
+import React, { forwardRef, useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
 import { useToast } from '@/hooks/use-toast';
 import { FaMapMarkerAlt, FaPhoneAlt, FaEnvelope } from 'react-icons/fa';
 import { validateEmail, validatePhone } from '@/lib/utils';
+import { useForm, ValidationError } from '@formspree/react';
 
 const Contact = forwardRef<HTMLDivElement, {}>((_, ref) => {
   const { t } = useTranslation();
   const { toast } = useToast();
+  
+  // Formspree form hook - replace with your form ID
+  const [formState, handleFormspreeSubmit] = useForm("xayrzkgq");
   
   const [formData, setFormData] = useState({
     name: '',
@@ -43,7 +47,7 @@ const Contact = forwardRef<HTMLDivElement, {}>((_, ref) => {
     return !Object.values(newErrors).some(error => error);
   };
   
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     
     if (!validateForm()) {
@@ -55,22 +59,27 @@ const Contact = forwardRef<HTMLDivElement, {}>((_, ref) => {
       return;
     }
     
-    // Here you would typically send the form data to your backend or a form service
-    console.log('Form submitted with data:', formData);
-    
-    toast({
-      title: t('toast.success'),
-      description: t('toast.messageSent'),
-    });
-    
-    // Reset form after successful submission
-    setFormData({
-      name: '',
-      email: '',
-      phone: '',
-      message: ''
-    });
+    // Submit to Formspree
+    handleFormspreeSubmit(e);
   };
+  
+  // Reset form and show success message when form is successfully submitted
+  useEffect(() => {
+    if (formState.succeeded) {
+      toast({
+        title: t('toast.success'),
+        description: t('toast.messageSent'),
+      });
+      
+      // Reset form after successful submission
+      setFormData({
+        name: '',
+        email: '',
+        phone: '',
+        message: ''
+      });
+    }
+  }, [formState.succeeded, t, toast]);
   
   return (
     <section ref={ref} id="contact" className="py-20 bg-neutral dark:bg-[#1e1e1e]">
@@ -160,6 +169,8 @@ const Contact = forwardRef<HTMLDivElement, {}>((_, ref) => {
           >
             <h3 className="text-2xl font-bold playfair mb-6">{t('contact.writeToUs')}</h3>
             <form onSubmit={handleSubmit} className="space-y-6">
+              <input type="hidden" name="_replyto" value="puaro@vp.pl" />
+              
               <div>
                 <label htmlFor="name" className="block mb-2 font-medium">
                   {t('contact.nameLabel')}
@@ -179,6 +190,7 @@ const Contact = forwardRef<HTMLDivElement, {}>((_, ref) => {
                     {t('contact.nameRequired')}
                   </p>
                 )}
+                <ValidationError prefix="Name" field="name" errors={formState.errors} />
               </div>
               
               <div>
@@ -200,6 +212,7 @@ const Contact = forwardRef<HTMLDivElement, {}>((_, ref) => {
                     {t('contact.validEmailRequired')}
                   </p>
                 )}
+                <ValidationError prefix="Email" field="email" errors={formState.errors} />
               </div>
               
               <div>
@@ -214,6 +227,7 @@ const Contact = forwardRef<HTMLDivElement, {}>((_, ref) => {
                   onChange={handleInputChange}
                   className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-accent dark:bg-[#1e1e1e] dark:text-white" 
                 />
+                <ValidationError prefix="Phone" field="phone" errors={formState.errors} />
               </div>
               
               <div>
@@ -235,15 +249,18 @@ const Contact = forwardRef<HTMLDivElement, {}>((_, ref) => {
                     {t('contact.messageRequired')}
                   </p>
                 )}
+                <ValidationError prefix="Message" field="message" errors={formState.errors} />
               </div>
               
               <div>
                 <button 
                   type="submit" 
                   className="px-6 py-3 bg-accent text-white font-medium hover:bg-opacity-90 transition duration-300 ease-in-out"
+                  disabled={formState.submitting}
                 >
-                  {t('contact.sendMessage')}
+                  {formState.submitting ? t('contact.sending') : t('contact.sendMessage')}
                 </button>
+                <ValidationError errors={formState.errors} />
               </div>
             </form>
           </motion.div>

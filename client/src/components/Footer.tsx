@@ -1,10 +1,11 @@
-import { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FaScissors } from 'react-icons/fa6';
 import { FaFacebookF, FaInstagram, FaTwitter, FaPaperPlane } from 'react-icons/fa';
 import { useToast } from '@/hooks/use-toast';
 import { validateEmail } from '@/lib/utils';
 import { getCurrentYear } from '@/lib/utils';
+import { useForm, ValidationError } from '@formspree/react';
 
 interface FooterProps {
   onHomeClick: () => void;
@@ -24,8 +25,11 @@ const Footer = ({
   const { t } = useTranslation();
   const { toast } = useToast();
   const [email, setEmail] = useState('');
+  
+  // Formspree form hook - replace with your newsletter form ID
+  const [formState, handleFormspreeSubmit] = useForm("mnqeovvr");
 
-  const handleNewsletterSubmit = (e: React.FormEvent) => {
+  const handleNewsletterSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     
     if (!email || !validateEmail(email)) {
@@ -37,16 +41,21 @@ const Footer = ({
       return;
     }
     
-    // Here you would typically send the email to your newsletter service
-    console.log('Newsletter subscription for:', email);
-    
-    toast({
-      title: t('toast.success'),
-      description: t('toast.newsletterSuccess'),
-    });
-    
-    setEmail('');
+    // Submit to Formspree
+    handleFormspreeSubmit(e);
   };
+  
+  // Reset form and show success message when form is successfully submitted
+  useEffect(() => {
+    if (formState.succeeded) {
+      toast({
+        title: t('toast.success'),
+        description: t('toast.newsletterSuccess'),
+      });
+      
+      setEmail('');
+    }
+  }, [formState.succeeded, t, toast]);
 
   return (
     <footer className="bg-primary text-white py-12">
@@ -143,9 +152,13 @@ const Footer = ({
               {t('footer.newsletterText')}
             </p>
             <form onSubmit={handleNewsletterSubmit} className="mb-4">
+              <input type="hidden" name="_replyto" value="puaro@vp.pl" />
+              <input type="hidden" name="form-name" value="newsletter" />
+              
               <div className="flex">
                 <input 
                   type="email" 
+                  name="email"
                   placeholder={t('footer.yourEmail')}
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
@@ -155,10 +168,15 @@ const Footer = ({
                   type="submit" 
                   className="px-4 py-2 bg-accent text-white rounded-r-md hover:bg-opacity-90 transition duration-300 ease-in-out"
                   aria-label={t('footer.subscribe')}
+                  disabled={formState.submitting}
                 >
-                  <FaPaperPlane />
+                  {formState.submitting ? 
+                    <span className="animate-spin">⟳</span> : 
+                    <FaPaperPlane />
+                  }
                 </button>
               </div>
+              <ValidationError prefix="Email" field="email" errors={formState.errors} className="text-red-500 text-sm mt-1" />
             </form>
           </div>
         </div>
