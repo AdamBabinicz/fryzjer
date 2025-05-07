@@ -1,6 +1,7 @@
 import { forwardRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
+import heroBgSrc from '../assets/hero-bg.svg';
 
 interface HomeProps {
   onContactClick: () => void;
@@ -17,7 +18,7 @@ const Home = forwardRef<HTMLDivElement, HomeProps>(({ onContactClick }, ref) => 
         <div
           style={{ 
             backgroundColor: '#6b5b95', 
-            backgroundImage: 'linear-gradient(135deg, #6b5b95 0%, #7e57c2 100%)',
+            backgroundImage: `url(${heroBgSrc})`,
             backgroundSize: 'cover',
             backgroundPosition: 'center',
             width: '100%',

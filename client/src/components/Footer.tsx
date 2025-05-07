@@ -115,7 +115,7 @@ const Footer = ({
               <li>
                 <button 
                   onClick={onHomeClick} 
-                  className="text-gray-400 hover:text-accent transition duration-300 ease-in-out"
+                  className="text-gray-500 dark:text-gray-400 hover:text-accent transition duration-300 ease-in-out"
                 >
                   {t('nav.home')}
                 </button>
@@ -123,7 +123,7 @@ const Footer = ({
               <li>
                 <button 
                   onClick={onAboutClick} 
-                  className="text-gray-400 hover:text-accent transition duration-300 ease-in-out"
+                  className="text-gray-500 dark:text-gray-400 hover:text-accent transition duration-300 ease-in-out"
                 >
                   {t('nav.about')}
                 </button>
@@ -157,7 +157,7 @@ const Footer = ({
           
           <div>
             <h4 className="text-xl font-semibold playfair mb-6">{t('footer.newsletter')}</h4>
-            <p className="text-gray-400 mb-4">
+            <p className="text-gray-500 dark:text-gray-400 mb-4">
               {t('footer.newsletterText')}
             </p>
             <form onSubmit={handleNewsletterSubmit} className="mb-4">
