@@ -62,7 +62,7 @@ const Navbar = ({
         ? "bg-white dark:bg-[#121212] shadow-md" 
         : "bg-white/90 dark:bg-[#121212]/90"
     )}>
-      <nav className="container mx-auto px-4 py-4 flex items-center justify-between">
+      <nav className="max-w-[1400px] mx-auto px-4 sm:px-6 md:px-8 py-4 flex items-center justify-between">
         {/* Logo */}
         <div className="flex items-center">
           <button onClick={onHomeClick} className="flex items-center">

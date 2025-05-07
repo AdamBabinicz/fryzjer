@@ -57,7 +57,7 @@ function App() {
         onContactClick={() => scrollToSection(contactRef)}
       />
       
-      <main id="main-content">
+      <main id="main-content" className="max-w-[1400px] mx-auto px-4 sm:px-6 md:px-8">
         <Home ref={homeRef} onContactClick={() => scrollToSection(contactRef)} />
         <About ref={aboutRef} />
         <Services ref={servicesRef} />

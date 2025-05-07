@@ -12,15 +12,20 @@ const Home = forwardRef<HTMLDivElement, HomeProps>(({ onContactClick }, ref) => 
   return (
     <section ref={ref} id="home" className="pt-24 md:pt-32 relative bg-white dark:bg-[#121212]">
       <div className="w-full h-[85vh] relative overflow-hidden">
+        {/* Hero Background */}
         <div
           style={{ 
             backgroundColor: '#6b5b95', 
             backgroundImage: 'linear-gradient(135deg, #6b5b95 0%, #7e57c2 100%)',
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
             width: '100%',
             height: '100%'
           }}
-          className="w-full h-full"
+          aria-label={t('home.heroAlt')}
         />
+        
+        {/* Content Overlay */}
         <div className="absolute inset-0 bg-primary bg-opacity-40 flex flex-col items-center justify-center px-4 text-center">
           <motion.h1 
             initial={{ opacity: 0, y: 20 }}
