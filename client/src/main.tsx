@@ -11,8 +11,9 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 // import { HelmetProvider } from "react-helmet-async"; // Temporarily disabled
 import "./index.css";
 
-// Import i18n configuration to initialize it before rendering
-import "./lib/i18n";
+// Import and explicitly initialize i18n before rendering
+import { setupI18n } from "./lib/i18n";
+setupI18n(); // Ensure i18n is properly initialized once
 
 createRoot(document.getElementById("root")!).render(
   <QueryClientProvider client={queryClient}>

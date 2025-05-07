@@ -1,11 +1,25 @@
-import { forwardRef } from 'react';
+import { forwardRef, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
 import ServiceCard from '@/components/ServiceCard';
-import { haircutServices, stylingServices, coloringServices } from '@/data/serviceData';
+import { ServiceType, haircutServices as haircutServicesPL, stylingServices as stylingServicesPL, coloringServices as coloringServicesPL } from '@/data/serviceData';
+import { haircutServices as haircutServicesEN, stylingServices as stylingServicesEN, coloringServices as coloringServicesEN } from '@/data/serviceDataEn';
 
 const Services = forwardRef<HTMLDivElement, {}>((_, ref) => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  
+  // Use appropriate service data based on the current language
+  const haircutServices = useMemo(() => {
+    return i18n.language === 'en' ? haircutServicesEN : haircutServicesPL;
+  }, [i18n.language]);
+  
+  const stylingServices = useMemo(() => {
+    return i18n.language === 'en' ? stylingServicesEN : stylingServicesPL;
+  }, [i18n.language]);
+  
+  const coloringServices = useMemo(() => {
+    return i18n.language === 'en' ? coloringServicesEN : coloringServicesPL;
+  }, [i18n.language]);
   
   // Animation variants
   const serviceVariants = {
@@ -50,7 +64,7 @@ const Services = forwardRef<HTMLDivElement, {}>((_, ref) => {
             {t('services.haircut')}
           </motion.h3>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {haircutServices.map((service, index) => (
+            {haircutServices.map((service: ServiceType, index: number) => (
               <motion.div
                 key={`haircut-${index}`}
                 variants={serviceVariants}
@@ -76,7 +90,7 @@ const Services = forwardRef<HTMLDivElement, {}>((_, ref) => {
             {t('services.styling')}
           </motion.h3>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {stylingServices.map((service, index) => (
+            {stylingServices.map((service: ServiceType, index: number) => (
               <motion.div
                 key={`styling-${index}`}
                 variants={serviceVariants}
@@ -102,7 +116,7 @@ const Services = forwardRef<HTMLDivElement, {}>((_, ref) => {
             {t('services.coloring')}
           </motion.h3>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {coloringServices.map((service, index) => (
+            {coloringServices.map((service: ServiceType, index: number) => (
               <motion.div
                 key={`coloring-${index}`}
                 variants={serviceVariants}

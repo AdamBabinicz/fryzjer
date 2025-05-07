@@ -1,21 +1,24 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-// Import directly from assets folder using Vite's alias
-import heroBg from '@assets/hero-bg.svg';
 
 interface HeroBackgroundProps {
   className?: string;
 }
 
+/**
+ * Hero background component that displays the main background image
+ * Uses a public URL approach that's more reliable in Replit's environment
+ */
 const HeroBackground: React.FC<HeroBackgroundProps> = ({ className = '' }) => {
   const { t } = useTranslation();
   
+  // Replit works better with assets directly in the public folder
   const bgStyle = {
-    backgroundImage: `url(${heroBg})`,
+    backgroundImage: `url('/hero-bg.svg')`,
     backgroundSize: 'cover',
     backgroundPosition: 'center',
     backgroundRepeat: 'no-repeat',
-    backgroundColor: '#6b5b95',
+    backgroundColor: '#6b5b95', // Fallback color
     width: '100%',
     height: '100%',
     position: 'absolute' as const,
