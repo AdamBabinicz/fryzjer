@@ -1,7 +1,7 @@
 import { forwardRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
-import heroImagePath from '../assets/images/hero-bg.svg';
+import heroImagePath from '@assets/hero-bg.svg';
 
 interface HomeProps {
   onContactClick: () => void;
