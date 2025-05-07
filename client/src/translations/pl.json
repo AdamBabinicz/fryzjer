@@ -1,4 +1,7 @@
 {
+  "common": {
+    "backToHome": "Powrót do strony głównej"
+  },
   "meta": {
     "title": "Salon Fryzjerski AGILERA | Styl. Klasa. Precyzja.",
     "description": "Profesjonalny salon fryzjerski damsko-męski AGILERA oferujący strzyżenie, stylizację i koloryzację w eleganckim wydaniu.",
@@ -96,5 +99,85 @@
     "newsletterSuccess": "Dziękujemy za zapisanie się do newslettera!",
     "formErrors": "Proszę wypełnić wszystkie wymagane pola formularza.",
     "invalidEmail": "Proszę podać poprawny adres email."
+  },
+  "privacyPolicy": {
+    "pageTitle": "Polityka Prywatności",
+    "pageDescription": "Polityka Prywatności salonu fryzjerskiego AGILERA - dowiedz się, jak chronimy Twoje dane osobowe.",
+    "title": "Polityka Prywatności",
+    "lastUpdated": "Ostatnia aktualizacja",
+    "section1": {
+      "title": "Wprowadzenie",
+      "content": "Niniejsza Polityka Prywatności opisuje, w jaki sposób Salon Fryzjerski AGILERA zbiera, wykorzystuje i chroni Twoje dane osobowe podczas korzystania z naszej strony internetowej oraz usług oferowanych w naszym salonie."
+    },
+    "section2": {
+      "title": "Dane, które zbieramy",
+      "content": "Podczas korzystania z naszej strony internetowej oraz usług, możemy zbierać następujące rodzaje danych osobowych:",
+      "subsection1": {
+        "title": "Dane podawane dobrowolnie",
+        "content": "Dane kontaktowe (imię, nazwisko, adres e-mail, numer telefonu) - gdy wypełniasz formularz kontaktowy, zapisujesz się do newslettera lub umawiasz wizytę w naszym salonie."
+      },
+      "subsection2": {
+        "title": "Dane zbierane automatycznie",
+        "content": "Informacje o urządzeniu i przeglądarce, adres IP, informacje o plikach cookie oraz dane analityczne dotyczące korzystania z naszej strony internetowej."
+      }
+    },
+    "section3": {
+      "title": "Cel przetwarzania danych",
+      "content": "Twoje dane osobowe są zbierane i przetwarzane w celu: udzielenia odpowiedzi na zapytania przesłane za pomocą formularza kontaktowego, realizacji usług fryzjerskich, wysyłania informacji marketingowych (jeśli wyraziłeś na to zgodę), poprawy jakości naszej strony internetowej oraz usług, oraz wypełnienia obowiązków prawnych."
+    },
+    "section4": {
+      "title": "Udostępnianie danych",
+      "content": "Nie sprzedajemy ani nie udostępniamy Twoich danych osobowych stronom trzecim, z wyjątkiem sytuacji, gdy jest to niezbędne do realizacji usług (np. dostawcy usług płatniczych, systemy rezerwacji online) lub gdy jesteśmy do tego zobowiązani przez prawo."
+    },
+    "section5": {
+      "title": "Twoje prawa",
+      "content": "Zgodnie z RODO, masz prawo do: dostępu do swoich danych osobowych, ich sprostowania, usunięcia lub ograniczenia przetwarzania, przenoszenia danych, wniesienia sprzeciwu wobec przetwarzania danych oraz cofnięcia zgody na przetwarzanie danych w dowolnym momencie. W celu skorzystania z tych praw, prosimy o kontakt z nami."
+    },
+    "contact": {
+      "title": "Kontakt w sprawie danych osobowych",
+      "content": "W przypadku pytań dotyczących naszej Polityki Prywatności lub przetwarzania Twoich danych osobowych, prosimy o kontakt:"
+    }
+  },
+  "terms": {
+    "pageTitle": "Regulamin",
+    "pageDescription": "Regulamin salonu fryzjerskiego AGILERA - zasady korzystania z naszych usług i strony internetowej.",
+    "title": "Regulamin",
+    "lastUpdated": "Ostatnia aktualizacja",
+    "section1": {
+      "title": "Postanowienia ogólne",
+      "content": "Niniejszy Regulamin określa zasady korzystania z usług Salonu Fryzjerskiego AGILERA oraz ze strony internetowej agilera.pl."
+    },
+    "section2": {
+      "title": "Definicje",
+      "content": "Salon - Salon Fryzjerski AGILERA z siedzibą w Warszawie, przy ul. Przykładowej 123. Klient - osoba fizyczna korzystająca z usług Salonu. Strona internetowa - witryna internetowa dostępna pod adresem agilera.pl. Usługi - usługi fryzjerskie świadczone przez Salon."
+    },
+    "section3": {
+      "title": "Zasady rezerwacji i anulowania wizyt",
+      "content": "Rezerwacji wizyty można dokonać telefonicznie, osobiście w Salonie lub poprzez system rezerwacji online dostępny na naszej stronie internetowej.",
+      "subsection1": {
+        "title": "Rezerwacja",
+        "content": "Podczas rezerwacji należy podać imię, nazwisko oraz numer telefonu. Rezerwacja jest ważna po otrzymaniu potwierdzenia od pracownika Salonu."
+      },
+      "subsection2": {
+        "title": "Anulowanie i zmiana terminu",
+        "content": "Anulowania lub zmiany terminu wizyty można dokonać najpóźniej 24 godziny przed planowaną wizytą. W przypadku nieodwołania wizyty i niestawienia się na umówiony termin, Salon zastrzega sobie prawo do zablokowania możliwości rezerwacji online na okres 30 dni."
+      }
+    },
+    "section4": {
+      "title": "Cennik usług",
+      "content": "Ceny usług fryzjerskich są dostępne w Salonie oraz na naszej stronie internetowej. Ceny mogą ulec zmianie, o czym Klienci będą informowani z odpowiednim wyprzedzeniem. Ostateczna cena usługi może różnić się od ceny podanej w cenniku, w zależności od długości, gęstości włosów oraz użytych produktów."
+    },
+    "section5": {
+      "title": "Reklamacje",
+      "content": "Wszelkie reklamacje dotyczące wykonanych usług należy zgłaszać bezpośrednio po wykonaniu usługi lub najpóźniej w ciągu 3 dni od daty wizyty. Reklamacje można składać osobiście w Salonie, telefonicznie lub drogą elektroniczną na adres e-mail: kontakt@agilera.pl. Reklamacje będą rozpatrywane indywidualnie w terminie 14 dni od daty zgłoszenia."
+    },
+    "section6": {
+      "title": "Postanowienia końcowe",
+      "content": "Salon zastrzega sobie prawo do zmiany niniejszego Regulaminu. Zmiany wchodzą w życie z dniem ich opublikowania na stronie internetowej. W sprawach nieuregulowanych niniejszym Regulaminem zastosowanie mają przepisy prawa polskiego."
+    },
+    "contact": {
+      "title": "Kontakt",
+      "content": "W przypadku pytań dotyczących naszego Regulaminu, prosimy o kontakt:"
+    }
   }
 }

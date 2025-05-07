@@ -1,6 +1,7 @@
 import { useRef } from "react";
-// import { Helmet } from "react-helmet-async";  // Temporarily commented out
+import { Helmet } from "react-helmet-async";
 import { useTranslation } from "react-i18next";
+import { Switch, Route, useLocation } from "wouter";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import Home from "@/pages/Home";
@@ -8,6 +9,9 @@ import About from "@/pages/About";
 import Services from "@/pages/Services";
 import Gallery from "@/pages/Gallery";
 import Contact from "@/pages/Contact";
+import PrivacyPolicy from "@/pages/PrivacyPolicy";
+import Terms from "@/pages/Terms";
+import NotFound from "@/pages/not-found";
 import GalleryModal from "@/components/GalleryModal";
 import ServiceModal from "@/components/ServiceModal";
 import { useLanguage } from "@/context/LanguageContext";

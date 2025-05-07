@@ -1,4 +1,7 @@
 {
+  "common": {
+    "backToHome": "Back to Home"
+  },
   "meta": {
     "title": "AGILERA Hair Salon | Style. Class. Precision.",
     "description": "Professional hair salon for women and men, AGILERA offers cutting, styling, and coloring in an elegant setting.",
@@ -96,5 +99,85 @@
     "newsletterSuccess": "Thank you for subscribing to our newsletter!",
     "formErrors": "Please fill in all required form fields.",
     "invalidEmail": "Please enter a valid email address."
+  },
+  "privacyPolicy": {
+    "pageTitle": "Privacy Policy",
+    "pageDescription": "Privacy Policy of AGILERA Hair Salon - learn how we protect your personal data.",
+    "title": "Privacy Policy",
+    "lastUpdated": "Last updated",
+    "section1": {
+      "title": "Introduction",
+      "content": "This Privacy Policy describes how AGILERA Hair Salon collects, uses, and protects your personal data when you use our website and services offered at our salon."
+    },
+    "section2": {
+      "title": "Data We Collect",
+      "content": "When using our website and services, we may collect the following types of personal data:",
+      "subsection1": {
+        "title": "Data Provided Voluntarily",
+        "content": "Contact information (name, email address, phone number) - when you fill out a contact form, subscribe to our newsletter, or book an appointment at our salon."
+      },
+      "subsection2": {
+        "title": "Automatically Collected Data",
+        "content": "Information about your device and browser, IP address, cookie information, and analytical data regarding the use of our website."
+      }
+    },
+    "section3": {
+      "title": "Purpose of Data Processing",
+      "content": "Your personal data is collected and processed for the purpose of: responding to inquiries submitted via the contact form, providing hairdressing services, sending marketing information (if you have consented to it), improving the quality of our website and services, and fulfilling legal obligations."
+    },
+    "section4": {
+      "title": "Data Sharing",
+      "content": "We do not sell or share your personal data with third parties, except when it is necessary to provide services (e.g., payment service providers, online booking systems) or when we are required to do so by law."
+    },
+    "section5": {
+      "title": "Your Rights",
+      "content": "In accordance with GDPR, you have the right to: access your personal data, rectify it, delete it or limit its processing, data portability, object to data processing, and withdraw consent for data processing at any time. To exercise these rights, please contact us."
+    },
+    "contact": {
+      "title": "Contact Regarding Personal Data",
+      "content": "If you have questions about our Privacy Policy or the processing of your personal data, please contact us:"
+    }
+  },
+  "terms": {
+    "pageTitle": "Terms & Conditions",
+    "pageDescription": "Terms and Conditions of AGILERA Hair Salon - rules for using our services and website.",
+    "title": "Terms & Conditions",
+    "lastUpdated": "Last updated",
+    "section1": {
+      "title": "General Provisions",
+      "content": "These Terms and Conditions govern the use of AGILERA Hair Salon services and the website agilera.pl."
+    },
+    "section2": {
+      "title": "Definitions",
+      "content": "Salon - AGILERA Hair Salon located in Warsaw at 123 Example Street. Client - a natural person using the Salon's services. Website - the website available at agilera.pl. Services - hairdressing services provided by the Salon."
+    },
+    "section3": {
+      "title": "Appointment Booking and Cancellation Rules",
+      "content": "Appointments can be booked by phone, in person at the Salon, or through the online booking system available on our website.",
+      "subsection1": {
+        "title": "Booking",
+        "content": "When booking, you need to provide your name, surname, and phone number. The booking is valid after receiving confirmation from a Salon employee."
+      },
+      "subsection2": {
+        "title": "Cancellation and Rescheduling",
+        "content": "Appointments can be cancelled or rescheduled no later than 24 hours before the scheduled appointment. In case of not cancelling an appointment and not showing up at the scheduled time, the Salon reserves the right to block the possibility of online booking for a period of 30 days."
+      }
+    },
+    "section4": {
+      "title": "Service Pricing",
+      "content": "Prices for hairdressing services are available at the Salon and on our website. Prices may change, and Clients will be informed about such changes in advance. The final price of a service may differ from the price listed in the price list, depending on the length, density of hair, and products used."
+    },
+    "section5": {
+      "title": "Complaints",
+      "content": "Any complaints regarding the services provided should be reported immediately after the service is performed or no later than 3 days from the date of the visit. Complaints can be submitted in person at the Salon, by phone, or electronically to the email address: contact@agilera.pl. Complaints will be considered individually within 14 days from the date of submission."
+    },
+    "section6": {
+      "title": "Final Provisions",
+      "content": "The Salon reserves the right to change these Terms and Conditions. Changes come into effect on the day of their publication on the website. In matters not regulated by these Terms and Conditions, the provisions of Polish law shall apply."
+    },
+    "contact": {
+      "title": "Contact",
+      "content": "If you have questions about our Terms and Conditions, please contact us:"
+    }
   }
 }
