@@ -127,12 +127,12 @@ const Footer = ({
               {t("footer.openingHours")}
             </h4>
             <ul className="space-y-2 text-gray-500 dark:text-gray-300">
-              <li>{t("footer.monday")}: 9:00 - 19:00</li>
-              <li>{t("footer.tuesday")}: 9:00 - 19:00</li>
-              <li>{t("footer.wednesday")}: 9:00 - 19:00</li>
-              <li>{t("footer.thursday")}: 9:00 - 19:00</li>
-              <li>{t("footer.friday")}: 9:00 - 19:00</li>
-              <li>{t("footer.saturday")}: 9:00 - 15:00</li>
+              <li>{t("footer.monday")}: 9:00 - 7:00</li>
+              <li>{t("footer.tuesday")}: 9:00 - 17:00</li>
+              <li>{t("footer.wednesday")}: 9:00 - 17:00</li>
+              <li>{t("footer.thursday")}: 9:00 - 17:00</li>
+              <li>{t("footer.friday")}: 9:00 - 17:00</li>
+              <li>{t("footer.saturday")}: 9:00 - 14:00</li>
               <li>
                 {t("footer.sunday")}: {t("footer.closed")}
               </li>
