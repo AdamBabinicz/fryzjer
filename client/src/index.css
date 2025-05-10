@@ -4,74 +4,145 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 0 0% 10.2%;
-    --muted: 60 4.8% 95.9%;
-    --muted-foreground: 25 5.3% 44.7%;
+    --background: 40 30% 97%;
+    --foreground: 20 10% 25%;
+    --muted: 40 25% 94%;
+    --muted-foreground: 25 8% 45%;
     --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 10.2%;
+    --popover-foreground: var(--foreground);
     --card: 0 0% 100%;
-    --card-foreground: 0 0% 10.2%;
-    --border: 20 5.9% 90%;
-    --input: 20 5.9% 90%;
-    --primary: 0 0% 10.2%; /* #1a1a1a */
+    --card-foreground: var(--foreground);
+    --border: 40 20% 90%;
+    --input-border: 40 15% 85%;
+    --input: 0 0% 100%;
+    --primary: 36 65% 40%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 0 0% 100%; /* #ffffff */
-    --secondary-foreground: 0 0% 10.2%;
-    --accent: 36 77% 55%; /* #c4a15a */
+    --secondary: 40 30% 92%;
+    --secondary-foreground: var(--foreground);
+    --accent: 36 77% 55%;
     --accent-foreground: 0 0% 100%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 60 9.1% 97.8%;
-    --ring: 0 0% 10.2%;
+    --destructive: 0 70% 55%;
+    --destructive-foreground: 0 0% 100%;
+    --ring: var(--accent);
     --radius: 0.5rem;
   }
 
+  .text-primary {
+    color: hsl(var(--primary));
+  }
+
   .dark {
-    --background: 220 30% 15%;  /* #1c2a42 - lighter navy blue */
-    --foreground: 0 0% 100%;
-    --muted: 220 25% 20%;       /* #253754 */
-    --muted-foreground: 240 5% 64.9%;
-    --popover: 220 30% 15%;
-    --popover-foreground: 0 0% 100%;
-    --card: 220 25% 20%;        /* #253754 */
-    --card-foreground: 0 0% 100%;
-    --border: 220 20% 25%;
-    --input: 220 20% 25%;
-    --primary: 0 0% 100%;       /* #ffffff */
-    --primary-foreground: 220 30% 15%;
-    --secondary: 220 30% 15%;   /* #1c2a42 */
-    --secondary-foreground: 0 0% 100%;
-    --accent: 36 77% 55%;       /* #c4a15a */
-    --accent-foreground: 0 0% 100%;
+    --background: 33 25% 20%;
+    --foreground: 45 80% 75%;
+    --muted: 35 25% 25%;
+    --muted-foreground: 45 70% 75%;
+    --popover: 30 25% 20%;
+    --popover-foreground: 45 80% 75%;
+    --card: 35 30% 25%;
+    --card-foreground: 45 80% 75%;
+    --border: 35 25% 30%;
+    --input: 35 25% 30%;
+    --primary: 45 80% 75%;
+    --primary-foreground: 30 25% 20%;
+    --secondary: 35 30% 25%;
+    --secondary-foreground: 45 80% 75%;
+    --accent: 36 77% 55%;
+    --accent-foreground: 45 80% 75%;
     --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 98%;
-    --ring: 240 4.9% 83.9%;
+    --destructive-foreground: 45 80% 75%;
+    --ring: 35 25% 30%;
   }
-  
-  /* Add pronounced gradients to dark mode sections */
-  .dark body {
-    background: linear-gradient(135deg, hsl(220, 40%, 18%) 0%, hsl(225, 40%, 12%) 100%);
+
+  /* Light mode section backgrounds - Example */
+  body {
+    background-color: hsl(
+      var(--background)
+    ); /* Applies to default light mode */
   }
-  
-  /* Different background gradients for each section */
+
+  header {
+    background-color: hsl(var(--card)); /* White header in light mode */
+    border-bottom: 1px solid hsl(var(--border));
+  }
+  .dark header {
+    background: hsl(35, 30%, 18%) !important;
+  }
+
+  footer {
+    background-color: hsl(
+      var(--secondary)
+    ); /* Slightly different bg for footer in light mode */
+    border-top: 1px solid hsl(var(--border));
+  }
+  .dark footer {
+    background: hsl(32, 28%, 18%) !important;
+  }
+
+  .section-home {
+    background-color: hsl(var(--background)); /* Default for light */
+  }
   .dark .section-home {
-    background: linear-gradient(145deg, hsl(220, 40%, 18%) 0%, hsl(225, 45%, 12%) 100%);
+    background: hsl(33, 25%, 25%);
   }
-  
+
+  .section-about {
+    background-color: hsl(var(--secondary)); /* Alternating for light */
+  }
   .dark .section-about {
-    background: linear-gradient(145deg, hsl(212, 45%, 20%) 0%, hsl(220, 40%, 14%) 100%);
+    background: hsl(35, 35%, 30%);
   }
-  
+
+  .section-services {
+    background-color: hsl(var(--background)); /* Default for light */
+  }
   .dark .section-services {
-    background: linear-gradient(145deg, hsl(225, 45%, 22%) 0%, hsl(220, 40%, 16%) 100%);
+    background: hsl(33, 25%, 25%);
   }
-  
+
+  .section-gallery {
+    background-color: hsl(var(--secondary)); /* Alternating for light */
+  }
   .dark .section-gallery {
-    background: linear-gradient(145deg, hsl(228, 45%, 20%) 0%, hsl(225, 40%, 14%) 100%);
+    background: hsl(40, 35%, 30%);
   }
-  
+
+  .section-contact {
+    background-color: hsl(var(--background)); /* Default for light */
+  }
   .dark .section-contact {
-    background: linear-gradient(145deg, hsl(215, 40%, 22%) 0%, hsl(220, 45%, 16%) 100%);
+    background: hsl(33, 25%, 25%);
+  }
+
+  /* Form styling */
+  input,
+  textarea {
+    /* General for light mode */
+    background-color: hsl(var(--input));
+    border-color: hsl(var(--input-border));
+  }
+  .dark input,
+  .dark textarea,
+  .dark div[class*="bg-[#253754]"] {
+    background: hsl(35, 25%, 18%) !important;
+    border-color: hsl(35, 25%, 25%) !important;
+  }
+
+  /* Fixing blue elements in contact section */
+  .dark .section-contact button,
+  .dark .section-contact a {
+    background-color: hsl(35, 30%, 18%) !important;
+    color: hsl(0, 0%, 100%) !important;
+  }
+
+  .dark .section-contact button:hover,
+  .dark .section-contact a:hover {
+    background-color: hsl(35, 30%, 25%) !important;
+  }
+
+  /* Override for specific background elements */
+  .dark .dark\:bg-\[\#1e1e1e\],
+  .dark [class*="dark:bg-[#1e1e1e]"] {
+    background-color: hsl(35, 25%, 18%) !important;
   }
 }
 
@@ -81,24 +152,27 @@
   }
 
   body {
-    @apply antialiased bg-background text-foreground;
-    font-family: 'Inter', sans-serif;
+    @apply antialiased text-foreground; /* bg-background is now handled by the specific rule above */
+    font-family: "Inter", sans-serif;
   }
 
-  h1, h2, h3, h4, h5, h6 {
-    font-family: 'Playfair Display', serif;
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: "Playfair Display", serif;
   }
 
   .playfair {
-    font-family: 'Playfair Display', serif;
+    font-family: "Playfair Display", serif;
   }
 
-  /* Smooth scrolling for the entire page */
   html {
     scroll-behavior: smooth;
   }
 
-  /* Transition for hover effects */
   .custom-transition {
     @apply transition duration-300 ease-in-out;
   }

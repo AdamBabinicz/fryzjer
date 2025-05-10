@@ -1,0 +1,162 @@
+✂️ Projekt: Salon Fryzjerski Damsko-Męski „AGILERA”
+✅ Stack technologiczny
+(Pozostaje praktycznie taki sam, sprawdzony i nowoczesny)
+
+Frontend Framework: React (z Vite)
+
+Stylowanie: TailwindCSS (dostosowane do eleganckiej estetyki)
+
+Routing: React Router DOM
+
+Multilingual: react-i18next (PL / EN)
+
+Formularz: HTML5 + Netlify Forms
+
+Popup / Modal: React Portals
+
+Ikony: react-icons (ikony nożyczek, grzebienia itp.)
+
+Responsywność: TailwindCSS (mobile-first)
+
+SEO & OpenGraph: react-helmet-async
+
+Tryb Dark/Light: useContext + localStorage
+
+Dostępność (a11y): aria-labels, focus management
+
+Obrazy: Format .avif + fallback .webp
+
+Favicons: RealFaviconGenerator
+
+Hosting: Netlify
+
+🧭 Struktura projektu
+pgsql
+Kopiuj
+Edytuj
+/public
+  └── favicons/
+  └── index.html
+/src
+  ├── assets/images/ (salon, fryzury, stylistki, zdjęcia .avif)
+  ├── components/
+  │   ├── Navbar.jsx
+  │   ├── Footer.jsx
+  │   ├── LanguageSelector.jsx
+  │   ├── ThemeToggle.jsx
+  │   ├── GallerySlider.jsx
+  │   ├── ServiceCard.jsx
+  │   ├── Modal.jsx
+  ├── pages/
+  │   ├── Home.jsx
+  │   ├── About.jsx
+  │   ├── Services.jsx
+  │   ├── Gallery.jsx
+  │   └── Contact.jsx
+  ├── translations/
+  │   ├── pl.json
+  │   └── en.json
+  ├── App.jsx
+  ├── main.jsx
+  └── i18n.js
+📌 Funkcjonalności
+Navbar
+
+Logo: Liternictwo eleganckie (np. „AGILERA” w stylu serif) + ikona nożyczek/grzebienia (react-icons)
+
+Linki: Start, O nas, Usługi (dropdown: Strzyżenie, Stylizacja, Koloryzacja), Galeria, Kontakt
+
+Przełącznik języka (PL / EN)
+
+Dark/Light toggle (ikonki słońce/księżyc)
+
+Strona główna (Home)
+
+Hero Image (duże zdjęcie salonu lub fryzury)
+
+Krótkie motto np. „Styl. Klasa. Precyzja.”
+
+Przyciski: Poznaj nas, Umów wizytę
+
+O nas (About)
+
+Zdjęcia zespołu/stylistów
+
+Historia salonu
+
+Certyfikaty, nagrody
+
+Usługi (Services)
+
+Karty usług (ServiceCard)
+
+Cennik podstawowy
+
+Przyciski „Dowiedz się więcej” (otwierają modal z opisem)
+
+Galeria (Gallery)
+
+Slider zdjęć realizacji (fryzury, metamorfozy)
+
+Po kliknięciu zdjęcia: powiększenie w modalu
+
+Kontakt (Contact)
+
+Formularz (imię, email, wiadomość) + walidacja
+
+Mapa Google (adres salonu)
+
+Dane kontaktowe (telefon, email, adres)
+
+Stopka (Footer)
+
+Social media (Facebook, Instagram)
+
+Linki nawigacyjne
+
+Data (new Date().getFullYear())
+
+🌐 SEO + Open Graph + UX
+Meta tagi + Open Graph (z pięknymi zdjęciami fryzur)
+
+JSON-LD (Organization + LocalBusiness)
+
+Canonical URLs
+
+Responsywność: mobile-friendly
+
+Favicony: eleganckie, pasujące do logo
+
+Lazy loading zdjęć, smooth scroll
+
+404 Page Not Found
+
+Accessibility skip link
+
+✨ Styl wizualny
+(Elegancja, nowoczesność, stonowane kolory)
+
+Kolory główne:
+
+Czerń #1a1a1a
+
+Biel #ffffff
+
+Szarość #e0e0e0
+
+Akcent (np. złoto #c4a15a lub bordo #7b3e19)
+
+Czcionki:
+
+Serif elegancka: Playfair Display (nagłówki)
+
+Sans-serif nowoczesna: Inter lub Open Sans (tekst)
+
+Efekty:
+
+Delikatne animacje (framer-motion)
+
+Subtelne podświetlenia przy hoverze
+
+Płynne przewijanie
+

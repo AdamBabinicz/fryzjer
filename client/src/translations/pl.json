@@ -3,7 +3,7 @@
     "backToHome": "Powrót do strony głównej"
   },
   "meta": {
-    "title": "Salon Fryzjerski AGILERA | Styl. Klasa. Precyzja.",
+    "title": "Salon Fryzjerski AGILERA | Styl Klasa Precyzja",
     "description": "Profesjonalny salon fryzjerski damsko-męski AGILERA oferujący strzyżenie, stylizację i koloryzację w eleganckim wydaniu.",
     "ogTitle": "Salon Fryzjerski AGILERA",
     "ogDescription": "Profesjonalny salon fryzjerski damsko-męski oferujący strzyżenie, stylizację i koloryzację w eleganckim wydaniu."
@@ -16,28 +16,30 @@
     "previousSlide": "Poprzedni slajd",
     "nextSlide": "Następny slajd",
     "goToSlide": "Przejdź do slajdu {{number}}",
-    "closeModal": "Zamknij okno"
+    "closeModal": "Zamknij okno",
+    "previousPages": "Poprzednia strona slajdów",
+    "nextPages": "Następna strona slajdów"
   },
   "nav": {
     "home": "Start",
     "about": "O nas",
     "services": "Usługi",
-    "gallery": "Galeria",
+    "gallery": "Kolekcja stylizacji",
     "contact": "Kontakt"
   },
   "home": {
     "heroAlt": "Wnętrze salonu fryzjerskiego AGILERA",
-    "motto": "Styl. Klasa. Precyzja.",
+    "motto": "Styl Klasa Precyzja",
     "knowUs": "Poznaj nas",
     "bookAppointment": "Umów wizytę"
   },
   "about": {
     "title": "O Nas",
     "ourStory": "Nasza Historia",
-    "storyParagraph1": "Salon Fryzjerski AGILERA to miejsce, gdzie pasja spotyka się z profesjonalizmem. Od 2010 roku zapewniamy najwyższej jakości usługi fryzjerskie dla klientów ceniących sobie elegancję i precyzję.",
-    "storyParagraph2": "Nasz zespół to grupa doświadczonych stylistów, którzy nieustannie doskonalą swoje umiejętności, uczestnicząc w międzynarodowych szkoleniach i pokazach fryzjerskich.",
+    "storyParagraph2": "Salon Fryzjerski AGILERA to miejsce, gdzie pasja spotyka się z profesjonalizmem. Od 2022 roku zapewniamy najwyższej jakości usługi fryzjerskie dla Klientów ceniących sobie elegancję i precyzję.",
+    "storyParagraph3": "Nasz zespół to grupa doświadczonych stylistów, którzy nieustannie doskonalą swoje umiejętności, uczestnicząc w międzynarodowych szkoleniach i pokazach fryzjerskich.",
     "yearsExperience": "Lat doświadczenia",
-    "happyClients": "Zadowolonych klientów",
+    "happyClients": "Zadowolonych Klientów",
     "industryAwards": "Nagród branżowych",
     "ourTeam": "Nasz Zespół",
     "mainStylist": "Główna Stylistka",
@@ -48,7 +50,7 @@
     "salonInteriorImage": "Wnętrze salonu AGILERA"
   },
   "services": {
-    "title": "Nasze Usługi",
+    "title": "Nasze usługi",
     "haircut": "Strzyżenie",
     "styling": "Stylizacja",
     "coloring": "Koloryzacja",
@@ -56,14 +58,17 @@
     "bookAppointment": "Umów wizytę"
   },
   "gallery": {
-    "title": "Galeria"
+    "title": "Kolekcja stylizacji"
   },
   "contact": {
     "title": "Kontakt",
     "contactInfo": "Informacje kontaktowe",
     "address": "Adres",
+    "addressDetails": "ul. Słowackiego 50, 26-604 Radom",
     "phone": "Telefon",
+    "phoneNumber": "+48 600 774 450",
     "email": "Email",
+    "emailAddress": "kontakt@agilera.pl",
     "openingHours": "Godziny otwarcia",
     "mondayFriday": "Poniedziałek - Piątek",
     "saturday": "Sobota",
@@ -79,11 +84,28 @@
     "nameRequired": "Imię i nazwisko jest wymagane",
     "validEmailRequired": "Proszę podać poprawny adres email",
     "messageRequired": "Wiadomość jest wymagana",
-    "mapTitle": "Lokalizacja Salonu Fryzjerskiego AGILERA"
+    "mapTitle": "Lokalizacja Salonu Fryzjerskiego AGILERA",
+    "certifications": "Nasze certyfikaty",
+    "premiumStylist": "Stylista Premium",
+    "masterCertificate": "Certyfikat Mistrzowski",
+    "colorExpert": "Ekspert Koloryzacji",
+    "topRated": "Najwyżej Oceniany",
+    "hairExpert": "Ekspert Fryzjerstwa",
+    "certificationDescription": "Stawiamy na rozwój i jakość. Nasze certyfikaty to efekt pracy, pasji i ciągłych szkoleń.",
+    "expertiseGuarantee": "Dzięki temu możesz liczyć na fachowe doradztwo, najnowsze techniki i indywidualne podejście. Twoje włosy są w dobrych, sprawdzonych rękach."
   },
   "footer": {
     "description": "Profesjonalny salon fryzjerski oferujący kompleksowe usługi dla kobiet i mężczyzn w eleganckiej atmosferze.",
     "quickLinks": "Szybki dostęp",
+    "openingHours": "Godziny otwarcia",
+    "monday": "Poniedziałek",
+    "tuesday": "Wtorek",
+    "wednesday": "Środa",
+    "thursday": "Czwartek",
+    "friday": "Piątek",
+    "saturday": "Sobota",
+    "sunday": "Niedziela",
+    "closed": "Zamknięte",
     "newsletter": "Newsletter",
     "newsletterText": "Zapisz się, aby otrzymywać informacje o promocjach i nowościach.",
     "yourEmail": "Twój email",
@@ -179,5 +201,19 @@
       "title": "Kontakt",
       "content": "W przypadku pytań dotyczących naszego Regulaminu, prosimy o kontakt:"
     }
+  },
+  "schema": {
+    "salonName": "Salon Fryzjerski AGILERA",
+    "salonDescription": "Profesjonalny salon fryzjerski damsko-męski w Radomiu, oferujący pełen zakres usług fryzjerskich. Specjalizujemy się w strzyżeniu, koloryzacji i stylizacji włosów.",
+    "galleryTitle": "Galeria Salon Fryzjerski AGILERA",
+    "galleryDescription": "Zobacz nasze wnętrza i przykłady naszych fryzur",
+    "galleryMainImage": "Wnętrze salonu fryzjerskiego AGILERA",
+    "streetAddress": "ul. Słowackiego 50"
+  },
+  "breadcrumbs": {
+    "services": "Usługi",
+    "gallery": "Galeria",
+    "about": "O nas",
+    "contact": "Kontakt"
   }
 }

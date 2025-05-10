@@ -15,13 +15,16 @@ import NotFound from "@/pages/not-found";
 import GalleryModal from "@/components/GalleryModal";
 import ServiceModal from "@/components/ServiceModal";
 import { useLanguage } from "@/context/LanguageContext";
+import { ServiceProvider } from "@/context/ServiceContext";
+import ScrollToTop from "@/components/ScrollToTop";
+import { HelmetProvider } from "react-helmet-async";
+import { SchemaOrg } from "./components/SchemaOrg";
 
 function App() {
   const { t } = useTranslation();
   const { language } = useLanguage();
   const [location] = useLocation();
-  
-  // References for scrolling to sections
+
   const homeRef = useRef<HTMLDivElement>(null);
   const aboutRef = useRef<HTMLDivElement>(null);
   const servicesRef = useRef<HTMLDivElement>(null);
@@ -31,16 +34,14 @@ function App() {
   const scrollToSection = (ref: React.RefObject<HTMLDivElement>) => {
     if (ref.current) {
       window.scrollTo({
-        top: ref.current.offsetTop - 80, // Adjust for header height
+        top: ref.current.offsetTop - 80,
         behavior: "smooth",
       });
     }
   };
 
-  // Check if we're on a special page (privacy policy, terms, etc.)
-  const isSpecialPage = location === '/privacy-policy' || location === '/terms';
+  const isSpecialPage = location === "/privacy-policy" || location === "/terms";
 
-  // Main page content with all sections
   const MainContent = () => (
     <>
       <Home ref={homeRef} onContactClick={() => scrollToSection(contactRef)} />
@@ -52,79 +53,88 @@ function App() {
   );
 
   return (
-    <>
-      <Helmet>
-        <html lang={language} />
-        <title>{t("meta.title")}</title>
-        <meta name="description" content={t("meta.description")} />
-        <meta property="og:title" content={t("meta.ogTitle")} />
-        <meta property="og:description" content={t("meta.ogDescription")} />
-      </Helmet>
-      
-      {/* Skip Link for Accessibility */}
-      <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:p-4 focus:bg-accent focus:text-white focus:z-50">
-        {t("accessibility.skipToContent")}
-      </a>
-      
-      <Navbar
-        onHomeClick={() => {
-          if (isSpecialPage) window.location.href = '/';
-          else scrollToSection(homeRef);
-        }}
-        onAboutClick={() => {
-          if (isSpecialPage) window.location.href = '/#about';
-          else scrollToSection(aboutRef);
-        }}
-        onServicesClick={() => {
-          if (isSpecialPage) window.location.href = '/#services';
-          else scrollToSection(servicesRef);
-        }}
-        onGalleryClick={() => {
-          if (isSpecialPage) window.location.href = '/#gallery';
-          else scrollToSection(galleryRef);
-        }}
-        onContactClick={() => {
-          if (isSpecialPage) window.location.href = '/#contact';
-          else scrollToSection(contactRef);
-        }}
-      />
-      
-      <main id="main-content" className="max-w-[1400px] mx-auto px-4 sm:px-6 md:px-8">
-        <Switch>
-          <Route path="/" component={MainContent} />
-          <Route path="/privacy-policy" component={PrivacyPolicy} />
-          <Route path="/terms" component={Terms} />
-          <Route component={NotFound} />
-        </Switch>
-      </main>
-      
-      <Footer 
-        onHomeClick={() => {
-          if (isSpecialPage) window.location.href = '/';
-          else scrollToSection(homeRef);
-        }}
-        onAboutClick={() => {
-          if (isSpecialPage) window.location.href = '/#about';
-          else scrollToSection(aboutRef);
-        }}
-        onServicesClick={() => {
-          if (isSpecialPage) window.location.href = '/#services';
-          else scrollToSection(servicesRef);
-        }}
-        onGalleryClick={() => {
-          if (isSpecialPage) window.location.href = '/#gallery';
-          else scrollToSection(galleryRef);
-        }}
-        onContactClick={() => {
-          if (isSpecialPage) window.location.href = '/#contact';
-          else scrollToSection(contactRef);
-        }}
-      />
-      
-      {/* Modals */}
-      <GalleryModal />
-      <ServiceModal />
-    </>
+    <ServiceProvider>
+      <HelmetProvider>
+        <Helmet>
+          <html lang={language} />
+          <title>{t("meta.title")}</title>
+          <meta name="description" content={t("meta.description")} />
+          <meta property="og:title" content={t("meta.ogTitle")} />
+          <meta property="og:description" content={t("meta.ogDescription")} />
+        </Helmet>
+
+        <SchemaOrg />
+
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:absolute focus:p-4 focus:bg-accent focus:text-white focus:z-50"
+        >
+          {t("accessibility.skipToContent")}
+        </a>
+
+        <Navbar
+          onHomeClick={() => {
+            if (isSpecialPage) window.location.href = "/";
+            else scrollToSection(homeRef);
+          }}
+          onAboutClick={() => {
+            if (isSpecialPage) window.location.href = "/#about";
+            else scrollToSection(aboutRef);
+          }}
+          onServicesClick={() => {
+            if (isSpecialPage) window.location.href = "/#services";
+            else scrollToSection(servicesRef);
+          }}
+          onGalleryClick={() => {
+            if (isSpecialPage) window.location.href = "/#gallery";
+            else scrollToSection(galleryRef);
+          }}
+          onContactClick={() => {
+            if (isSpecialPage) window.location.href = "/#contact";
+            else scrollToSection(contactRef);
+          }}
+        />
+
+        <main
+          id="main-content"
+          className="max-w-[1400px] mx-auto px-4 sm:px-6 md:px-8"
+        >
+          <Switch>
+            <Route path="/" component={MainContent} />
+            <Route path="/privacy-policy" component={PrivacyPolicy} />
+            <Route path="/terms" component={Terms} />
+            <Route component={NotFound} />
+          </Switch>
+        </main>
+
+        <Footer
+          onHomeClick={() => {
+            if (isSpecialPage) window.location.href = "/";
+            else scrollToSection(homeRef);
+          }}
+          onAboutClick={() => {
+            if (isSpecialPage) window.location.href = "/#about";
+            else scrollToSection(aboutRef);
+          }}
+          onServicesClick={() => {
+            if (isSpecialPage) window.location.href = "/#services";
+            else scrollToSection(servicesRef);
+          }}
+          onGalleryClick={() => {
+            if (isSpecialPage) window.location.href = "/#gallery";
+            else scrollToSection(galleryRef);
+          }}
+          onContactClick={() => {
+            if (isSpecialPage) window.location.href = "/#contact";
+            else scrollToSection(contactRef);
+          }}
+        />
+
+        <GalleryModal />
+        <ServiceModal />
+        <ScrollToTop />
+      </HelmetProvider>
+    </ServiceProvider>
   );
 }
 

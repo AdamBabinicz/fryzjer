@@ -1,0 +1,2080 @@
+import { useState, useEffect, useRef } from "react";
+import { useTranslation } from "react-i18next";
+import { motion, AnimatePresence } from "framer-motion";
+import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
+import { useGalleryModal } from "@/context/GalleryContext";
+import { galleryData } from "@/data/galleryData";
+
+const GallerySlider = () => {
+  const { t } = useTranslation();
+  const { openGalleryModal } = useGalleryModal();
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const [touchStart, setTouchStart] = useState(0);
+  const [touchEnd, setTouchEnd] = useState(0);
+  const [direction, setDirection] = useState<"next" | "prev">("next");
+  const sliderRef = useRef<HTMLDivElement>(null);
+
+  const totalSlides = galleryData.length;
+
+  // Auto slide functionality
+  useEffect(() => {
+    const interval = setInterval(() => {
+      goToNextSlide();
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, [currentSlide]);
+
+  const goToSlide = (slideIndex: number) => {
+    let newIndex = slideIndex;
+    if (newIndex < 0) newIndex = totalSlides - 1;
+    if (newIndex >= totalSlides) newIndex = 0;
+
+    setCurrentSlide(newIndex);
+  };
+
+  const goToPrevSlide = () => {
+    setDirection("prev");
+    goToSlide(currentSlide - 1);
+  };
+
+  const goToNextSlide = () => {
+    setDirection("next");
+    goToSlide(currentSlide + 1);
+  };
+
+  // Touch handlers for mobile swiping
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setTouchStart(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    setTouchEnd(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchEnd = () => {
+    if (touchStart - touchEnd > 50) {
+      // Swipe left
+      goToPrevSlide();
+    }
+
+    if (touchStart - touchEnd < -50) {
+      // Swipe right
+      goToNextSlide();
+    }
+  };
+
+  // Handle image click to open modal
+  const handleImageClick = (slide: number, imageIndex: number) => {
+    const gallerySlide = galleryData[slide];
+    if (gallerySlide) {
+      const imageData = gallerySlide.images[imageIndex];
+      if (imageData) {
+        openGalleryModal(imageData.fullSrc, imageData.alt);
+      }
+    }
+  };
+
+  return (
+    <div className="relative">
+      <div
+        ref={sliderRef}
+        className="overflow-hidden"
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
+      >
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={currentSlide}
+            initial={{
+              opacity: 0,
+              x: direction === "next" ? -100 : 100,
+            }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{
+              opacity: 0,
+              x: direction === "next" ? 100 : -100,
+            }}
+            transition={{ duration: 0.5 }}
+            className="px-4"
+          >
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {galleryData[currentSlide]?.images.map((image, index) => (
+                <div
+                  key={`image-${index}`}
+                  className={`gallery-item cursor-pointer overflow-hidden rounded-md shadow-md ${
+                    window.innerWidth < 768 && index > 0
+                      ? "hidden md:block"
+                      : ""
+                  }`}
+                  onClick={() => handleImageClick(currentSlide, index)}
+                >
+                  <img
+                    src={image.src}
+                    alt={image.alt}
+                    className="w-full h-64 object-cover transition duration-300 ease-in-out hover:scale-105"
+                    loading="lazy"
+                  />
+                </div>
+              ))}
+            </div>
+          </motion.div>
+        </AnimatePresence>
+      </div>
+
+      <button
+        onClick={goToPrevSlide}
+        className="absolute top-1/2 left-0 transform -translate-y-1/2 bg-accent text-white p-3 rounded-r-md opacity-70 hover:opacity-100 transition duration-300 ease-in-out z-10"
+        aria-label={t("accessibility.previousSlide")}
+      >
+        <FaChevronLeft />
+      </button>
+
+      <button
+        onClick={goToNextSlide}
+        className="absolute top-1/2 right-0 transform -translate-y-1/2 bg-accent text-white p-3 rounded-l-md opacity-70 hover:opacity-100 transition duration-300 ease-in-out z-10"
+        aria-label={t("accessibility.nextSlide")}
+      >
+        <FaChevronRight />
+      </button>
+
+      <div className="flex justify-center mt-6 gap-2">
+        {Array.from({ length: totalSlides }).map((_, index) => (
+          <button
+            key={`dot-${index}`}
+            onClick={() => goToSlide(index)}
+            className={`w-3 h-3 rounded-full transition duration-300 ease-in-out ${
+              currentSlide === index
+                ? "bg-accent"
+                : "bg-neutral dark:bg-gray-600 hover:bg-accent dark:hover:bg-accent"
+            }`}
+            aria-label={t("accessibility.goToSlide", { number: index + 1 })}
+          />
+        ))}
+      </div>
+    </div>
+  );
+};
+
+export default GallerySlider;
+
+
+--------------------------
+
+import React, { forwardRef, useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
+import { motion } from "framer-motion";
+import { useToast } from "@/hooks/use-toast";
+import { FaMapMarkerAlt, FaPhoneAlt, FaEnvelope } from "react-icons/fa";
+import { validateEmail, validatePhone } from "@/lib/utils";
+import { useForm, ValidationError } from "@formspree/react";
+
+const Contact = forwardRef<HTMLDivElement, {}>((_, ref) => {
+  const { t } = useTranslation();
+  const { toast } = useToast();
+
+  // Formspree form hook - replace with your form ID
+  const [formState, handleFormspreeSubmit] = useForm("mnqeovvr");
+
+  // Console log formState to debug
+  console.log("Contact form state:", formState);
+
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    message: "",
+  });
+
+  const [errors, setErrors] = useState({
+    name: false,
+    email: false,
+    message: false,
+  });
+
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+
+    // Clear error when typing
+    if (errors[name as keyof typeof errors]) {
+      setErrors((prev) => ({ ...prev, [name]: false }));
+    }
+  };
+
+  const validateForm = () => {
+    const newErrors = {
+      name: !formData.name.trim(),
+      email: !formData.email.trim() || !validateEmail(formData.email),
+      message: !formData.message.trim(),
+    };
+
+    setErrors(newErrors);
+    return !Object.values(newErrors).some((error) => error);
+  };
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    if (!validateForm()) {
+      toast({
+        title: t("toast.error"),
+        description: t("toast.formErrors"),
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Submit to Formspree
+    handleFormspreeSubmit(e);
+  };
+
+  // Reset form and show success message when form is successfully submitted
+  useEffect(() => {
+    // Show console logs for debugging
+    console.log(
+      "Contact form useEffect running, succeeded:",
+      formState.succeeded
+    );
+
+    if (formState.succeeded) {
+      console.log("Form succeeded, showing toast");
+
+      toast({
+        title: t("toast.success"),
+        description: t("toast.messageSent"),
+        variant: "default",
+      });
+
+      // Reset form after successful submission
+      setFormData({
+        name: "",
+        email: "",
+        phone: "",
+        message: "",
+      });
+    }
+  }, [formState.succeeded, t, toast]);
+
+  return (
+    <section
+      ref={ref}
+      id="contact"
+      className="py-20 bg-neutral dark:bg-transparent section-contact"
+    >
+      <div className="container mx-auto px-4">
+        <div className="text-center mb-16">
+          <motion.h2
+            initial={{ opacity: 0, y: -20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="text-3xl md:text-4xl font-bold playfair mb-4"
+          >
+            {t("contact.title")}
+          </motion.h2>
+          <motion.div
+            initial={{ opacity: 0, width: 0 }}
+            whileInView={{ opacity: 1, width: 96 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
+            className="h-1 bg-accent mx-auto"
+          />
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+          <motion.div
+            initial={{ opacity: 0, x: -30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
+          >
+            <div className="bg-white dark:bg-[#253754] rounded-lg shadow-lg p-8 mb-8">
+              <h3 className="text-2xl font-bold playfair mb-6">
+                {t("contact.contactInfo")}
+              </h3>
+              <div className="space-y-4">
+                <div className="flex items-start">
+                  <FaMapMarkerAlt className="text-accent mt-1 w-6" />
+                  <div className="ml-4">
+                    <h4 className="font-semibold mb-1">
+                      {t("contact.address")}
+                    </h4>
+                    <p className="text-gray-600 dark:text-gray-400">
+                      ul. Przykładowa 123
+                      <br />
+                      00-001 Warszawa
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-start">
+                  <FaPhoneAlt className="text-accent mt-1 w-6" />
+                  <div className="ml-4">
+                    <h4 className="font-semibold mb-1">{t("contact.phone")}</h4>
+                    <p className="text-gray-600 dark:text-gray-400">
+                      +48 123 456 789
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-start">
+                  <FaEnvelope className="text-accent mt-1 w-6" />
+                  <div className="ml-4">
+                    <h4 className="font-semibold mb-1">{t("contact.email")}</h4>
+                    <p className="text-gray-600 dark:text-gray-400">
+                      kontakt@agilera.pl
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-white dark:bg-[#253754] rounded-lg shadow-lg p-8">
+              <h3 className="text-2xl font-bold playfair mb-6">
+                {t("contact.openingHours")}
+              </h3>
+              <div className="space-y-3">
+                <div className="flex justify-between">
+                  <span className="text-gray-600 dark:text-gray-400">
+                    {t("contact.mondayFriday")}
+                  </span>
+                  <span className="font-semibold">9:00 - 19:00</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-600 dark:text-gray-400">
+                    {t("contact.saturday")}
+                  </span>
+                  <span className="font-semibold">9:00 - 16:00</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-600 dark:text-gray-400">
+                    {t("contact.sunday")}
+                  </span>
+                  <span className="font-semibold">{t("contact.closed")}</span>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, x: 30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
+            className="bg-white dark:bg-[#253754] rounded-lg shadow-lg p-8"
+          >
+            <h3 className="text-2xl font-bold playfair mb-6">
+              {t("contact.writeToUs")}
+            </h3>
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <input type="hidden" name="_replyto" value="puaro@vp.pl" />
+
+              <div>
+                <label htmlFor="name" className="block mb-2 font-medium">
+                  {t("contact.nameLabel")}
+                </label>
+                <input
+                  type="text"
+                  id="name"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleInputChange}
+                  className={`w-full px-4 py-2 border ${
+                    errors.name
+                      ? "border-red-500"
+                      : "border-gray-300 dark:border-gray-700"
+                  } rounded-md focus:outline-none focus:ring-2 focus:ring-accent dark:bg-[#1e2e44] dark:text-white`}
+                  aria-invalid={errors.name}
+                  aria-describedby={errors.name ? "name-error" : undefined}
+                />
+                {errors.name && (
+                  <p id="name-error" className="mt-1 text-red-500 text-sm">
+                    {t("contact.nameRequired")}
+                  </p>
+                )}
+                <ValidationError
+                  prefix="Name"
+                  field="name"
+                  errors={formState.errors}
+                />
+              </div>
+
+              <div>
+                <label htmlFor="email" className="block mb-2 font-medium">
+                  {t("contact.emailLabel")}
+                </label>
+                <input
+                  type="email"
+                  id="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleInputChange}
+                  className={`w-full px-4 py-2 border ${
+                    errors.email
+                      ? "border-red-500"
+                      : "border-gray-300 dark:border-gray-700"
+                  } rounded-md focus:outline-none focus:ring-2 focus:ring-accent dark:bg-[#1e2e44] dark:text-white`}
+                  aria-invalid={errors.email}
+                  aria-describedby={errors.email ? "email-error" : undefined}
+                />
+                {errors.email && (
+                  <p id="email-error" className="mt-1 text-red-500 text-sm">
+                    {t("contact.validEmailRequired")}
+                  </p>
+                )}
+                <ValidationError
+                  prefix="Email"
+                  field="email"
+                  errors={formState.errors}
+                />
+              </div>
+
+              <div>
+                <label htmlFor="phone" className="block mb-2 font-medium">
+                  {t("contact.phoneLabel")}
+                </label>
+                <input
+                  type="tel"
+                  id="phone"
+                  name="phone"
+                  value={formData.phone}
+                  onChange={handleInputChange}
+                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-accent dark:bg-[#1e2e44] dark:text-white"
+                />
+                <ValidationError
+                  prefix="Phone"
+                  field="phone"
+                  errors={formState.errors}
+                />
+              </div>
+
+              <div>
+                <label htmlFor="message" className="block mb-2 font-medium">
+                  {t("contact.messageLabel")}
+                </label>
+                <textarea
+                  id="message"
+                  name="message"
+                  value={formData.message}
+                  onChange={handleInputChange}
+                  rows={4}
+                  className={`w-full px-4 py-2 border ${
+                    errors.message
+                      ? "border-red-500"
+                      : "border-gray-300 dark:border-gray-700"
+                  } rounded-md focus:outline-none focus:ring-2 focus:ring-accent dark:bg-[#1e2e44] dark:text-white`}
+                  aria-invalid={errors.message}
+                  aria-describedby={
+                    errors.message ? "message-error" : undefined
+                  }
+                />
+                {errors.message && (
+                  <p id="message-error" className="mt-1 text-red-500 text-sm">
+                    {t("contact.messageRequired")}
+                  </p>
+                )}
+                <ValidationError
+                  prefix="Message"
+                  field="message"
+                  errors={formState.errors}
+                />
+              </div>
+
+              <div>
+                <button
+                  type="submit"
+                  className="px-6 py-3 bg-accent text-white font-medium hover:bg-opacity-90 transition duration-300 ease-in-out"
+                  disabled={formState.submitting}
+                >
+                  {formState.submitting
+                    ? t("contact.sending")
+                    : t("contact.sendMessage")}
+                </button>
+                <ValidationError errors={formState.errors} />
+              </div>
+            </form>
+          </motion.div>
+        </div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.8, delay: 0.2 }}
+          className="mt-12"
+        >
+          <div className="bg-white dark:bg-[#253754] rounded-lg shadow-lg p-0 h-64 md:h-96">
+            <iframe
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2443.3151954985895!2d21.00717661593672!3d52.23178017976199!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x471eccf695420895%3A0xcb0e27f11ace068!2sWarsaw%2C%20Poland!5e0!3m2!1sen!2sus!4v1627654835981!5m2!1sen!2sus"
+              width="100%"
+              height="100%"
+              // style={{ border: 0 }}
+              allowFullScreen={false}
+              loading="lazy"
+              title={t("contact.mapTitle")}
+              className="rounded-md"
+            />
+          </div>
+        </motion.div>
+      </div>
+    </section>
+  );
+});
+
+Contact.displayName = "Contact";
+
+export default Contact;
+
+----------------------------
+
+import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
+import { Link } from 'wouter';
+import { FaScissors } from 'react-icons/fa6';
+import { FaFacebookF, FaInstagram, FaTwitter, FaPaperPlane } from 'react-icons/fa';
+import { useToast } from '@/hooks/use-toast';
+import { validateEmail } from '@/lib/utils';
+import { getCurrentYear } from '@/lib/utils';
+import { useForm, ValidationError } from '@formspree/react';
+
+interface FooterProps {
+  onHomeClick: () => void;
+  onAboutClick: () => void;
+  onServicesClick: () => void;
+  onGalleryClick: () => void;
+  onContactClick: () => void;
+}
+
+const Footer = ({
+  onHomeClick,
+  onAboutClick,
+  onServicesClick,
+  onGalleryClick,
+  onContactClick
+}: FooterProps) => {
+  const { t } = useTranslation();
+  const { toast } = useToast();
+  const [email, setEmail] = useState('');
+  
+  // Formspree form hook - replace with your newsletter form ID
+  const [formState, handleFormspreeSubmit] = useForm("mnqeovvr");
+  
+  // Debug formState
+  console.log("Newsletter form state:", formState);
+
+  const handleNewsletterSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    
+    if (!email || !validateEmail(email)) {
+      toast({
+        title: t('toast.error'),
+        description: t('toast.invalidEmail'),
+        variant: 'destructive',
+      });
+      return;
+    }
+    
+    // Submit to Formspree
+    handleFormspreeSubmit(e);
+  };
+  
+  // Reset form and show success message when form is successfully submitted
+  useEffect(() => {
+    // Show console logs for debugging
+    console.log("Newsletter form useEffect running, succeeded:", formState.succeeded);
+    
+    if (formState.succeeded) {
+      console.log("Newsletter form succeeded, showing toast");
+      
+      toast({
+        title: t('toast.success'),
+        description: t('toast.newsletterSuccess'),
+        variant: 'default',
+      });
+      
+      setEmail('');
+    }
+  }, [formState.succeeded, t, toast]);
+
+  return (
+    <footer className="bg-background/95 text-foreground dark:bg-[#1a1a1a] dark:text-white py-12">
+      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 md:px-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div>
+            <div className="flex items-center mb-6">
+              <FaScissors className="text-accent mr-2" />
+              <span className="text-2xl font-bold playfair tracking-wider">AGILERA</span>
+            </div>
+            <p className="text-gray-500 dark:text-gray-400 mb-6">
+              {t('footer.description')}
+            </p>
+            <div className="flex space-x-4">
+              <a 
+                href="https://facebook.com" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="text-gray-500 dark:text-white hover:text-accent transition duration-300 ease-in-out" 
+                aria-label="Facebook"
+              >
+                <FaFacebookF />
+              </a>
+              <a 
+                href="https://instagram.com" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="text-gray-500 dark:text-white hover:text-accent transition duration-300 ease-in-out" 
+                aria-label="Instagram"
+              >
+                <FaInstagram />
+              </a>
+              <a 
+                href="https://twitter.com" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="text-gray-500 dark:text-white hover:text-accent transition duration-300 ease-in-out" 
+                aria-label="Twitter"
+              >
+                <FaTwitter />
+              </a>
+            </div>
+          </div>
+          
+          <div>
+            <h4 className="text-xl font-semibold playfair mb-6">{t('footer.quickLinks')}</h4>
+            <ul className="space-y-3">
+              <li>
+                <button 
+                  onClick={onHomeClick} 
+                  className="text-gray-500 dark:text-gray-400 hover:text-accent transition duration-300 ease-in-out"
+                >
+                  {t('nav.home')}
+                </button>
+              </li>
+              <li>
+                <button 
+                  onClick={onAboutClick} 
+                  className="text-gray-500 dark:text-gray-400 hover:text-accent transition duration-300 ease-in-out"
+                >
+                  {t('nav.about')}
+                </button>
+              </li>
+              <li>
+                <button 
+                  onClick={onServicesClick} 
+                  className="text-gray-500 dark:text-gray-400 hover:text-accent transition duration-300 ease-in-out"
+                >
+                  {t('nav.services')}
+                </button>
+              </li>
+              <li>
+                <button 
+                  onClick={onGalleryClick} 
+                  className="text-gray-500 dark:text-gray-400 hover:text-accent transition duration-300 ease-in-out"
+                >
+                  {t('nav.gallery')}
+                </button>
+              </li>
+              <li>
+                <button 
+                  onClick={onContactClick} 
+                  className="text-gray-500 dark:text-gray-400 hover:text-accent transition duration-300 ease-in-out"
+                >
+                  {t('nav.contact')}
+                </button>
+              </li>
+            </ul>
+          </div>
+          
+          <div>
+            <h4 className="text-xl font-semibold playfair mb-6">{t('footer.newsletter')}</h4>
+            <p className="text-gray-500 dark:text-gray-400 mb-4">
+              {t('footer.newsletterText')}
+            </p>
+            <form onSubmit={handleNewsletterSubmit} className="mb-4">
+              <input type="hidden" name="_replyto" value="puaro@vp.pl" />
+              <input type="hidden" name="form-name" value="newsletter" />
+              
+              <div className="flex">
+                <input 
+                  type="email" 
+                  name="email"
+                  placeholder={t('footer.yourEmail')}
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="px-4 py-2 flex-grow bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-l-md focus:outline-none focus:ring-1 focus:ring-accent text-gray-800 dark:text-white" 
+                />
+                <button 
+                  type="submit" 
+                  className="px-4 py-2 bg-accent text-white rounded-r-md hover:bg-opacity-90 transition duration-300 ease-in-out"
+                  aria-label={t('footer.subscribe')}
+                  disabled={formState.submitting}
+                >
+                  {formState.submitting ? 
+                    <span className="animate-spin">⟳</span> : 
+                    <FaPaperPlane />
+                  }
+                </button>
+              </div>
+              <ValidationError prefix="Email" field="email" errors={formState.errors} className="text-red-500 text-sm mt-1" />
+            </form>
+          </div>
+        </div>
+        
+        <div className="border-t border-gray-200 dark:border-gray-800 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
+          <p className="text-gray-500 text-sm mb-4 md:mb-0">
+            &copy; {getCurrentYear()} {t('footer.copyright')}
+          </p>
+          <div className="flex space-x-4">
+            <Link href="/privacy-policy" className="text-gray-500 hover:text-accent text-sm transition duration-300 ease-in-out">{t('footer.privacyPolicy')}</Link>
+            <Link href="/terms" className="text-gray-500 hover:text-accent text-sm transition duration-300 ease-in-out">{t('footer.terms')}</Link>
+          </div>
+        </div>
+      </div>
+    </footer>
+  );
+};
+
+export default Footer;
+
+
+--------------------------
+
+{
+  "common": {
+    "backToHome": "Back to Home"
+  },
+  "meta": {
+    "title": "AGILERA Hair Salon | Style. Class. Precision.",
+    "description": "Professional hair salon for women and men, AGILERA offers cutting, styling, and coloring in an elegant setting.",
+    "ogTitle": "AGILERA Hair Salon",
+    "ogDescription": "Professional hair salon for women and men offering cutting, styling, and coloring in an elegant setting."
+  },
+  "accessibility": {
+    "skipToContent": "Skip to content",
+    "toggleMenu": "Toggle menu",
+    "toggleTheme": "Toggle light/dark mode",
+    "changeLanguage": "Change language",
+    "previousSlide": "Previous slide",
+    "nextSlide": "Next slide",
+    "goToSlide": "Go to slide {{number}}",
+    "closeModal": "Close modal"
+  },
+  "nav": {
+    "home": "Home",
+    "about": "About",
+    "services": "Services",
+    "gallery": "Gallery",
+    "contact": "Contact"
+  },
+  "home": {
+    "heroAlt": "AGILERA hair salon interior",
+    "motto": "Style. Class. Precision.",
+    "knowUs": "About Us",
+    "bookAppointment": "Book Appointment"
+  },
+  "about": {
+    "title": "About Us",
+    "ourStory": "Our Story",
+    "storyParagraph1": "AGILERA Hair Salon is a place where passion meets professionalism. Since 2010, we have been providing top-quality hairdressing services for Clients who value elegance and precision.",
+    "storyParagraph2": "Our team is a group of experienced stylists who continuously improve their skills by participating in international training sessions and hairdressing shows.",
+    "yearsExperience": "Years of experience",
+    "happyClients": "Happy Clients",
+    "industryAwards": "Industry awards",
+    "ourTeam": "Our Team",
+    "mainStylist": "Head Stylist",
+    "creativeStylist": "Creative Stylist",
+    "colorist": "Colorist",
+    "barber": "Barber",
+    "stylistWorkingImage": "Stylist working with client",
+    "salonInteriorImage": "AGILERA salon interior"
+  },
+  "services": {
+    "title": "Our Services",
+    "haircut": "Haircut",
+    "styling": "Styling",
+    "coloring": "Coloring",
+    "learnMore": "Learn More",
+    "bookAppointment": "Book Appointment"
+  },
+  "gallery": {
+    "title": "Gallery"
+  },
+  "contact": {
+    "title": "Contact",
+    "contactInfo": "Contact Information",
+    "address": "Address",
+    "phone": "Phone",
+    "email": "Email",
+    "openingHours": "Opening Hours",
+    "mondayFriday": "Monday - Friday",
+    "saturday": "Saturday",
+    "sunday": "Sunday",
+    "closed": "Closed",
+    "writeToUs": "Write to Us",
+    "nameLabel": "Full Name",
+    "emailLabel": "Email",
+    "phoneLabel": "Phone (optional)",
+    "messageLabel": "Message",
+    "sendMessage": "Send Message",
+    "sending": "Sending...",
+    "nameRequired": "Full name is required",
+    "validEmailRequired": "Please enter a valid email address",
+    "messageRequired": "Message is required",
+    "mapTitle": "AGILERA Hair Salon Location"
+  },
+  "footer": {
+    "description": "Professional hair salon offering comprehensive services for women and men in an elegant atmosphere.",
+    "quickLinks": "Quick Links",
+    "newsletter": "Newsletter",
+    "newsletterText": "Subscribe to receive information about promotions and news.",
+    "yourEmail": "Your email",
+    "subscribe": "Subscribe",
+    "copyright": "AGILERA Hair Salon. All rights reserved.",
+    "privacyPolicy": "Privacy Policy",
+    "terms": "Terms & Conditions"
+  },
+  "toast": {
+    "success": "Success!",
+    "error": "Error!",
+    "messageSent": "Your message has been sent. Thank you!",
+    "newsletterSuccess": "Thank you for subscribing to our newsletter!",
+    "formErrors": "Please fill in all required form fields.",
+    "invalidEmail": "Please enter a valid email address."
+  },
+  "privacyPolicy": {
+    "pageTitle": "Privacy Policy",
+    "pageDescription": "Privacy Policy of AGILERA Hair Salon - learn how we protect your personal data.",
+    "title": "Privacy Policy",
+    "lastUpdated": "Last updated",
+    "section1": {
+      "title": "Introduction",
+      "content": "This Privacy Policy describes how AGILERA Hair Salon collects, uses, and protects your personal data when you use our website and services offered at our salon."
+    },
+    "section2": {
+      "title": "Data We Collect",
+      "content": "When using our website and services, we may collect the following types of personal data:",
+      "subsection1": {
+        "title": "Data Provided Voluntarily",
+        "content": "Contact information (name, email address, phone number) - when you fill out a contact form, subscribe to our newsletter, or book an appointment at our salon."
+      },
+      "subsection2": {
+        "title": "Automatically Collected Data",
+        "content": "Information about your device and browser, IP address, cookie information, and analytical data regarding the use of our website."
+      }
+    },
+    "section3": {
+      "title": "Purpose of Data Processing",
+      "content": "Your personal data is collected and processed for the purpose of: responding to inquiries submitted via the contact form, providing hairdressing services, sending marketing information (if you have consented to it), improving the quality of our website and services, and fulfilling legal obligations."
+    },
+    "section4": {
+      "title": "Data Sharing",
+      "content": "We do not sell or share your personal data with third parties, except when it is necessary to provide services (e.g., payment service providers, online booking systems) or when we are required to do so by law."
+    },
+    "section5": {
+      "title": "Your Rights",
+      "content": "In accordance with GDPR, you have the right to: access your personal data, rectify it, delete it or limit its processing, data portability, object to data processing, and withdraw consent for data processing at any time. To exercise these rights, please contact us."
+    },
+    "contact": {
+      "title": "Contact Regarding Personal Data",
+      "content": "If you have questions about our Privacy Policy or the processing of your personal data, please contact us:"
+    }
+  },
+  "terms": {
+    "pageTitle": "Terms & Conditions",
+    "pageDescription": "Terms and Conditions of AGILERA Hair Salon - rules for using our services and website.",
+    "title": "Terms & Conditions",
+    "lastUpdated": "Last updated",
+    "section1": {
+      "title": "General Provisions",
+      "content": "These Terms and Conditions govern the use of AGILERA Hair Salon services and the website agilera.pl."
+    },
+    "section2": {
+      "title": "Definitions",
+      "content": "Salon - AGILERA Hair Salon located in Warsaw at 123 Example Street. Client - a natural person using the Salon's services. Website - the website available at agilera.pl. Services - hairdressing services provided by the Salon."
+    },
+    "section3": {
+      "title": "Appointment Booking and Cancellation Rules",
+      "content": "Appointments can be booked by phone, in person at the Salon, or through the online booking system available on our website.",
+      "subsection1": {
+        "title": "Booking",
+        "content": "When booking, you need to provide your name, surname, and phone number. The booking is valid after receiving confirmation from a Salon employee."
+      },
+      "subsection2": {
+        "title": "Cancellation and Rescheduling",
+        "content": "Appointments can be cancelled or rescheduled no later than 24 hours before the scheduled appointment. In case of not cancelling an appointment and not showing up at the scheduled time, the Salon reserves the right to block the possibility of online booking for a period of 30 days."
+      }
+    },
+    "section4": {
+      "title": "Service Pricing",
+      "content": "Prices for hairdressing services are available at the Salon and on our website. Prices may change, and Clients will be informed about such changes in advance. The final price of a service may differ from the price listed in the price list, depending on the length, density of hair, and products used."
+    },
+    "section5": {
+      "title": "Complaints",
+      "content": "Any complaints regarding the services provided should be reported immediately after the service is performed or no later than 3 days from the date of the visit. Complaints can be submitted in person at the Salon, by phone, or electronically to the email address: contact@agilera.pl. Complaints will be considered individually within 14 days from the date of submission."
+    },
+    "section6": {
+      "title": "Final Provisions",
+      "content": "The Salon reserves the right to change these Terms and Conditions. Changes come into effect on the day of their publication on the website. In matters not regulated by these Terms and Conditions, the provisions of Polish law shall apply."
+    },
+    "contact": {
+      "title": "Contact",
+      "content": "If you have questions about our Terms and Conditions, please contact us:"
+    }
+  }
+}
+
+
+------------------------------
+
+{
+  "common": {
+    "backToHome": "Powrót do strony głównej"
+  },
+  "meta": {
+    "title": "Salon Fryzjerski AGILERA | Styl. Klasa. Precyzja.",
+    "description": "Profesjonalny salon fryzjerski damsko-męski AGILERA oferujący strzyżenie, stylizację i koloryzację w eleganckim wydaniu.",
+    "ogTitle": "Salon Fryzjerski AGILERA",
+    "ogDescription": "Profesjonalny salon fryzjerski damsko-męski oferujący strzyżenie, stylizację i koloryzację w eleganckim wydaniu."
+  },
+  "accessibility": {
+    "skipToContent": "Przejdź do treści",
+    "toggleMenu": "Przełącz menu",
+    "toggleTheme": "Przełącz tryb jasny/ciemny",
+    "changeLanguage": "Zmień język",
+    "previousSlide": "Poprzedni slajd",
+    "nextSlide": "Następny slajd",
+    "goToSlide": "Przejdź do slajdu {{number}}",
+    "closeModal": "Zamknij okno"
+  },
+  "nav": {
+    "home": "Start",
+    "about": "O nas",
+    "services": "Usługi",
+    "gallery": "Galeria",
+    "contact": "Kontakt"
+  },
+  "home": {
+    "heroAlt": "Wnętrze salonu fryzjerskiego AGILERA",
+    "motto": "Styl. Klasa. Precyzja.",
+    "knowUs": "Poznaj nas",
+    "bookAppointment": "Umów wizytę"
+  },
+  "about": {
+    "title": "O Nas",
+    "ourStory": "Nasza Historia",
+    "storyParagraph1": "Salon Fryzjerski AGILERA to miejsce, gdzie pasja spotyka się z profesjonalizmem. Od 2010 roku zapewniamy najwyższej jakości usługi fryzjerskie dla Klientów ceniących sobie elegancję i precyzję.",
+    "storyParagraph2": "Nasz zespół to grupa doświadczonych stylistów, którzy nieustannie doskonalą swoje umiejętności, uczestnicząc w międzynarodowych szkoleniach i pokazach fryzjerskich.",
+    "yearsExperience": "Lat doświadczenia",
+    "happyClients": "Zadowolonych Klientów",
+    "industryAwards": "Nagród branżowych",
+    "ourTeam": "Nasz Zespół",
+    "mainStylist": "Główna Stylistka",
+    "creativeStylist": "Stylista Kreatywny",
+    "colorist": "Kolorystka",
+    "barber": "Barber",
+    "stylistWorkingImage": "Stylistka pracująca z klientką",
+    "salonInteriorImage": "Wnętrze salonu AGILERA"
+  },
+  "services": {
+    "title": "Nasze Usługi",
+    "haircut": "Strzyżenie",
+    "styling": "Stylizacja",
+    "coloring": "Koloryzacja",
+    "learnMore": "Dowiedz się więcej",
+    "bookAppointment": "Umów wizytę"
+  },
+  "gallery": {
+    "title": "Galeria"
+  },
+  "contact": {
+    "title": "Kontakt",
+    "contactInfo": "Informacje kontaktowe",
+    "address": "Adres",
+    "phone": "Telefon",
+    "email": "Email",
+    "openingHours": "Godziny otwarcia",
+    "mondayFriday": "Poniedziałek - Piątek",
+    "saturday": "Sobota",
+    "sunday": "Niedziela",
+    "closed": "Zamknięte",
+    "writeToUs": "Napisz do nas",
+    "nameLabel": "Imię i nazwisko",
+    "emailLabel": "Email",
+    "phoneLabel": "Telefon (opcjonalnie)",
+    "messageLabel": "Wiadomość",
+    "sendMessage": "Wyślij wiadomość",
+    "sending": "Wysyłanie...",
+    "nameRequired": "Imię i nazwisko jest wymagane",
+    "validEmailRequired": "Proszę podać poprawny adres email",
+    "messageRequired": "Wiadomość jest wymagana",
+    "mapTitle": "Lokalizacja Salonu Fryzjerskiego AGILERA"
+  },
+  "footer": {
+    "description": "Profesjonalny salon fryzjerski oferujący kompleksowe usługi dla kobiet i mężczyzn w eleganckiej atmosferze.",
+    "quickLinks": "Szybki dostęp",
+    "newsletter": "Newsletter",
+    "newsletterText": "Zapisz się, aby otrzymywać informacje o promocjach i nowościach.",
+    "yourEmail": "Twój email",
+    "subscribe": "Zapisz się",
+    "copyright": "Salon Fryzjerski AGILERA. Wszelkie prawa zastrzeżone.",
+    "privacyPolicy": "Polityka prywatności",
+    "terms": "Regulamin"
+  },
+  "toast": {
+    "success": "Sukces!",
+    "error": "Błąd!",
+    "messageSent": "Twoja wiadomość została wysłana. Dziękujemy!",
+    "newsletterSuccess": "Dziękujemy za zapisanie się do newslettera!",
+    "formErrors": "Proszę wypełnić wszystkie wymagane pola formularza.",
+    "invalidEmail": "Proszę podać poprawny adres email."
+  },
+  "privacyPolicy": {
+    "pageTitle": "Polityka Prywatności",
+    "pageDescription": "Polityka Prywatności salonu fryzjerskiego AGILERA - dowiedz się, jak chronimy Twoje dane osobowe.",
+    "title": "Polityka Prywatności",
+    "lastUpdated": "Ostatnia aktualizacja",
+    "section1": {
+      "title": "Wprowadzenie",
+      "content": "Niniejsza Polityka Prywatności opisuje, w jaki sposób Salon Fryzjerski AGILERA zbiera, wykorzystuje i chroni Twoje dane osobowe podczas korzystania z naszej strony internetowej oraz usług oferowanych w naszym salonie."
+    },
+    "section2": {
+      "title": "Dane, które zbieramy",
+      "content": "Podczas korzystania z naszej strony internetowej oraz usług, możemy zbierać następujące rodzaje danych osobowych:",
+      "subsection1": {
+        "title": "Dane podawane dobrowolnie",
+        "content": "Dane kontaktowe (imię, nazwisko, adres e-mail, numer telefonu) - gdy wypełniasz formularz kontaktowy, zapisujesz się do newslettera lub umawiasz wizytę w naszym salonie."
+      },
+      "subsection2": {
+        "title": "Dane zbierane automatycznie",
+        "content": "Informacje o urządzeniu i przeglądarce, adres IP, informacje o plikach cookie oraz dane analityczne dotyczące korzystania z naszej strony internetowej."
+      }
+    },
+    "section3": {
+      "title": "Cel przetwarzania danych",
+      "content": "Twoje dane osobowe są zbierane i przetwarzane w celu: udzielenia odpowiedzi na zapytania przesłane za pomocą formularza kontaktowego, realizacji usług fryzjerskich, wysyłania informacji marketingowych (jeśli wyraziłeś na to zgodę), poprawy jakości naszej strony internetowej oraz usług, oraz wypełnienia obowiązków prawnych."
+    },
+    "section4": {
+      "title": "Udostępnianie danych",
+      "content": "Nie sprzedajemy ani nie udostępniamy Twoich danych osobowych stronom trzecim, z wyjątkiem sytuacji, gdy jest to niezbędne do realizacji usług (np. dostawcy usług płatniczych, systemy rezerwacji online) lub gdy jesteśmy do tego zobowiązani przez prawo."
+    },
+    "section5": {
+      "title": "Twoje prawa",
+      "content": "Zgodnie z RODO, masz prawo do: dostępu do swoich danych osobowych, ich sprostowania, usunięcia lub ograniczenia przetwarzania, przenoszenia danych, wniesienia sprzeciwu wobec przetwarzania danych oraz cofnięcia zgody na przetwarzanie danych w dowolnym momencie. W celu skorzystania z tych praw, prosimy o kontakt z nami."
+    },
+    "contact": {
+      "title": "Kontakt w sprawie danych osobowych",
+      "content": "W przypadku pytań dotyczących naszej Polityki Prywatności lub przetwarzania Twoich danych osobowych, prosimy o kontakt:"
+    }
+  },
+  "terms": {
+    "pageTitle": "Regulamin",
+    "pageDescription": "Regulamin salonu fryzjerskiego AGILERA - zasady korzystania z naszych usług i strony internetowej.",
+    "title": "Regulamin",
+    "lastUpdated": "Ostatnia aktualizacja",
+    "section1": {
+      "title": "Postanowienia ogólne",
+      "content": "Niniejszy Regulamin określa zasady korzystania z usług Salonu Fryzjerskiego AGILERA oraz ze strony internetowej agilera.pl."
+    },
+    "section2": {
+      "title": "Definicje",
+      "content": "Salon - Salon Fryzjerski AGILERA z siedzibą w Warszawie, przy ul. Przykładowej 123. Klient - osoba fizyczna korzystająca z usług Salonu. Strona internetowa - witryna internetowa dostępna pod adresem agilera.pl. Usługi - usługi fryzjerskie świadczone przez Salon."
+    },
+    "section3": {
+      "title": "Zasady rezerwacji i anulowania wizyt",
+      "content": "Rezerwacji wizyty można dokonać telefonicznie, osobiście w Salonie lub poprzez system rezerwacji online dostępny na naszej stronie internetowej.",
+      "subsection1": {
+        "title": "Rezerwacja",
+        "content": "Podczas rezerwacji należy podać imię, nazwisko oraz numer telefonu. Rezerwacja jest ważna po otrzymaniu potwierdzenia od pracownika Salonu."
+      },
+      "subsection2": {
+        "title": "Anulowanie i zmiana terminu",
+        "content": "Anulowania lub zmiany terminu wizyty można dokonać najpóźniej 24 godziny przed planowaną wizytą. W przypadku nieodwołania wizyty i niestawienia się na umówiony termin, Salon zastrzega sobie prawo do zablokowania możliwości rezerwacji online na okres 30 dni."
+      }
+    },
+    "section4": {
+      "title": "Cennik usług",
+      "content": "Ceny usług fryzjerskich są dostępne w Salonie oraz na naszej stronie internetowej. Ceny mogą ulec zmianie, o czym Klienci będą informowani z odpowiednim wyprzedzeniem. Ostateczna cena usługi może różnić się od ceny podanej w cenniku, w zależności od długości, gęstości włosów oraz użytych produktów."
+    },
+    "section5": {
+      "title": "Reklamacje",
+      "content": "Wszelkie reklamacje dotyczące wykonanych usług należy zgłaszać bezpośrednio po wykonaniu usługi lub najpóźniej w ciągu 3 dni od daty wizyty. Reklamacje można składać osobiście w Salonie, telefonicznie lub drogą elektroniczną na adres e-mail: kontakt@agilera.pl. Reklamacje będą rozpatrywane indywidualnie w terminie 14 dni od daty zgłoszenia."
+    },
+    "section6": {
+      "title": "Postanowienia końcowe",
+      "content": "Salon zastrzega sobie prawo do zmiany niniejszego Regulaminu. Zmiany wchodzą w życie z dniem ich opublikowania na stronie internetowej. W sprawach nieuregulowanych niniejszym Regulaminem zastosowanie mają przepisy prawa polskiego."
+    },
+    "contact": {
+      "title": "Kontakt",
+      "content": "W przypadku pytań dotyczących naszego Regulaminu, prosimy o kontakt:"
+    }
+  }
+}
+ 
+-------------------------------
+
+import { createContext, useState, useContext } from 'react';
+import { ServiceType } from '@/data/serviceData';
+
+interface ServiceContextType {
+  isServiceModalOpen: boolean;
+  serviceData: ServiceType | null;
+  openServiceModal: (service: ServiceType) => void;
+  closeServiceModal: () => void;
+}
+
+const ServiceContext = createContext<ServiceContextType>({
+  isServiceModalOpen: false,
+  serviceData: null,
+  openServiceModal: () => {},
+  closeServiceModal: () => {}
+});
+
+export function ServiceProvider({ children }: { children: React.ReactNode }) {
+  const [isServiceModalOpen, setIsServiceModalOpen] = useState(false);
+  const [serviceData, setServiceData] = useState<ServiceType | null>(null);
+  
+  const openServiceModal = (service: ServiceType) => {
+    setServiceData(service);
+    setIsServiceModalOpen(true);
+  };
+  
+  const closeServiceModal = () => {
+    setIsServiceModalOpen(false);
+  };
+  
+  return (
+    <ServiceContext.Provider 
+      value={{ 
+        isServiceModalOpen, 
+        serviceData, 
+        openServiceModal, 
+        closeServiceModal 
+      }}
+    >
+      {children}
+    </ServiceContext.Provider>
+  );
+}
+
+export function useServiceModal() {
+  const context = useContext(ServiceContext);
+  
+  if (!context) {
+    throw new Error('useServiceModal must be used within a ServiceProvider');
+  }
+  
+  return context;
+}
+
+-------------------------
+import { createContext, useState, useContext } from "react";
+import { ServiceType } from "@/data/serviceData";
+
+interface ServiceContextType {
+  isServiceModalOpen: boolean;
+  serviceData: ServiceType | null;
+  openServiceModal: (service: ServiceType) => void;
+  closeServiceModal: () => void;
+}
+
+const ServiceContext = createContext<ServiceContextType>({
+  isServiceModalOpen: false,
+  serviceData: null,
+  openServiceModal: () => {},
+  closeServiceModal: () => {},
+});
+
+export function ServiceProvider({ children }: { children: React.ReactNode }) {
+  const [isServiceModalOpen, setIsServiceModalOpen] = useState(false);
+  const [serviceData, setServiceData] = useState<ServiceType | null>(null);
+
+  const openServiceModal = (service: ServiceType) => {
+    setServiceData(service);
+    setIsServiceModalOpen(true);
+  };
+
+  const closeServiceModal = () => {
+    setIsServiceModalOpen(false);
+    setServiceData(null); // <-- TO DODAJ
+  };
+
+  return (
+    <ServiceContext.Provider
+      value={{
+        isServiceModalOpen,
+        serviceData,
+        openServiceModal,
+        closeServiceModal,
+      }}
+    >
+      {children}
+    </ServiceContext.Provider>
+  );
+}
+
+export function useServiceModal() {
+  const context = useContext(ServiceContext);
+
+  if (!context) {
+    throw new Error("useServiceModal must be used within a ServiceProvider");
+  }
+
+  return context;
+}
+
+
+-------------------
+import { forwardRef, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { motion } from 'framer-motion';
+import ServiceCard from '@/components/ServiceCard';
+import { ServiceType, haircutServices as haircutServicesPL, stylingServices as stylingServicesPL, coloringServices as coloringServicesPL } from '@/data/serviceData';
+import { haircutServices as haircutServicesEN, stylingServices as stylingServicesEN, coloringServices as coloringServicesEN } from '@/data/serviceDataEn';
+
+const Services = forwardRef<HTMLDivElement, {}>((_, ref) => {
+  const { t, i18n } = useTranslation();
+  
+  // Use appropriate service data based on the current language
+  const haircutServices = useMemo(() => {
+    return i18n.language === 'en' ? haircutServicesEN : haircutServicesPL;
+  }, [i18n.language]);
+  
+  const stylingServices = useMemo(() => {
+    return i18n.language === 'en' ? stylingServicesEN : stylingServicesPL;
+  }, [i18n.language]);
+  
+  const coloringServices = useMemo(() => {
+    return i18n.language === 'en' ? coloringServicesEN : coloringServicesPL;
+  }, [i18n.language]);
+  
+  // Animation variants
+  const serviceVariants = {
+    hidden: { opacity: 0, y: 50 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.8 }
+    }
+  };
+  
+  return (
+    <section ref={ref} id="services" className="py-20 bg-neutral dark:bg-transparent section-services">
+      <div className="container mx-auto px-4">
+        <div className="text-center mb-16">
+          <motion.h2 
+            initial={{ opacity: 0, y: -20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="text-3xl md:text-4xl font-bold playfair mb-4"
+          >
+            {t('services.title')}
+          </motion.h2>
+          <motion.div 
+            initial={{ opacity: 0, width: 0 }}
+            whileInView={{ opacity: 1, width: 96 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
+            className="h-1 bg-accent mx-auto"
+          />
+        </div>
+        
+        <div id="services-haircut" className="mb-20">
+          <motion.h3
+            initial={{ opacity: 0, x: -20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="text-2xl font-bold playfair mb-8 text-center"
+          >
+            {t('services.haircut')}
+          </motion.h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {haircutServices.map((service: ServiceType, index: number) => (
+              <motion.div
+                key={`haircut-${index}`}
+                variants={serviceVariants}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true }}
+                custom={index}
+              >
+                <ServiceCard service={service} />
+              </motion.div>
+            ))}
+          </div>
+        </div>
+        
+        <div id="services-styling" className="mb-20">
+          <motion.h3
+            initial={{ opacity: 0, x: -20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="text-2xl font-bold playfair mb-8 text-center"
+          >
+            {t('services.styling')}
+          </motion.h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {stylingServices.map((service: ServiceType, index: number) => (
+              <motion.div
+                key={`styling-${index}`}
+                variants={serviceVariants}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true }}
+                custom={index}
+              >
+                <ServiceCard service={service} />
+              </motion.div>
+            ))}
+          </div>
+        </div>
+        
+        <div id="services-coloring">
+          <motion.h3
+            initial={{ opacity: 0, x: -20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="text-2xl font-bold playfair mb-8 text-center"
+          >
+            {t('services.coloring')}
+          </motion.h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {coloringServices.map((service: ServiceType, index: number) => (
+              <motion.div
+                key={`coloring-${index}`}
+                variants={serviceVariants}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true }}
+                custom={index}
+              >
+                <ServiceCard service={service} />
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+});
+
+Services.displayName = 'Services';
+
+export default Services;
+
+
+------------------------------
+import { useTranslation } from "react-i18next";
+import { cn } from "@/lib/utils";
+import { useServiceModal } from "@/context/ServiceContext";
+import { ServiceType } from "@/data/serviceData";
+
+interface ServiceCardProps {
+  service: ServiceType;
+  className?: string;
+}
+
+const ServiceCard = ({ service, className }: ServiceCardProps) => {
+  const { t } = useTranslation();
+  const { openServiceModal } = useServiceModal();
+
+  const handleLearnMore = () => {
+    console.log("Kliknięto Learn More:", service);
+    openServiceModal(service);
+  };
+
+  return (
+    <div
+      className={cn(
+        "bg-white dark:bg-[#1e1e1e] rounded-lg shadow-lg overflow-hidden transition duration-300 ease-in-out hover:shadow-xl",
+        className
+      )}
+    >
+      <img
+        src={service.image}
+        alt={service.title}
+        className="w-full h-48 object-cover"
+        loading="lazy"
+      />
+      <div className="p-6">
+        <h4 className="text-xl font-semibold playfair mb-2">{service.title}</h4>
+        <p className="text-gray-600 dark:text-gray-400 mb-4">
+          {service.shortDescription}
+        </p>
+        <div className="flex justify-between items-center">
+          <span className="text-accent font-bold text-xl">{service.price}</span>
+          <button
+            onClick={handleLearnMore}
+            className="text-sm px-4 py-2 border border-accent text-accent hover:bg-accent hover:text-white transition duration-300 ease-in-out"
+          >
+            {t("services.learnMore")}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default ServiceCard;
+
+
+-----------------------------
+
+import { useRef } from "react";
+import { Helmet } from "react-helmet-async";
+import { useTranslation } from "react-i18next";
+import { Switch, Route, useLocation } from "wouter";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
+import Home from "@/pages/Home";
+import About from "@/pages/About";
+import Services from "@/pages/Services";
+import Gallery from "@/pages/Gallery";
+import Contact from "@/pages/Contact";
+import PrivacyPolicy from "@/pages/PrivacyPolicy";
+import Terms from "@/pages/Terms";
+import NotFound from "@/pages/not-found";
+import GalleryModal from "@/components/GalleryModal";
+import ServiceModal from "@/components/ServiceModal";
+import { useLanguage } from "@/context/LanguageContext";
+
+function App() {
+  const { t } = useTranslation();
+  const { language } = useLanguage();
+  const [location] = useLocation();
+  
+  // References for scrolling to sections
+  const homeRef = useRef<HTMLDivElement>(null);
+  const aboutRef = useRef<HTMLDivElement>(null);
+  const servicesRef = useRef<HTMLDivElement>(null);
+  const galleryRef = useRef<HTMLDivElement>(null);
+  const contactRef = useRef<HTMLDivElement>(null);
+
+  const scrollToSection = (ref: React.RefObject<HTMLDivElement>) => {
+    if (ref.current) {
+      window.scrollTo({
+        top: ref.current.offsetTop - 80, // Adjust for header height
+        behavior: "smooth",
+      });
+    }
+  };
+
+  // Check if we're on a special page (privacy policy, terms, etc.)
+  const isSpecialPage = location === '/privacy-policy' || location === '/terms';
+
+  // Main page content with all sections
+  const MainContent = () => (
+    <>
+      <Home ref={homeRef} onContactClick={() => scrollToSection(contactRef)} />
+      <About ref={aboutRef} />
+      <Services ref={servicesRef} />
+      <Gallery ref={galleryRef} />
+      <Contact ref={contactRef} />
+    </>
+  );
+
+  return (
+    <>
+      <Helmet>
+        <html lang={language} />
+        <title>{t("meta.title")}</title>
+        <meta name="description" content={t("meta.description")} />
+        <meta property="og:title" content={t("meta.ogTitle")} />
+        <meta property="og:description" content={t("meta.ogDescription")} />
+      </Helmet>
+      
+      {/* Skip Link for Accessibility */}
+      <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:p-4 focus:bg-accent focus:text-white focus:z-50">
+        {t("accessibility.skipToContent")}
+      </a>
+      
+      <Navbar
+        onHomeClick={() => {
+          if (isSpecialPage) window.location.href = '/';
+          else scrollToSection(homeRef);
+        }}
+        onAboutClick={() => {
+          if (isSpecialPage) window.location.href = '/#about';
+          else scrollToSection(aboutRef);
+        }}
+        onServicesClick={() => {
+          if (isSpecialPage) window.location.href = '/#services';
+          else scrollToSection(servicesRef);
+        }}
+        onGalleryClick={() => {
+          if (isSpecialPage) window.location.href = '/#gallery';
+          else scrollToSection(galleryRef);
+        }}
+        onContactClick={() => {
+          if (isSpecialPage) window.location.href = '/#contact';
+          else scrollToSection(contactRef);
+        }}
+      />
+      
+      <main id="main-content" className="max-w-[1400px] mx-auto px-4 sm:px-6 md:px-8">
+        <Switch>
+          <Route path="/" component={MainContent} />
+          <Route path="/privacy-policy" component={PrivacyPolicy} />
+          <Route path="/terms" component={Terms} />
+          <Route component={NotFound} />
+        </Switch>
+      </main>
+      
+      <Footer 
+        onHomeClick={() => {
+          if (isSpecialPage) window.location.href = '/';
+          else scrollToSection(homeRef);
+        }}
+        onAboutClick={() => {
+          if (isSpecialPage) window.location.href = '/#about';
+          else scrollToSection(aboutRef);
+        }}
+        onServicesClick={() => {
+          if (isSpecialPage) window.location.href = '/#services';
+          else scrollToSection(servicesRef);
+        }}
+        onGalleryClick={() => {
+          if (isSpecialPage) window.location.href = '/#gallery';
+          else scrollToSection(galleryRef);
+        }}
+        onContactClick={() => {
+          if (isSpecialPage) window.location.href = '/#contact';
+          else scrollToSection(contactRef);
+        }}
+      />
+      
+      {/* Modals */}
+      <GalleryModal />
+      <ServiceModal />
+    </>
+  );
+}
+
+export default App;
+
+
+
+poprawne kolory dla dark
+------------------------
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 0 0% 10.2%;
+    --muted: 60 4.8% 95.9%;
+    --muted-foreground: 25 5.3% 44.7%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 10.2%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 10.2%;
+    --border: 20 5.9% 90%;
+    --input: 20 5.9% 90%;
+    --primary: 0 0% 10.2%; /* #1a1a1a */
+    --primary-foreground: 0 0% 100%;
+    --secondary: 0 0% 100%; /* #ffffff */
+    --secondary-foreground: 0 0% 10.2%;
+    --accent: 36 77% 55%; /* #c4a15a */
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 60 9.1% 97.8%;
+    --ring: 0 0% 10.2%;
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: 33 25% 20%; /* Modified to a warmer brown */
+    --foreground: 45 80% 75%; /* Jasny złoty */
+    --muted: 35 25% 25%; /* Ciemniejszy brąz */
+    --muted-foreground: 45 70% 75%; /* Jasny złoty */
+    --popover: 30 25% 20%;
+    --popover-foreground: 45 80% 75%; /* Jasny złoty */
+    --card: 35 30% 25%; /* Ciepły brąz dla kart */
+    --card-foreground: 45 80% 75%; /* Jasny złoty */
+    --border: 35 25% 30%;
+    --input: 35 25% 30%;
+    --primary: 45 80% 75%; /* Jasny złoty */
+    --primary-foreground: 30 25% 20%;
+    --secondary: 35 30% 25%; /* Ciepły brąz */
+    --secondary-foreground: 45 80% 75%; /* Jasny złoty */
+    --accent: 36 77% 55%; /* Złoty akcent */
+    --accent-foreground: 45 80% 75%; /* Jasny złoty */
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 45 80% 75%; /* Jasny złoty */
+    --ring: 35 25% 30%;
+  }
+
+  /* Dark mode sections with lighter alternating colors */
+  .dark body {
+    background: hsl(33, 25%, 25%); /* Modified to a warmer brown */
+  }
+
+  .dark header {
+    background: hsl(
+      35,
+      30%,
+      18%
+    ) !important; /* Ciemniejszy brąz dla nawigacji */
+  }
+
+  .dark footer {
+    background: hsl(32, 28%, 18%) !important; /* Ciemniejszy brąz dla stopki */
+  }
+
+  .dark .section-home {
+    background: hsl(33, 25%, 25%); /* Modified to a warmer brown */
+  }
+
+  .dark .section-about {
+    background: hsl(35, 35%, 30%); /* Jaśniejsze złoto */
+  }
+
+  .dark .section-services {
+    background: hsl(33, 25%, 25%); /* Modified to a warmer brown */
+  }
+
+  .dark .section-gallery {
+    background: hsl(40, 35%, 30%); /* Jaśniejszy bursztyn */
+  }
+
+  .dark .section-contact {
+    background: hsl(33, 25%, 25%); /* Modified to a warmer brown */
+  }
+
+  /* Form styling in dark mode */
+  .dark input,
+  .dark textarea,
+  .dark div[class*="bg-[#253754]"] {
+    background: hsl(
+      35,
+      25%,
+      18%
+    ) !important; /* Ciemniejszy brąz dla pól formularza */
+    border-color: hsl(35, 25%, 25%) !important;
+  }
+
+  /* Fixing blue elements in contact section */
+  .dark .section-contact button,
+  .dark .section-contact a {
+    background-color: hsl(35, 30%, 18%) !important;
+    color: hsl(0, 0%, 100%) !important;
+  }
+
+  .dark .section-contact button:hover,
+  .dark .section-contact a:hover {
+    background-color: hsl(35, 30%, 25%) !important;
+  }
+
+  /* Override for specific background elements */
+  .dark .dark\:bg-\[\#1e1e1e\],
+  .dark [class*="dark:bg-[#1e1e1e]"] {
+    background-color: hsl(35, 25%, 18%) !important;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply antialiased bg-background text-foreground;
+    font-family: "Inter", sans-serif;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: "Playfair Display", serif;
+  }
+
+  .playfair {
+    font-family: "Playfair Display", serif;
+  }
+
+  /* Smooth scrolling for the entire page */
+  html {
+    scroll-behavior: smooth;
+  }
+
+  /* Transition for hover effects */
+  .custom-transition {
+    @apply transition duration-300 ease-in-out;
+  }
+}
+
+
+----------------------------
+
+import type { Config } from "tailwindcss";
+
+export default {
+  darkMode: ["class"],
+  content: ["./client/index.html", "./client/src/**/*.{js,jsx,ts,tsx}"],
+  theme: {
+    extend: {
+      borderRadius: {
+        lg: "var(--radius)",
+        md: "calc(var(--radius) - 2px)",
+        sm: "calc(var(--radius) - 4px)",
+      },
+      colors: {
+        background: "hsl(var(--background))",
+        foreground: "hsl(var(--foreground))",
+        card: {
+          DEFAULT: "hsl(var(--card))",
+          foreground: "hsl(var(--card-foreground))",
+        },
+        popover: {
+          DEFAULT: "hsl(var(--popover))",
+          foreground: "hsl(var(--popover-foreground))",
+        },
+        primary: {
+          DEFAULT: "hsl(var(--primary))",
+          foreground: "hsl(var(--primary-foreground))",
+        },
+        secondary: {
+          DEFAULT: "hsl(var(--secondary))",
+          foreground: "hsl(var(--secondary-foreground))",
+        },
+        muted: {
+          DEFAULT: "hsl(var(--muted))",
+          foreground: "hsl(var(--muted-foreground))",
+        },
+        accent: {
+          DEFAULT: "hsl(var(--accent))",
+          foreground: "hsl(var(--accent-foreground))",
+        },
+        destructive: {
+          DEFAULT: "hsl(var(--destructive))",
+          foreground: "hsl(var(--destructive-foreground))",
+        },
+        border: "hsl(var(--border))",
+        input: "hsl(var(--input))",
+        ring: "hsl(var(--ring))",
+        chart: {
+          "1": "hsl(var(--chart-1))",
+          "2": "hsl(var(--chart-2))",
+          "3": "hsl(var(--chart-3))",
+          "4": "hsl(var(--chart-4))",
+          "5": "hsl(var(--chart-5))",
+        },
+        sidebar: {
+          DEFAULT: "hsl(var(--sidebar-background))",
+          foreground: "hsl(var(--sidebar-foreground))",
+          primary: "hsl(var(--sidebar-primary))",
+          "primary-foreground": "hsl(var(--sidebar-primary-foreground))",
+          accent: "hsl(var(--sidebar-accent))",
+          "accent-foreground": "hsl(var(--sidebar-accent-foreground))",
+          border: "hsl(var(--sidebar-border))",
+          ring: "hsl(var(--sidebar-ring))",
+        },
+      },
+      keyframes: {
+        "accordion-down": {
+          from: {
+            height: "0",
+          },
+          to: {
+            height: "var(--radix-accordion-content-height)",
+          },
+        },
+        "accordion-up": {
+          from: {
+            height: "var(--radix-accordion-content-height)",
+          },
+          to: {
+            height: "0",
+          },
+        },
+      },
+      animation: {
+        "accordion-down": "accordion-down 0.2s ease-out",
+        "accordion-up": "accordion-up 0.2s ease-out",
+      },
+    },
+  },
+  plugins: [require("tailwindcss-animate"), require("@tailwindcss/typography")],
+} satisfies Config;
+
+
+-----------------------------------
+
+import React, { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
+import { Link } from "wouter";
+import { FaScissors } from "react-icons/fa6";
+import {
+  FaFacebookF,
+  FaInstagram,
+  FaTwitter,
+  FaPaperPlane,
+} from "react-icons/fa";
+import { useToast } from "@/hooks/use-toast";
+import { validateEmail } from "@/lib/utils";
+import { getCurrentYear } from "@/lib/utils";
+import { useForm, ValidationError } from "@formspree/react";
+
+interface FooterProps {
+  onHomeClick: () => void;
+  onAboutClick: () => void;
+  onServicesClick: () => void;
+  onGalleryClick: () => void;
+  onContactClick: () => void;
+}
+
+const Footer = ({
+  onHomeClick,
+  onAboutClick,
+  onServicesClick,
+  onGalleryClick,
+  onContactClick,
+}: FooterProps) => {
+  const { t } = useTranslation();
+  const { toast } = useToast();
+  const [email, setEmail] = useState("");
+
+  // Formspree form hook - replace with your newsletter form ID
+  const [formState, handleFormspreeSubmit] = useForm(
+    "TWÓJ_NOWY_ID_DLA_NEWSLETTERA"
+  );
+
+  // Debug formState
+  console.log("Newsletter form state:", formState);
+
+  const handleNewsletterSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    if (!email || !validateEmail(email)) {
+      toast({
+        title: t("toast.error"),
+        description: t("toast.invalidEmail"),
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Submit to Formspree
+    handleFormspreeSubmit(e);
+  };
+
+  // Reset form and show success message when form is successfully submitted
+  useEffect(() => {
+    // Show console logs for debugging
+    console.log(
+      "Newsletter form useEffect running, succeeded:",
+      formState.succeeded
+    );
+
+    if (formState.succeeded) {
+      console.log("Newsletter form succeeded, showing toast");
+
+      toast({
+        title: t("toast.success"),
+        description: t("toast.newsletterSuccess"),
+        variant: "default",
+      });
+
+      setEmail("");
+    }
+  }, [formState.succeeded, t, toast]);
+
+  return (
+    <footer className="bg-background/95 text-foreground dark:bg-[#1a1a1a] dark:text-white py-12">
+      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 md:px-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div>
+            <div className="flex items-center mb-6">
+              <FaScissors className="text-accent mr-2" />
+              <span className="text-2xl font-bold playfair tracking-wider">
+                AGILERA
+              </span>
+            </div>
+            <p className="text-gray-500 dark:text-gray-300 mb-6">
+              {t("footer.description")}
+            </p>
+            <div className="flex space-x-4">
+              <a
+                href="https://facebook.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-gray-500 dark:text-white hover:text-accent transition duration-300 ease-in-out"
+                aria-label="Facebook"
+              >
+                <FaFacebookF />
+              </a>
+              <a
+                href="https://instagram.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-gray-500 dark:text-white hover:text-accent transition duration-300 ease-in-out"
+                aria-label="Instagram"
+              >
+                <FaInstagram />
+              </a>
+              <a
+                href="https://twitter.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-gray-500 dark:text-white hover:text-accent transition duration-300 ease-in-out"
+                aria-label="Twitter"
+              >
+                <FaTwitter />
+              </a>
+            </div>
+          </div>
+
+          <div>
+            <h4 className="text-xl font-semibold playfair mb-6">
+              {t("footer.quickLinks")}
+            </h4>
+            <ul className="space-y-3">
+              <li>
+                <button
+                  onClick={onHomeClick}
+                  className="text-gray-500 dark:text-gray-300 hover:text-accent transition duration-300 ease-in-out"
+                >
+                  {t("nav.home")}
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={onAboutClick}
+                  className="text-gray-500 dark:text-gray-300 hover:text-accent transition duration-300 ease-in-out"
+                >
+                  {t("nav.about")}
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={onServicesClick}
+                  className="text-gray-500 dark:text-gray-300 hover:text-accent transition duration-300 ease-in-out"
+                >
+                  {t("nav.services")}
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={onGalleryClick}
+                  className="text-gray-500 dark:text-gray-300 hover:text-accent transition duration-300 ease-in-out"
+                >
+                  {t("nav.gallery")}
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={onContactClick}
+                  className="text-gray-500 dark:text-gray-300 hover:text-accent transition duration-300 ease-in-out"
+                >
+                  {t("nav.contact")}
+                </button>
+              </li>
+            </ul>
+          </div>
+
+          <div>
+            <h4 className="text-xl font-semibold playfair mb-6">
+              {t("footer.openingHours")}
+            </h4>
+            <ul className="space-y-2 text-gray-500 dark:text-gray-300">
+              <li>{t("footer.monday")}: 9:00 - 17:00</li>
+              <li>{t("footer.tuesday")}: 9:00 - 17:00</li>
+              <li>{t("footer.wednesday")}: 9:00 - 17:00</li>
+              <li>{t("footer.thursday")}: 9:00 - 17:00</li>
+              <li>{t("footer.friday")}: 9:00 - 17:00</li>
+              <li>{t("footer.saturday")}: 9:00 - 14:00</li>
+              <li>
+                {t("footer.sunday")}: {t("footer.closed")}
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div className="border-t border-gray-200 dark:border-gray-800 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
+          <p className="text-gray-500 text-sm mb-4 md:mb-0">
+            &copy; {getCurrentYear()} {t("footer.copyright")}
+          </p>
+          <div className="flex space-x-4">
+            <Link
+              href="/privacy-policy"
+              className="text-gray-500 hover:text-accent text-sm transition duration-300 ease-in-out"
+            >
+              {t("footer.privacyPolicy")}
+            </Link>
+            <Link
+              href="/terms"
+              className="text-gray-500 hover:text-accent text-sm transition duration-300 ease-in-out"
+            >
+              {t("footer.terms")}
+            </Link>
+          </div>
+        </div>
+      </div>
+    </footer>
+  );
+};
+
+export default Footer;
+
+
+---------------------------
+
+import { FaMoon, FaSun } from 'react-icons/fa';
+import { useTheme } from '@/context/ThemeContext';
+import { useTranslation } from 'react-i18next';
+
+interface ThemeToggleProps {
+  isMobile?: boolean;
+}
+
+const ThemeToggle = ({ isMobile = false }: ThemeToggleProps) => {
+  const { t } = useTranslation();
+  const { theme, toggleTheme } = useTheme();
+  
+  console.log("ThemeToggle rendering, current theme:", theme);
+
+  // Create a direct handler that uses document manipulation
+  const handleToggleTheme = () => {
+    console.log("ThemeToggle: Button clicked, current theme:", theme);
+    
+    // Manual document class manipulation for immediate visual feedback
+    const isDark = document.documentElement.classList.contains('dark');
+    if (isDark) {
+      document.documentElement.classList.remove('dark');
+      localStorage.setItem('theme', 'light');
+      console.log("ThemeToggle: Manually switched to light mode");
+    } else {
+      document.documentElement.classList.add('dark');
+      localStorage.setItem('theme', 'dark');
+      console.log("ThemeToggle: Manually switched to dark mode");
+    }
+    
+    // Also call the context toggler to maintain state
+    toggleTheme();
+  };
+  
+  return (
+    <button 
+      onClick={handleToggleTheme}
+      className="text-primary dark:text-white hover:text-accent dark:hover:text-accent transition duration-300 ease-in-out"
+      aria-label={t('accessibility.toggleTheme')}
+    >
+      {document.documentElement.classList.contains('dark') ? <FaSun /> : <FaMoon />}
+    </button>
+  );
+};
+
+export default ThemeToggle;

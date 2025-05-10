@@ -1,0 +1,1210 @@
+import { useState, useEffect, useRef, useCallback } from "react";
+import { useTranslation } from "react-i18next";
+import { motion, AnimatePresence } from "framer-motion";
+import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
+import { useGalleryModal } from "@/context/GalleryContext";
+import { galleryData } from "@/data/galleryData";
+import { useIsMobile } from "@/hooks/use-mobile";
+
+const GallerySlider = () => {
+  const { t } = useTranslation();
+  const { openGalleryModal } = useGalleryModal();
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [touchStart, setTouchStart] = useState(0);
+  const [touchEnd, setTouchEnd] = useState(0);
+  const [direction, setDirection] = useState<"next" | "prev">("next");
+  const sliderRef = useRef<HTMLDivElement>(null);
+  const isMobile = useIsMobile();
+  const [isPaused, setIsPaused] = useState(false);
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+
+  const flattenedImages = galleryData.flatMap((slide) => slide.images);
+  const desktopTotalSlides = galleryData.length;
+  const mobileTotalSlides = flattenedImages.length;
+  const currentViewTotalItems = isMobile
+    ? mobileTotalSlides
+    : desktopTotalSlides;
+
+  const goToNextSlideStable = useCallback(() => {
+    setDirection("next");
+    setCurrentIndex((prev) => (prev + 1) % currentViewTotalItems);
+  }, [currentViewTotalItems]);
+
+  useEffect(() => {
+    const clearAutoplayInterval = () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
+      }
+    };
+
+    if (!isPaused && currentViewTotalItems > 1) {
+      clearAutoplayInterval();
+      intervalRef.current = setInterval(goToNextSlideStable, 5000);
+    } else {
+      clearAutoplayInterval();
+    }
+    return () => clearAutoplayInterval();
+  }, [isPaused, currentViewTotalItems, goToNextSlideStable]);
+
+  const goToSlide = (slideIndex: number, newDirection?: "next" | "prev") => {
+    let newIndex = slideIndex;
+    if (newIndex < 0) newIndex = currentViewTotalItems - 1;
+    if (newIndex >= currentViewTotalItems) newIndex = 0;
+
+    if (newDirection) {
+      setDirection(newDirection);
+    } else {
+      if (newIndex > currentIndex) {
+        if (currentIndex === 0 && newIndex === currentViewTotalItems - 1) {
+          setDirection("prev");
+        } else {
+          setDirection("next");
+        }
+      } else if (newIndex < currentIndex) {
+        if (currentIndex === currentViewTotalItems - 1 && newIndex === 0) {
+          setDirection("next");
+        } else {
+          setDirection("prev");
+        }
+      }
+    }
+    setCurrentIndex(newIndex);
+  };
+
+  const goToPrevSlide = () => {
+    setDirection("prev");
+    setCurrentIndex(
+      (prev) => (prev - 1 + currentViewTotalItems) % currentViewTotalItems
+    );
+  };
+
+  const goToNextSlide = () => {
+    setDirection("next");
+    setCurrentIndex((prev) => (prev + 1) % currentViewTotalItems);
+  };
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setTouchStart(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    setTouchEnd(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchEnd = () => {
+    if (touchStart - touchEnd > 50) {
+      goToNextSlide();
+    }
+    if (touchStart - touchEnd < -50) {
+      goToPrevSlide();
+    }
+  };
+
+  const handleImageClick = (imageData: {
+    src: string;
+    fullSrc?: string;
+    alt: string;
+  }) => {
+    openGalleryModal(imageData.fullSrc || imageData.src, imageData.alt);
+  };
+
+  const renderContent = () => {
+    if (isMobile) {
+      const currentImage = flattenedImages[currentIndex];
+      if (!currentImage) return null;
+      return (
+        <div className="w-full">
+          <div
+            className="gallery-item cursor-pointer overflow-hidden rounded-md shadow-md"
+            onClick={() => handleImageClick(currentImage)}
+          >
+            <img
+              src={currentImage.src}
+              alt={currentImage.alt}
+              className="w-full h-96 object-cover transition duration-300 ease-in-out hover:scale-105"
+              loading="lazy"
+            />
+          </div>
+        </div>
+      );
+    }
+
+    const currentSlideData = galleryData[currentIndex];
+    if (!currentSlideData || !currentSlideData.images) return null;
+    const desktopGridHeight = "h-[450px]";
+
+    return (
+      <div className={`grid grid-cols-3 gap-4 ${desktopGridHeight}`}>
+        {currentSlideData.images.map((image, index) => (
+          <div
+            key={`image-${currentIndex}-${index}`}
+            className="gallery-item cursor-pointer overflow-hidden rounded-md shadow-md h-full"
+            onClick={() => handleImageClick(image)}
+          >
+            <img
+              src={image.src}
+              alt={image.alt}
+              className="w-full h-full object-cover transition duration-300 ease-in-out hover:scale-105"
+              loading="lazy"
+            />
+          </div>
+        ))}
+      </div>
+    );
+  };
+
+  const handleMouseEnter = () => {
+    setIsPaused(true);
+  };
+
+  const handleMouseLeave = () => {
+    setIsPaused(false);
+  };
+
+  const renderDots = () => {
+    const dots = [];
+
+    const itemsToIterate = currentViewTotalItems;
+    for (let i = 0; i < itemsToIterate; i++) {
+      dots.push(
+        <button
+          key={`dot-${i}`}
+          onClick={() => goToSlide(i)}
+          className={`w-3 h-3 rounded-full transition duration-300 ease-in-out ${
+            currentIndex === i
+              ? "bg-accent"
+              : "bg-neutral dark:bg-gray-600 hover:bg-accent dark:hover:bg-accent"
+          }`}
+          aria-label={t("accessibility.goToSlide", { number: i + 1 })}
+        />
+      );
+    }
+    return dots;
+  };
+
+  const spaceForDotsAndMarginPx = 56;
+  const desktopGridHeightPx = 450;
+
+  const mobileContainerMinHeight = `min-h-[calc(24rem+1.5rem)]`; //
+  const desktopContainerMinHeight = `min-h-[calc(${desktopGridHeightPx}px+${spaceForDotsAndMarginPx}px)]`;
+
+  return (
+    <div
+      className={`relative ${
+        isMobile ? mobileContainerMinHeight : desktopContainerMinHeight
+      }`}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+    >
+      <div
+        ref={sliderRef}
+        className="overflow-hidden h-full"
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
+      >
+        <AnimatePresence mode="wait" initial={false}>
+          <motion.div
+            key={currentIndex}
+            initial={{
+              opacity: 0,
+              x: direction === "next" ? "100%" : "-100%",
+            }}
+            animate={{ opacity: 1, x: "0%" }}
+            exit={{
+              opacity: 0,
+              x: direction === "next" ? "-100%" : "100%",
+            }}
+            custom={direction}
+            transition={{ duration: 0.5 }}
+            className="px-4 h-full"
+          >
+            {renderContent()}
+          </motion.div>
+        </AnimatePresence>
+      </div>
+
+      <button
+        onClick={goToPrevSlide}
+        className="absolute top-1/2 left-0 transform -translate-y-1/2 -translate-x-0 md:-translate-x-1/2 bg-accent text-white p-3 rounded-r-md md:rounded-full opacity-70 hover:opacity-100 transition duration-300 ease-in-out z-10"
+        aria-label={t("accessibility.previousSlide")}
+      >
+        <FaChevronLeft />
+      </button>
+
+      <button
+        onClick={goToNextSlide}
+        className="absolute top-1/2 right-0 transform -translate-y-1/2 translate-x-0 md:translate-x-1/2 bg-accent text-white p-3 rounded-l-md md:rounded-full opacity-70 hover:opacity-100 transition duration-300 ease-in-out z-10"
+        aria-label={t("accessibility.nextSlide")}
+      >
+        <FaChevronRight />
+      </button>
+
+      {!isMobile && (
+        <div className="flex justify-center items-center mt-6 gap-2">
+          {renderDots()}
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default GallerySlider;
+
+
+-----------------------------
+
+import { useState, useEffect, useRef, useCallback } from "react";
+import { useTranslation } from "react-i18next";
+import { motion, AnimatePresence } from "framer-motion";
+import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
+import { useGalleryModal } from "@/context/GalleryContext";
+import { galleryData } from "@/data/galleryData";
+import { useIsMobile } from "@/hooks/use-mobile";
+
+const GallerySlider = () => {
+  const { t } = useTranslation();
+  const { openGalleryModal } = useGalleryModal();
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [touchStart, setTouchStart] = useState(0);
+  const [touchEnd, setTouchEnd] = useState(0);
+  const [direction, setDirection] = useState<"next" | "prev">("next");
+  const sliderRef = useRef<HTMLDivElement>(null);
+  const isMobile = useIsMobile();
+  const [isPaused, setIsPaused] = useState(false);
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+
+  const flattenedImages = galleryData.flatMap((slide) => slide.images);
+  const desktopTotalSlides = galleryData.length;
+  const mobileTotalSlides = flattenedImages.length;
+  const currentViewTotalItems = isMobile
+    ? mobileTotalSlides
+    : desktopTotalSlides;
+
+  const goToNextSlideStable = useCallback(() => {
+    setDirection("next");
+    setCurrentIndex((prev) => (prev + 1) % currentViewTotalItems);
+  }, [currentViewTotalItems]);
+
+  useEffect(() => {
+    const clearAutoplayInterval = () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
+      }
+    };
+
+    if (!isPaused && currentViewTotalItems > 1) {
+      clearAutoplayInterval();
+      intervalRef.current = setInterval(goToNextSlideStable, 5000);
+    } else {
+      clearAutoplayInterval();
+    }
+    return () => clearAutoplayInterval();
+  }, [isPaused, currentViewTotalItems, goToNextSlideStable]);
+
+  const goToSlide = (slideIndex: number, newDirection?: "next" | "prev") => {
+    let newIndex = slideIndex;
+    if (newIndex < 0) newIndex = currentViewTotalItems - 1;
+    if (newIndex >= currentViewTotalItems) newIndex = 0;
+
+    if (newDirection) {
+      setDirection(newDirection);
+    } else {
+      if (newIndex > currentIndex) {
+        if (currentIndex === 0 && newIndex === currentViewTotalItems - 1) {
+          setDirection("prev");
+        } else {
+          setDirection("next");
+        }
+      } else if (newIndex < currentIndex) {
+        if (currentIndex === currentViewTotalItems - 1 && newIndex === 0) {
+          setDirection("next");
+        } else {
+          setDirection("prev");
+        }
+      }
+    }
+    setCurrentIndex(newIndex);
+  };
+
+  const goToPrevSlide = () => {
+    setDirection("prev");
+    setCurrentIndex(
+      (prev) => (prev - 1 + currentViewTotalItems) % currentViewTotalItems
+    );
+  };
+
+  const goToNextSlide = () => {
+    setDirection("next");
+    setCurrentIndex((prev) => (prev + 1) % currentViewTotalItems);
+  };
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setTouchStart(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    setTouchEnd(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchEnd = () => {
+    if (touchStart - touchEnd > 50) {
+      goToNextSlide();
+    }
+    if (touchStart - touchEnd < -50) {
+      goToPrevSlide();
+    }
+  };
+
+  const handleImageClick = (imageData: {
+    src: string;
+    fullSrc?: string;
+    alt: string;
+  }) => {
+    openGalleryModal(imageData.fullSrc || imageData.src, imageData.alt);
+  };
+
+  const renderContent = () => {
+    if (isMobile) {
+      const currentImage = flattenedImages[currentIndex];
+      if (!currentImage) return null;
+      return (
+        <div className="w-full">
+          <div
+            className="gallery-item cursor-pointer overflow-hidden rounded-md shadow-md"
+            onClick={() => handleImageClick(currentImage)}
+          >
+            <img
+              src={currentImage.src}
+              alt={currentImage.alt}
+              className="w-full h-96 object-cover transition duration-300 ease-in-out hover:scale-105"
+              loading="lazy"
+            />
+          </div>
+        </div>
+      );
+    }
+
+    const currentSlideData = galleryData[currentIndex];
+    if (!currentSlideData || !currentSlideData.images) return null;
+    const desktopGridHeight = "h-[450px]";
+
+    return (
+      <div className={`grid grid-cols-3 gap-4 ${desktopGridHeight}`}>
+        {currentSlideData.images.map((image, index) => (
+          <div
+            key={`image-${currentIndex}-${index}`}
+            className="gallery-item cursor-pointer overflow-hidden rounded-md shadow-md h-full"
+            onClick={() => handleImageClick(image)}
+          >
+            <img
+              src={image.src}
+              alt={image.alt}
+              className="w-full h-full object-cover transition duration-300 ease-in-out hover:scale-105"
+              loading="lazy"
+            />
+          </div>
+        ))}
+      </div>
+    );
+  };
+
+  const handleMouseEnter = () => {
+    setIsPaused(true);
+  };
+
+  const handleMouseLeave = () => {
+    setIsPaused(false);
+  };
+
+  const renderDots = () => {
+    const dots = [];
+
+    const itemsToIterate = currentViewTotalItems;
+    for (let i = 0; i < itemsToIterate; i++) {
+      dots.push(
+        <button
+          key={`dot-${i}`}
+          onClick={() => goToSlide(i)}
+          className={`w-3 h-3 rounded-full transition duration-300 ease-in-out ${
+            currentIndex === i
+              ? "bg-accent"
+              : "bg-neutral dark:bg-gray-600 hover:bg-accent dark:hover:bg-accent"
+          }`}
+          aria-label={t("accessibility.goToSlide", { number: i + 1 })}
+        />
+      );
+    }
+    return dots;
+  };
+
+  const spaceForDotsAndMarginPx = 56;
+  const desktopGridHeightPx = 450;
+
+  const mobileContainerMinHeight = `min-h-[calc(24rem+1.5rem)]`;
+  const desktopContainerMinHeight = `min-h-[calc(${desktopGridHeightPx}px+${spaceForDotsAndMarginPx}px)]`;
+
+  const backgroundImageUrl = "/assets/10.jfif";
+
+  return (
+    <div
+      className={`relative ${
+        isMobile ? mobileContainerMinHeight : desktopContainerMinHeight
+      }`}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+    >
+      <div
+        ref={sliderRef}
+        className={`overflow-hidden h-full bg-cover bg-center bg-no-repeat`}
+        style={{ backgroundImage: `url(${backgroundImageUrl})` }} // Dynamiczne ustawienie tła
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
+      >
+        <AnimatePresence mode="wait" initial={false}>
+          <motion.div
+            key={currentIndex}
+            initial={{
+              opacity: 0,
+              x: direction === "next" ? "100%" : "-100%",
+            }}
+            animate={{ opacity: 1, x: "0%" }}
+            exit={{
+              opacity: 0,
+              x: direction === "next" ? "-100%" : "100%",
+            }}
+            custom={direction}
+            transition={{ duration: 0.5 }}
+            className="px-4 h-full" // Ten padding px-4 oznacza, że tło będzie widoczne na krawędziach podczas przejścia
+          >
+            {renderContent()}
+          </motion.div>
+        </AnimatePresence>
+      </div>
+
+      <button
+        onClick={goToPrevSlide}
+        className="absolute top-1/2 left-0 transform -translate-y-1/2 -translate-x-0 md:-translate-x-1/2 bg-accent text-white p-3 rounded-r-md md:rounded-full opacity-70 hover:opacity-100 transition duration-300 ease-in-out z-10"
+        aria-label={t("accessibility.previousSlide")}
+      >
+        <FaChevronLeft />
+      </button>
+
+      <button
+        onClick={goToNextSlide}
+        className="absolute top-1/2 right-0 transform -translate-y-1/2 translate-x-0 md:translate-x-1/2 bg-accent text-white p-3 rounded-l-md md:rounded-full opacity-70 hover:opacity-100 transition duration-300 ease-in-out z-10"
+        aria-label={t("accessibility.nextSlide")}
+      >
+        <FaChevronRight />
+      </button>
+
+      {!isMobile && (
+        <div className="flex justify-center items-center mt-6 gap-2">
+          {renderDots()}
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default GallerySlider;
+
+
+------------------------------
+
+import { useState, useEffect, useRef, useCallback } from "react";
+import { useTranslation } from "react-i18next";
+import { motion, AnimatePresence } from "framer-motion";
+import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
+import { useGalleryModal } from "@/context/GalleryContext";
+import { galleryData } from "@/data/galleryData";
+import { useIsMobile } from "@/hooks/use-mobile";
+
+const GallerySlider = () => {
+  const { t } = useTranslation();
+  const { openGalleryModal } = useGalleryModal();
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [touchStart, setTouchStart] = useState(0);
+  const [touchEnd, setTouchEnd] = useState(0);
+  const [direction, setDirection] = useState<"next" | "prev">("next");
+  const sliderRef = useRef<HTMLDivElement>(null); // Ref dla głównego kontenera dotykowego
+  const isMobile = useIsMobile();
+  const [isPaused, setIsPaused] = useState(false);
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+
+  const flattenedImages = galleryData.flatMap((slide) => slide.images);
+  const desktopTotalSlides = galleryData.length;
+  const mobileTotalSlides = flattenedImages.length;
+  const currentViewTotalItems = isMobile
+    ? mobileTotalSlides
+    : desktopTotalSlides;
+
+  const goToNextSlideStable = useCallback(() => {
+    setDirection("next");
+    setCurrentIndex((prev) => (prev + 1) % currentViewTotalItems);
+  }, [currentViewTotalItems]);
+
+  useEffect(() => {
+    const clearAutoplayInterval = () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
+      }
+    };
+
+    if (!isPaused && currentViewTotalItems > 1) {
+      clearAutoplayInterval();
+      intervalRef.current = setInterval(goToNextSlideStable, 5000);
+    } else {
+      clearAutoplayInterval();
+    }
+    return () => clearAutoplayInterval();
+  }, [isPaused, currentViewTotalItems, goToNextSlideStable]);
+
+  const goToSlide = (slideIndex: number, newDirection?: "next" | "prev") => {
+    let newIndex = slideIndex;
+    if (newIndex < 0) newIndex = currentViewTotalItems - 1;
+    if (newIndex >= currentViewTotalItems) newIndex = 0;
+
+    if (newDirection) {
+      setDirection(newDirection);
+    } else {
+      if (newIndex > currentIndex) {
+        if (currentIndex === 0 && newIndex === currentViewTotalItems - 1) {
+          setDirection("prev");
+        } else {
+          setDirection("next");
+        }
+      } else if (newIndex < currentIndex) {
+        if (currentIndex === currentViewTotalItems - 1 && newIndex === 0) {
+          setDirection("next");
+        } else {
+          setDirection("prev");
+        }
+      }
+    }
+    setCurrentIndex(newIndex);
+  };
+
+  const goToPrevSlide = () => {
+    setDirection("prev");
+    setCurrentIndex(
+      (prev) => (prev - 1 + currentViewTotalItems) % currentViewTotalItems
+    );
+  };
+
+  const goToNextSlide = () => {
+    setDirection("next");
+    setCurrentIndex((prev) => (prev + 1) % currentViewTotalItems);
+  };
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setTouchStart(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    setTouchEnd(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchEnd = () => {
+    if (touchStart - touchEnd > 50) {
+      goToNextSlide();
+    }
+    if (touchStart - touchEnd < -50) {
+      goToPrevSlide();
+    }
+  };
+
+  const handleImageClick = (imageData: {
+    src: string;
+    fullSrc?: string;
+    alt: string;
+  }) => {
+    openGalleryModal(imageData.fullSrc || imageData.src, imageData.alt);
+  };
+
+  // ZMIEŃ '/images/slider-background.jpg' na rzeczywistą ścieżkę do Twojego obrazka.
+  const backgroundImageUrl = "/assets/10.jfif";
+
+  const renderContent = () => {
+    // Zawartość slajdu (zdjęcia) - bez własnego tła i zaokrągleń na głównym kontenerze
+    if (isMobile) {
+      const currentImage = flattenedImages[currentIndex];
+      if (!currentImage) return null;
+      return (
+        <div className="w-full h-full flex items-center justify-center">
+          <div
+            className="gallery-item cursor-pointer overflow-hidden rounded-md shadow-md"
+            onClick={() => handleImageClick(currentImage)}
+          >
+            <img
+              src={currentImage.src}
+              alt={currentImage.alt}
+              className="w-full h-full object-cover transition duration-300 ease-in-out hover:scale-105 rounded-md" // h-full aby wypełnić kontener o zdefiniowanej wysokości
+              loading="lazy"
+            />
+          </div>
+        </div>
+      );
+    }
+
+    const currentSlideData = galleryData[currentIndex];
+    if (!currentSlideData || !currentSlideData.images) return null;
+
+    return (
+      <div className={`grid grid-cols-3 gap-4 w-full h-full`}>
+        {currentSlideData.images.map((image, index) => (
+          <div
+            key={`image-${currentIndex}-${index}`}
+            className="gallery-item cursor-pointer overflow-hidden rounded-md shadow-md h-full"
+            onClick={() => handleImageClick(image)}
+          >
+            <img
+              src={image.src}
+              alt={image.alt}
+              className="w-full h-full object-cover transition duration-300 ease-in-out hover:scale-105 rounded-md"
+              loading="lazy"
+            />
+          </div>
+        ))}
+      </div>
+    );
+  };
+
+  const handleMouseEnter = () => {
+    setIsPaused(true);
+  };
+
+  const handleMouseLeave = () => {
+    setIsPaused(false);
+  };
+
+  const renderDots = () => {
+    const dots = [];
+    const itemsToIterate = currentViewTotalItems;
+    for (let i = 0; i < itemsToIterate; i++) {
+      dots.push(
+        <button
+          key={`dot-${i}`}
+          onClick={() => goToSlide(i)}
+          className={`w-3 h-3 rounded-full transition duration-300 ease-in-out ${
+            currentIndex === i
+              ? "bg-accent"
+              : "bg-neutral dark:bg-gray-600 hover:bg-accent dark:hover:bg-accent"
+          }`}
+          aria-label={t("accessibility.goToSlide", { number: i + 1 })}
+        />
+      );
+    }
+    return dots;
+  };
+
+  const spaceForDotsAndMarginPx = 56; // Przestrzeń na kropki i margines pod nimi
+  const mobileImageHeight = "24rem"; // Odpowiada h-96 Tailwind
+  const desktopGridHeight = "450px"; // Odpowiada h-[450px] Tailwind
+
+  // Definiujemy wysokość samego obszaru slajdów (bez kropek)
+  const contentAreaHeight = isMobile ? mobileImageHeight : desktopGridHeight;
+
+  // Całkowita minimalna wysokość komponentu slidera
+  const mobileContainerMinHeight = `min-h-[calc(${mobileImageHeight} + 1rem)]`; // Wysokość obrazka + mały margines
+  const desktopContainerMinHeight = `min-h-[calc(${desktopGridHeight} + ${spaceForDotsAndMarginPx}px)]`; // Wysokość siatki + przestrzeń na kropki
+
+  return (
+    <div
+      className={`relative ${
+        isMobile ? mobileContainerMinHeight : desktopContainerMinHeight
+      }`}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+      ref={sliderRef} // Ref dla obsługi dotyku na całym komponencie
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
+    >
+      {/* Kontener dla obszaru slajdów z tłem i zaokrągleniami */}
+      <div
+        className="relative mx-4 rounded-md overflow-hidden bg-cover bg-center bg-no-repeat"
+        style={{
+          backgroundImage: `url(${backgroundImageUrl})`,
+          height: contentAreaHeight, // Ustawia stałą wysokość dla tła i obszaru animacji
+        }}
+      >
+        <AnimatePresence mode="wait" initial={false}>
+          <motion.div
+            key={currentIndex}
+            initial={{
+              opacity: 0,
+              x: direction === "next" ? "100%" : "-100%",
+            }}
+            animate={{ opacity: 1, x: "0%" }}
+            exit={{
+              opacity: 0,
+              x: direction === "next" ? "-100%" : "100%",
+            }}
+            custom={direction}
+            transition={{ duration: 0.5 }}
+            // Ten div wypełnia kontener z tłem (slideAreaContainer)
+            // Jest pozycjonowany absolutnie, aby kolejne slajdy nakładały się na siebie
+            className="absolute top-0 left-0 w-full h-full"
+          >
+            {/* W renderContent, obrazek/siatka powinny mieć h-full, aby wypełnić ten motion.div */}
+            {renderContent()}
+          </motion.div>
+        </AnimatePresence>
+      </div>
+
+      {/* Przyciski nawigacyjne - pozycjonowane względem głównego diva (rodzica) */}
+      <button
+        onClick={goToPrevSlide}
+        className="absolute top-1/2 left-0 transform -translate-y-1/2 -translate-x-0 md:-translate-x-1/2 bg-accent text-white p-3 rounded-r-md md:rounded-full opacity-70 hover:opacity-100 transition duration-300 ease-in-out z-10"
+        style={{ marginTop: `calc(-${contentAreaHeight} / 2)` }} // Centrowanie względem contentAreaHeight (połowa wysokości w górę)
+        aria-label={t("accessibility.previousSlide")}
+      >
+        <FaChevronLeft />
+      </button>
+
+      <button
+        onClick={goToNextSlide}
+        className="absolute top-1/2 right-0 transform -translate-y-1/2 translate-x-0 md:translate-x-1/2 bg-accent text-white p-3 rounded-l-md md:rounded-full opacity-70 hover:opacity-100 transition duration-300 ease-in-out z-10"
+        style={{ marginTop: `calc(-${contentAreaHeight} / 2)` }} // Centrowanie względem contentAreaHeight
+        aria-label={t("accessibility.nextSlide")}
+      >
+        <FaChevronRight />
+      </button>
+
+      {/* Kropki - pozycjonowane pod obszarem slajdów */}
+      {!isMobile && (
+        <div
+          className="flex justify-center items-center gap-2"
+          style={{ marginTop: "1.5rem" }} // Stały margines pod obszarem slajdów (mt-6)
+        >
+          {renderDots()}
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default GallerySlider;
+
+
+-----------------------------
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 0 0% 10.2%;
+    --muted: 60 4.8% 95.9%;
+    --muted-foreground: 25 5.3% 44.7%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 10.2%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 10.2%;
+    --border: 20 5.9% 90%;
+    --input: 20 5.9% 90%;
+    --primary: 0 0% 10.2%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 0 0% 100%; /* #ffffff */
+    --secondary-foreground: 0 0% 10.2%;
+    --accent: 36 77% 55%; /* #c4a15a */
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 60 9.1% 97.8%;
+    --ring: 0 0% 10.2%;
+    --radius: 0.5rem;
+  }
+  .text-primary {
+    color: hsl(var(--primary)); /* Używa zmiennej CSS --primary */
+  }
+  .dark {
+    --background: 33 25% 20%; /* Modified to a warmer brown */
+    --foreground: 45 80% 75%; /* Jasny złoty */
+    --muted: 35 25% 25%; /* Ciemniejszy brąz */
+    --muted-foreground: 45 70% 75%; /* Jasny złoty */
+    --popover: 30 25% 20%;
+    --popover-foreground: 45 80% 75%; /* Jasny złoty */
+    --card: 35 30% 25%; /* Ciepły brąz dla kart */
+    --card-foreground: 45 80% 75%; /* Jasny złoty */
+    --border: 35 25% 30%;
+    --input: 35 25% 30%;
+    --primary: 45 80% 75%; /* Jasny złoty */
+    --primary-foreground: 30 25% 20%;
+    --secondary: 35 30% 25%; /* Ciepły brąz */
+    --secondary-foreground: 45 80% 75%; /* Jasny złoty */
+    --accent: 36 77% 55%; /* Złoty akcent */
+    --accent-foreground: 45 80% 75%; /* Jasny złoty */
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 45 80% 75%; /* Jasny złoty */
+    --ring: 35 25% 30%;
+  }
+
+  /* Dark mode sections with lighter alternating colors */
+  .dark body {
+    background: hsl(33, 25%, 25%); /* Modified to a warmer brown */
+  }
+
+  .dark header {
+    background: hsl(
+      35,
+      30%,
+      18%
+    ) !important; /* Ciemniejszy brąz dla nawigacji */
+  }
+
+  .dark footer {
+    background: hsl(32, 28%, 18%) !important; /* Ciemniejszy brąz dla stopki */
+  }
+
+  .dark .section-home {
+    background: hsl(33, 25%, 25%); /* Modified to a warmer brown */
+  }
+
+  .dark .section-about {
+    background: hsl(35, 35%, 30%); /* Jaśniejsze złoto */
+  }
+
+  .dark .section-services {
+    background: hsl(33, 25%, 25%); /* Modified to a warmer brown */
+  }
+
+  .dark .section-gallery {
+    background: hsl(40, 35%, 30%); /* Jaśniejszy bursztyn */
+  }
+
+  .dark .section-contact {
+    background: hsl(33, 25%, 25%); /* Modified to a warmer brown */
+  }
+
+  /* Form styling in dark mode */
+  .dark input,
+  .dark textarea,
+  .dark div[class*="bg-[#253754]"] {
+    background: hsl(
+      35,
+      25%,
+      18%
+    ) !important; /* Ciemniejszy brąz dla pól formularza */
+    border-color: hsl(35, 25%, 25%) !important;
+  }
+
+  /* Fixing blue elements in contact section */
+  .dark .section-contact button,
+  .dark .section-contact a {
+    background-color: hsl(35, 30%, 18%) !important;
+    color: hsl(0, 0%, 100%) !important;
+  }
+
+  .dark .section-contact button:hover,
+  .dark .section-contact a:hover {
+    background-color: hsl(35, 30%, 25%) !important;
+  }
+
+  /* Override for specific background elements */
+  .dark .dark\:bg-\[\#1e1e1e\],
+  .dark [class*="dark:bg-[#1e1e1e]"] {
+    background-color: hsl(35, 25%, 18%) !important;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply antialiased bg-background text-foreground;
+    font-family: "Inter", sans-serif;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: "Playfair Display", serif;
+  }
+
+  .playfair {
+    font-family: "Playfair Display", serif;
+  }
+
+  /* Smooth scrolling for the entire page */
+  html {
+    scroll-behavior: smooth;
+  }
+
+  /* Transition for hover effects */
+  .custom-transition {
+    @apply transition duration-300 ease-in-out;
+  }
+}
+
+
+------------------------------
+
+import { useEffect } from "react";
+import { useTranslation } from "react-i18next";
+import { motion, AnimatePresence } from "framer-motion";
+import { FaTimes } from "react-icons/fa";
+import { useServiceModal } from "@/context/ServiceContext";
+
+const ServiceModal = () => {
+  const { t } = useTranslation();
+  const { isServiceModalOpen, serviceData, closeServiceModal } =
+    useServiceModal();
+  console.log("ServiceModal – isOpen:", isServiceModalOpen);
+  console.log("ServiceModal – serviceData:", serviceData);
+
+  useEffect(() => {
+    const handleEscKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape" && isServiceModalOpen) {
+        closeServiceModal();
+      }
+    };
+
+    window.addEventListener("keydown", handleEscKey);
+    console.log("Modal open:", isServiceModalOpen);
+    console.log("Service data:", serviceData);
+
+    return () => {
+      window.removeEventListener("keydown", handleEscKey);
+    };
+  }, [isServiceModalOpen, closeServiceModal]);
+
+  useEffect(() => {
+    if (isServiceModalOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isServiceModalOpen]);
+
+  const handleBookAppointment = () => {
+    closeServiceModal();
+
+    setTimeout(() => {
+      const contactSection = document.getElementById("contact");
+      if (contactSection) {
+        window.scrollTo({
+          top: contactSection.offsetTop - 80,
+          behavior: "smooth",
+        });
+      }
+    }, 300);
+  };
+
+  return (
+    <AnimatePresence>
+      {isServiceModalOpen && serviceData && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.3 }}
+          className="fixed inset-0 z-50 bg-black bg-opacity-75 flex items-center justify-center p-4"
+          onClick={closeServiceModal}
+        >
+          <motion.div
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0.9, opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            className="relative bg-white dark:bg-[#1e1e1e] rounded-lg max-w-2xl w-full"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              onClick={closeServiceModal}
+              className="absolute top-4 right-4 text-gray-500 hover:text-accent text-xl transition duration-300 ease-in-out"
+              aria-label={t("accessibility.closeModal")}
+            >
+              <FaTimes />
+            </button>
+            <div className="p-8">
+              <h3 className="text-2xl font-bold playfair mb-4">
+                {serviceData.title}
+              </h3>
+              <div
+                className="prose dark:prose-invert max-w-none"
+                dangerouslySetInnerHTML={{
+                  __html: serviceData.fullDescription,
+                }}
+              />
+              <div className="mt-8 flex justify-between items-center">
+                <span className="text-accent font-bold text-xl">
+                  {serviceData.price}
+                </span>
+                <button
+                  onClick={handleBookAppointment}
+                  className="px-6 py-2 bg-accent text-white font-medium hover:bg-opacity-90 transition duration-300 ease-in-out"
+                >
+                  {t("services.bookAppointment")}
+                </button>
+              </div>
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+};
+
+export default ServiceModal;
+
+
+---------------------------
+
+import { useEffect } from "react";
+import { useTranslation } from "react-i18next";
+import { motion, AnimatePresence } from "framer-motion"; // Upewnij się, że AnimatePresence jest importowane
+import { FaTimes } from "react-icons/fa";
+import { useServiceModal } from "@/context/ServiceContext";
+
+const ServiceModal = () => {
+  const { t } = useTranslation();
+  const { isServiceModalOpen, serviceData, closeServiceModal } =
+    useServiceModal();
+
+  // Close modal when Escape key is pressed
+  useEffect(() => {
+    const handleEscKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape" && isServiceModalOpen) {
+        closeServiceModal();
+      }
+    };
+
+    window.addEventListener("keydown", handleEscKey);
+
+    return () => {
+      window.removeEventListener("keydown", handleEscKey);
+    };
+  }, [isServiceModalOpen, closeServiceModal]);
+
+  // Prevent scrolling when modal is open
+  useEffect(() => {
+    if (isServiceModalOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+
+    return () => {
+      document.body.style.overflow = ""; // Reset on unmount or when modal closes
+    };
+  }, [isServiceModalOpen]);
+
+  // Scroll to contact section when "Book Appointment" is clicked
+  const handleBookAppointment = () => {
+    closeServiceModal();
+
+    // Small delay to ensure modal closes first
+    setTimeout(() => {
+      const contactSection = document.getElementById("contact");
+      if (contactSection) {
+        window.scrollTo({
+          top: contactSection.offsetTop - 80, // Consider making 80 dynamic (header height)
+          behavior: "smooth",
+        });
+      }
+    }, 300); // Delay for modal close animation
+  };
+
+  // If modal is not open or no data, render nothing (or a fragment)
+  // This check is important because AnimatePresence needs a direct child that can be removed/added.
+  if (!isServiceModalOpen || !serviceData) {
+    return null; // Lub <AnimatePresence>{null}</AnimatePresence> jeśli jest to wymagane przez strukturę
+  }
+
+  return (
+    <AnimatePresence>
+      {/*
+        Ten warunek jest już obsłużony przez if (!isServiceModalOpen || !serviceData) powyżej,
+        ale AnimatePresence oczekuje, że jego dzieci będą się zmieniać.
+        Jeśli isServiceModalOpen jest false, motion.div nie będzie renderowany, co jest poprawne dla AnimatePresence.
+      */}
+      {isServiceModalOpen &&
+        serviceData && ( // Ten warunek może tu zostać dla jasności, ale główna kontrola jest wyżej
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            className="fixed inset-0 z-50 bg-black bg-opacity-80 flex items-center justify-center p-4"
+            onClick={closeServiceModal} // Click on backdrop closes modal
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              transition={{ duration: 0.3 }}
+              className="relative bg-white dark:bg-[#1e1e1e] rounded-lg max-w-2xl w-full"
+              onClick={(e) => e.stopPropagation()} // Prevent click from bubbling to backdrop
+              role="dialog" // ARIA: Role for dialog
+              aria-modal="true" // ARIA: Indicates it's a modal
+              aria-labelledby="service-modal-title" // ARIA: Points to the title
+              // aria-describedby="service-modal-description" // Opcjonalnie, jeśli masz statyczny opis
+            >
+              <button
+                onClick={closeServiceModal}
+                className="absolute top-4 right-4 text-gray-500 hover:text-accent text-xl transition duration-300 ease-in-out"
+                aria-label={t("accessibility.closeModal")}
+              >
+                <FaTimes />
+              </button>
+              <div className="p-8">
+                <motion.h3
+                  id="service-modal-title" // ARIA: ID for the title
+                  initial={{ opacity: 0, y: -20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3 }}
+                  className="text-2xl font-bold playfair mb-4"
+                >
+                  {serviceData.title}
+                </motion.h3>
+                <motion.div
+                  // id="service-modal-description" // ARIA: ID for description if needed
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: 0.2 }}
+                  className="prose dark:prose-invert max-w-none"
+                  dangerouslySetInnerHTML={{
+                    __html: serviceData.fullDescription,
+                  }}
+                />
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.3, delay: 0.4 }}
+                  className="mt-8 flex justify-between items-center"
+                >
+                  <span className="text-accent font-bold text-xl">
+                    {serviceData.price}
+                  </span>
+                  <button
+                    onClick={handleBookAppointment}
+                    className="px-6 py-2 bg-accent text-white font-medium hover:bg-opacity-90 transition duration-300 ease-in-out"
+                  >
+                    {t("services.bookAppointment")}
+                  </button>
+                </motion.div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+    </AnimatePresence> // TUTAJ BRAKOWAŁO ZAMKNIĘCIA
+  );
+};
+
+export default ServiceModal;

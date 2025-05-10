@@ -1,44 +1,35 @@
-import { FaMoon, FaSun } from 'react-icons/fa';
-import { useTheme } from '@/context/ThemeContext';
-import { useTranslation } from 'react-i18next';
+import { FaMoon, FaSun } from "react-icons/fa";
+import { useTheme } from "@/context/ThemeContext";
+import { useTranslation } from "react-i18next";
 
 interface ThemeToggleProps {
+  // PRZYWRÓCONY INTERFEJS PROPSÓW
   isMobile?: boolean;
 }
 
 const ThemeToggle = ({ isMobile = false }: ThemeToggleProps) => {
+  // UŻYCIE PROPSA
   const { t } = useTranslation();
   const { theme, toggleTheme } = useTheme();
-  
-  console.log("ThemeToggle rendering, current theme:", theme);
 
-  // Create a direct handler that uses document manipulation
-  const handleToggleTheme = () => {
-    console.log("ThemeToggle: Button clicked, current theme:", theme);
-    
-    // Manual document class manipulation for immediate visual feedback
-    const isDark = document.documentElement.classList.contains('dark');
-    if (isDark) {
-      document.documentElement.classList.remove('dark');
-      localStorage.setItem('theme', 'light');
-      console.log("ThemeToggle: Manually switched to light mode");
-    } else {
-      document.documentElement.classList.add('dark');
-      localStorage.setItem('theme', 'dark');
-      console.log("ThemeToggle: Manually switched to dark mode");
-    }
-    
-    // Also call the context toggler to maintain state
-    toggleTheme();
-  };
-  
+  // console.log("ThemeToggle rendering, theme from context:", theme, "isMobile:", isMobile);
+
+  // Tutaj możesz użyć `isMobile` do warunkowego stylowania lub logiki, np.:
+  const iconSize = isMobile ? 18 : 20;
+  // const buttonPadding = isMobile ? "p-1" : "p-2";
+
   return (
-    <button 
-      onClick={handleToggleTheme}
-      className="text-primary dark:text-white hover:text-accent dark:hover:text-accent transition duration-300 ease-in-out"
-      aria-label={t('accessibility.toggleTheme')}
+    <button
+      onClick={toggleTheme}
+      // className={`rounded-md text-primary dark:text-white hover:text-accent dark:hover:text-accent transition duration-300 ease-in-out ${buttonPadding}`} // Przykład użycia
+      className="p-2 rounded-md text-primary dark:text-white hover:text-accent dark:hover:text-accent transition duration-300 ease-in-out"
+      aria-label={t("accessibility.toggleTheme")}
     >
-      {document.documentElement.classList.contains('dark') ? <FaSun /> : <FaMoon />}
+      {theme === "dark" ? (
+        <FaSun size={iconSize} />
+      ) : (
+        <FaMoon size={iconSize} />
+      )}
     </button>
   );
 };

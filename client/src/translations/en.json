@@ -3,10 +3,10 @@
     "backToHome": "Back to Home"
   },
   "meta": {
-    "title": "AGILERA Hair Salon | Style. Class. Precision.",
-    "description": "Professional hair salon for women and men, AGILERA offers cutting, styling, and coloring in an elegant setting.",
+    "title": "AGILERA Hair Salon | Style Class Precision",
+    "description": "Professional unisex AGILERA hair salon offering haircuts, styling, and coloring in an elegant setting.",
     "ogTitle": "AGILERA Hair Salon",
-    "ogDescription": "Professional hair salon for women and men offering cutting, styling, and coloring in an elegant setting."
+    "ogDescription": "Professional unisex hair salon offering haircuts, styling, and coloring in an elegant setting."
   },
   "accessibility": {
     "skipToContent": "Skip to content",
@@ -16,35 +16,37 @@
     "previousSlide": "Previous slide",
     "nextSlide": "Next slide",
     "goToSlide": "Go to slide {{number}}",
-    "closeModal": "Close modal"
+    "closeModal": "Close modal",
+    "previousPages": "Previous slides page",
+    "nextPages": "Next slides page"
   },
   "nav": {
     "home": "Home",
-    "about": "About",
+    "about": "About Us",
     "services": "Services",
-    "gallery": "Gallery",
+    "gallery": "Style Collection",
     "contact": "Contact"
   },
   "home": {
-    "heroAlt": "AGILERA hair salon interior",
-    "motto": "Style. Class. Precision.",
-    "knowUs": "About Us",
+    "heroAlt": "Interior of AGILERA hair salon",
+    "motto": "Style Class Precision",
+    "knowUs": "Get to know us",
     "bookAppointment": "Book Appointment"
   },
   "about": {
     "title": "About Us",
     "ourStory": "Our Story",
-    "storyParagraph1": "AGILERA Hair Salon is a place where passion meets professionalism. Since 2010, we have been providing top-quality hairdressing services for clients who value elegance and precision.",
-    "storyParagraph2": "Our team is a group of experienced stylists who continuously improve their skills by participating in international training sessions and hairdressing shows.",
-    "yearsExperience": "Years of experience",
-    "happyClients": "Happy clients",
-    "industryAwards": "Industry awards",
+    "storyParagraph2": "AGILERA Hair Salon is a place where passion meets professionalism. Since 2022, we have been providing top-quality hairdressing services for clients who value elegance and precision.",
+    "storyParagraph3": "Our team is a group of experienced stylists who constantly improve their skills by participating in international training and hair shows.",
+    "yearsExperience": "Years of Experience",
+    "happyClients": "Satisfied Clients",
+    "industryAwards": "Industry Awards",
     "ourTeam": "Our Team",
-    "mainStylist": "Head Stylist",
+    "mainStylist": "Lead Stylist",
     "creativeStylist": "Creative Stylist",
     "colorist": "Colorist",
     "barber": "Barber",
-    "stylistWorkingImage": "Stylist working with client",
+    "stylistWorkingImage": "Stylist working with a client",
     "salonInteriorImage": "AGILERA salon interior"
   },
   "services": {
@@ -56,14 +58,17 @@
     "bookAppointment": "Book Appointment"
   },
   "gallery": {
-    "title": "Gallery"
+    "title": "Style Collection"
   },
   "contact": {
     "title": "Contact",
     "contactInfo": "Contact Information",
     "address": "Address",
+    "addressDetails": "Słowackiego 50 St., 26-604 Radom",
     "phone": "Phone",
+    "phoneNumber": "+48 600 774 450",
     "email": "Email",
+    "emailAddress": "kontakt@agilera.pl",
     "openingHours": "Opening Hours",
     "mondayFriday": "Monday - Friday",
     "saturday": "Saturday",
@@ -79,18 +84,35 @@
     "nameRequired": "Full name is required",
     "validEmailRequired": "Please enter a valid email address",
     "messageRequired": "Message is required",
-    "mapTitle": "AGILERA Hair Salon Location"
+    "mapTitle": "AGILERA Hair Salon Location",
+    "certifications": "Our Certifications",
+    "premiumStylist": "Premium Stylist",
+    "masterCertificate": "Master Certificate",
+    "colorExpert": "Color Expert",
+    "topRated": "Top Rated",
+    "hairExpert": "Hair Expert",
+    "certificationDescription": "We focus on development and quality. Our certificates are the result of work, passion, and continuous training.",
+    "expertiseGuarantee": "Thanks to this, you can count on professional advice, the latest techniques, and an individual approach. Your hair is in good, trusted hands."
   },
   "footer": {
     "description": "Professional hair salon offering comprehensive services for women and men in an elegant atmosphere.",
     "quickLinks": "Quick Links",
+    "openingHours": "Opening Hours",
+    "monday": "Monday",
+    "tuesday": "Tuesday",
+    "wednesday": "Wednesday",
+    "thursday": "Thursday",
+    "friday": "Friday",
+    "saturday": "Saturday",
+    "sunday": "Sunday",
+    "closed": "Closed",
     "newsletter": "Newsletter",
-    "newsletterText": "Subscribe to receive information about promotions and news.",
+    "newsletterText": "Sign up to receive information about promotions and news.",
     "yourEmail": "Your email",
     "subscribe": "Subscribe",
     "copyright": "AGILERA Hair Salon. All rights reserved.",
     "privacyPolicy": "Privacy Policy",
-    "terms": "Terms & Conditions"
+    "terms": "Terms of Service"
   },
   "toast": {
     "success": "Success!",
@@ -107,31 +129,31 @@
     "lastUpdated": "Last updated",
     "section1": {
       "title": "Introduction",
-      "content": "This Privacy Policy describes how AGILERA Hair Salon collects, uses, and protects your personal data when you use our website and services offered at our salon."
+      "content": "This Privacy Policy describes how AGILERA Hair Salon collects, uses, and protects your personal data when you use our website and the services offered in our salon."
     },
     "section2": {
       "title": "Data We Collect",
-      "content": "When using our website and services, we may collect the following types of personal data:",
+      "content": "When you use our website and services, we may collect the following types of personal data:",
       "subsection1": {
         "title": "Data Provided Voluntarily",
-        "content": "Contact information (name, email address, phone number) - when you fill out a contact form, subscribe to our newsletter, or book an appointment at our salon."
+        "content": "Contact details (name, surname, email address, phone number) - when you fill out a contact form, subscribe to a newsletter, or book an appointment at our salon."
       },
       "subsection2": {
-        "title": "Automatically Collected Data",
-        "content": "Information about your device and browser, IP address, cookie information, and analytical data regarding the use of our website."
+        "title": "Data Collected Automatically",
+        "content": "Information about your device and browser, IP address, cookie information, and analytical data regarding your use of our website."
       }
     },
     "section3": {
       "title": "Purpose of Data Processing",
-      "content": "Your personal data is collected and processed for the purpose of: responding to inquiries submitted via the contact form, providing hairdressing services, sending marketing information (if you have consented to it), improving the quality of our website and services, and fulfilling legal obligations."
+      "content": "Your personal data is collected and processed to: respond to inquiries sent via the contact form, provide hairdressing services, send marketing information (if you have consented), improve the quality of our website and services, and fulfill legal obligations."
     },
     "section4": {
       "title": "Data Sharing",
-      "content": "We do not sell or share your personal data with third parties, except when it is necessary to provide services (e.g., payment service providers, online booking systems) or when we are required to do so by law."
+      "content": "We do not sell or share your personal data with third parties, except when necessary to provide services (e.g., payment service providers, online booking systems) or when required by law."
     },
     "section5": {
       "title": "Your Rights",
-      "content": "In accordance with GDPR, you have the right to: access your personal data, rectify it, delete it or limit its processing, data portability, object to data processing, and withdraw consent for data processing at any time. To exercise these rights, please contact us."
+      "content": "In accordance with GDPR, you have the right to: access your personal data, rectify it, delete it or restrict its processing, data portability, object to data processing, and withdraw consent for data processing at any time. To exercise these rights, please contact us."
     },
     "contact": {
       "title": "Contact Regarding Personal Data",
@@ -139,45 +161,59 @@
     }
   },
   "terms": {
-    "pageTitle": "Terms & Conditions",
-    "pageDescription": "Terms and Conditions of AGILERA Hair Salon - rules for using our services and website.",
-    "title": "Terms & Conditions",
+    "pageTitle": "Terms of Service",
+    "pageDescription": "Terms of Service for AGILERA Hair Salon - rules for using our services and website.",
+    "title": "Terms of Service",
     "lastUpdated": "Last updated",
     "section1": {
       "title": "General Provisions",
-      "content": "These Terms and Conditions govern the use of AGILERA Hair Salon services and the website agilera.pl."
+      "content": "These Terms of Service define the rules for using the services of AGILERA Hair Salon and the agilera.pl website."
     },
     "section2": {
       "title": "Definitions",
-      "content": "Salon - AGILERA Hair Salon located in Warsaw at 123 Example Street. Client - a natural person using the Salon's services. Website - the website available at agilera.pl. Services - hairdressing services provided by the Salon."
+      "content": "Salon - AGILERA Hair Salon, located in Radom, at Słowackiego 50 St. Client - a natural person using the Salon's services. Website - the website available at agilera.pl. Services - hairdressing services provided by the Salon."
     },
     "section3": {
-      "title": "Appointment Booking and Cancellation Rules",
+      "title": "Booking and Cancellation Policy",
       "content": "Appointments can be booked by phone, in person at the Salon, or through the online booking system available on our website.",
       "subsection1": {
         "title": "Booking",
-        "content": "When booking, you need to provide your name, surname, and phone number. The booking is valid after receiving confirmation from a Salon employee."
+        "content": "When booking, please provide your name, surname, and phone number. The booking is valid after receiving confirmation from a Salon employee."
       },
       "subsection2": {
         "title": "Cancellation and Rescheduling",
-        "content": "Appointments can be cancelled or rescheduled no later than 24 hours before the scheduled appointment. In case of not cancelling an appointment and not showing up at the scheduled time, the Salon reserves the right to block the possibility of online booking for a period of 30 days."
+        "content": "Appointments can be canceled or rescheduled no later than 24 hours before the planned visit. In case of failure to cancel the appointment and not showing up for the scheduled time, the Salon reserves the right to block the possibility of online booking for a period of 30 days."
       }
     },
     "section4": {
-      "title": "Service Pricing",
-      "content": "Prices for hairdressing services are available at the Salon and on our website. Prices may change, and Clients will be informed about such changes in advance. The final price of a service may differ from the price listed in the price list, depending on the length, density of hair, and products used."
+      "title": "Price List",
+      "content": "The prices for hairdressing services are available at the Salon and on our website. Prices are subject to change, and Clients will be informed accordingly in advance. The final price of the service may differ from the price stated in the price list, depending on the length, density of hair, and products used."
     },
     "section5": {
       "title": "Complaints",
-      "content": "Any complaints regarding the services provided should be reported immediately after the service is performed or no later than 3 days from the date of the visit. Complaints can be submitted in person at the Salon, by phone, or electronically to the email address: contact@agilera.pl. Complaints will be considered individually within 14 days from the date of submission."
+      "content": "Any complaints regarding services rendered should be reported immediately after the service or no later than 3 days from the date of the visit. Complaints can be submitted in person at the Salon, by phone, or by email to: kontakt@agilera.pl. Complaints will be considered individually within 14 days of submission."
     },
     "section6": {
       "title": "Final Provisions",
-      "content": "The Salon reserves the right to change these Terms and Conditions. Changes come into effect on the day of their publication on the website. In matters not regulated by these Terms and Conditions, the provisions of Polish law shall apply."
+      "content": "The Salon reserves the right to change these Terms of Service. Changes come into effect on the day of their publication on the website. In matters not regulated by these Terms of Service, Polish law shall apply."
     },
     "contact": {
       "title": "Contact",
-      "content": "If you have questions about our Terms and Conditions, please contact us:"
+      "content": "If you have questions regarding our Terms of Service, please contact us:"
     }
+  },
+  "schema": {
+    "salonName": "AGILERA Hair Salon",
+    "salonDescription": "Professional unisex hair salon in Radom, offering a full range of hairdressing services. We specialize in haircuts, coloring, and hair styling.",
+    "galleryTitle": "AGILERA Hair Salon Gallery",
+    "galleryDescription": "See our interiors and examples of our hairstyles",
+    "galleryMainImage": "Interior of AGILERA hair salon",
+    "streetAddress": "Słowackiego 50 St."
+  },
+  "breadcrumbs": {
+    "services": "Services",
+    "gallery": "Gallery",
+    "about": "About Us",
+    "contact": "Contact"
   }
 }
