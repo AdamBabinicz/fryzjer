@@ -3,12 +3,6 @@
   publish = "dist"
 
 [[redirects]]
-  from = "https://www.blackhole-universe.netlify.app/*"
-  to = "https://blackhole-universe.netlify.app/:splat"
-  status = 301
-  force = true
-
-[[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
