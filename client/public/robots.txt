@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://stylowefryzury.netlify.app/sitemap.xml
