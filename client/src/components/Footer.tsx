@@ -40,7 +40,7 @@ const Footer = ({
                 GILERA
               </span>
             </div>
-            <p className="text-gray-500 dark:text-gray-400 mb-6">
+            <p className="text-gray-500 dark:text-gray-300 mb-6">
               {t("footer.description")}
             </p>
             <div className="flex space-x-4">
@@ -82,7 +82,7 @@ const Footer = ({
               <li>
                 <button
                   onClick={onHomeClick}
-                  className="text-gray-500 dark:text-gray-400 hover:text-accent transition duration-300 ease-in-out"
+                  className="text-gray-500 dark:text-gray-300 hover:text-accent transition duration-300 ease-in-out"
                 >
                   {t("nav.home")}
                 </button>
@@ -90,7 +90,7 @@ const Footer = ({
               <li>
                 <button
                   onClick={onAboutClick}
-                  className="text-gray-500 dark:text-gray-400 hover:text-accent transition duration-300 ease-in-out"
+                  className="text-gray-500 dark:text-gray-300 hover:text-accent transition duration-300 ease-in-out"
                 >
                   {t("nav.about")}
                 </button>
@@ -98,7 +98,7 @@ const Footer = ({
               <li>
                 <button
                   onClick={onServicesClick}
-                  className="text-gray-500 dark:text-gray-400 hover:text-accent transition duration-300 ease-in-out"
+                  className="text-gray-500 dark:text-gray-300 hover:text-accent transition duration-300 ease-in-out"
                 >
                   {t("nav.services")}
                 </button>
@@ -106,7 +106,7 @@ const Footer = ({
               <li>
                 <button
                   onClick={onGalleryClick}
-                  className="text-gray-500 dark:text-gray-400 hover:text-accent transition duration-300 ease-in-out"
+                  className="text-gray-500 dark:text-gray-300 hover:text-accent transition duration-300 ease-in-out"
                 >
                   {t("nav.gallery")}
                 </button>
@@ -114,7 +114,7 @@ const Footer = ({
               <li>
                 <button
                   onClick={onContactClick}
-                  className="text-gray-500 dark:text-gray-400 hover:text-accent transition duration-300 ease-in-out"
+                  className="text-gray-500 dark:text-gray-300 hover:text-accent transition duration-300 ease-in-out"
                 >
                   {t("nav.contact")}
                 </button>
@@ -126,7 +126,7 @@ const Footer = ({
             <h4 className="text-xl font-semibold playfair mb-6">
               {t("footer.openingHours")}
             </h4>
-            <ul className="space-y-2 text-gray-500 dark:text-gray-400">
+            <ul className="space-y-2 text-gray-500 dark:text-gray-300">
               <li>{t("footer.monday")}: 9:00 - 19:00</li>
               <li>{t("footer.tuesday")}: 9:00 - 19:00</li>
               <li>{t("footer.wednesday")}: 9:00 - 19:00</li>
