@@ -141,19 +141,19 @@ const Footer = ({
         </div>
 
         <div className="border-t border-gray-200 dark:border-gray-800 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
-          <p className="text-gray-500 text-sm mb-4 md:mb-0">
+          <p className="text-gray-500 dark:text-gray-300 text-sm mb-4 md:mb-0">
             2025 - {getCurrentYear()} {t("footer.copyright")}
           </p>
           <div className="flex space-x-4">
             <Link
               href="/privacy-policy"
-              className="text-gray-500 hover:text-accent text-sm transition duration-300 ease-in-out"
+              className="text-gray-500 dark:text-gray-300 hover:text-accent text-sm transition duration-300 ease-in-out"
             >
               {t("footer.privacyPolicy")}
             </Link>
             <Link
               href="/terms"
-              className="text-gray-500 hover:text-accent text-sm transition duration-300 ease-in-out"
+              className="text-gray-500 dark:text-gray-300 hover:text-accent text-sm transition duration-300 ease-in-out"
             >
               {t("footer.terms")}
             </Link>
