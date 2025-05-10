@@ -548,14 +548,14 @@ const ThemeContext = createContext<ThemeContextType>({
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [theme, setTheme] = useState<Theme>('light');
-  
+
   // Initialize theme from localStorage or system preference
   useEffect(() => {
     const savedTheme = localStorage.getItem('theme') as Theme | null;
     const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    
+
     console.log("ThemeContext: Initializing theme", { savedTheme, prefersDark });
-    
+
     if (savedTheme) {
       console.log("ThemeContext: Using saved theme", savedTheme);
       setTheme(savedTheme);
@@ -569,26 +569,26 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       document.documentElement.classList.remove('dark');
     }
   }, []);
-  
+
   const toggleTheme = () => {
     console.log("ThemeContext: Toggle theme called, current theme:", theme);
-    
+
     setTheme(prevTheme => {
       const newTheme = prevTheme === 'light' ? 'dark' : 'light';
       console.log("ThemeContext: Setting new theme:", newTheme);
       localStorage.setItem('theme', newTheme);
-      
+
       // Ensure proper class toggling
       if (newTheme === 'dark') {
         document.documentElement.classList.add('dark');
       } else {
         document.documentElement.classList.remove('dark');
       }
-      
+
       return newTheme;
     });
   };
-  
+
   return (
     <ThemeContext.Provider value={{ theme, toggleTheme }}>
       {children}
@@ -598,11 +598,11 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
 export function useTheme() {
   const context = useContext(ThemeContext);
-  
+
   if (!context) {
     throw new Error('useTheme must be used within a ThemeProvider');
   }
-  
+
   return context;
 }
 
@@ -628,17 +628,17 @@ const LanguageContext = createContext<LanguageContextType>({
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
   const { i18n } = useTranslation();
   const [language, setLanguage] = useState(i18n.language || 'en');
-  
+
   // Initialize language from i18n
   useEffect(() => {
     setLanguage(i18n.language);
   }, [i18n.language]);
-  
+
   const changeLanguage = (lang: string) => {
     i18n.changeLanguage(lang);
     setLanguage(lang);
   };
-  
+
   return (
     <LanguageContext.Provider value={{ language, changeLanguage }}>
       {children}
@@ -648,11 +648,11 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
 
 export function useLanguage() {
   const context = useContext(LanguageContext);
-  
+
   if (!context) {
     throw new Error('useLanguage must be used within a LanguageProvider');
   }
-  
+
   return context;
 }
 
@@ -676,9 +676,9 @@ let initialized = false;
  */
 export const setupI18n = () => {
   if (initialized) return i18n;
-  
+
   console.log('Initializing i18n with languages:', { pl: !!translationPL, en: !!translationEN });
-  
+
   // Resources for i18next
   const resources = {
     pl: {
@@ -700,24 +700,24 @@ export const setupI18n = () => {
       resources,
       fallbackLng: 'en',
       lng: localStorage.getItem('i18nextLng') || 'en', // Explicitly use stored language or default
-      
+
       // Turn on debug only in development
       debug: process.env.NODE_ENV === 'development',
-      
+
       interpolation: {
         escapeValue: false, // React already safes from XSS
       },
-      
+
       detection: {
         order: ['localStorage', 'navigator'],
         caches: ['localStorage'],
       },
-      
+
       react: {
         useSuspense: true,
       }
     });
-    
+
   initialized = true;
   return i18n;
 };
@@ -3582,7 +3582,7 @@ export default GallerySlider;
     "address": "Adres",
     "addressDetails": "ul. Słowackiego 50, 26-604 Radom",
     "phone": "Telefon",
-    "phoneNumber": "+48 600 774 450",
+    "phoneNumber": "+48 797 879 002",
     "email": "Email",
     "emailAddress": "kontakt@agilera.pl",
     "openingHours": "Godziny otwarcia",

@@ -19,7 +19,7 @@ export const SchemaOrg = () => {
       postalCode: "26-604",
       addressCountry: "PL",
     },
-    telephone: "+48 600 774 450",
+    telephone: "+48 797 879 002",
     email: "kontakt@agilera.pl",
     url: "https://stylowefryzury.netlify.app",
     image: "/assets/a.png",
