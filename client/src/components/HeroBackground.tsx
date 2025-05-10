@@ -25,6 +25,7 @@ const HeroBackground: React.FC<HeroBackgroundProps> = ({ className = "" }) => {
   return (
     <div
       className={`w-full h-full relative ${className}`}
+      role="img"
       aria-label={t("home.heroAlt")}
     >
       <div style={bgStyle}></div>
