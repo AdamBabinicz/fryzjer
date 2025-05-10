@@ -119,7 +119,7 @@ const Navbar = ({
         <div className="hidden md:flex items-center space-x-8">
           <button
             onClick={onHomeClick}
-            className="text-primary dark:text-[#e3f7ff] hover:text-accent dark:hover:text-accent transition duration-300 ease-in-out"
+            className="text-primary dark:text-[#d6f4ff] hover:text-accent dark:hover:text-accent transition duration-300 ease-in-out"
           >
             {t("nav.home")}
           </button>

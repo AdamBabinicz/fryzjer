@@ -9,7 +9,7 @@ export const SchemaOrg = () => {
   const salonSchema = {
     "@context": "https://schema.org",
     "@type": "HairSalon",
-    "@id": "https://www.agilera-salon.pl",
+    "@id": "https://stylowefryzury.netlify.app",
     name: t("schema.salonName"),
     description: t("schema.salonDescription"),
     address: {
@@ -21,7 +21,7 @@ export const SchemaOrg = () => {
     },
     telephone: "+48 123 456 789",
     email: "kontakt@agilera.pl",
-    url: "https://www.agilera-salon.pl",
+    url: "https://stylowefryzury.netlify.app",
     image: "/assets/a.png",
     priceRange: "$$",
     openingHoursSpecification: [
@@ -45,10 +45,11 @@ export const SchemaOrg = () => {
     "@context": "https://schema.org",
     "@type": "WebSite",
     name: t("schema.salonName"),
-    url: "https://www.agilera-salon.pl",
+    url: "https://stylowefryzury.netlify.app",
     potentialAction: {
       "@type": "SearchAction",
-      target: "https://www.agilera-salon.pl/search?q={search_term_string}",
+      target:
+        "https://stylowefryzury.netlify.app/search?q={search_term_string}",
       "query-input": "required name=search_term_string",
     },
   };
@@ -62,7 +63,7 @@ export const SchemaOrg = () => {
         "@type": "ListItem",
         position: index + 1,
         name: t(`breadcrumbs.${segment}`),
-        item: `https://www.agilera-salon.pl/${pathSegments
+        item: `https://stylowefryzury.netlify.app/${pathSegments
           .slice(0, index + 1)
           .join("/")}`,
       })
