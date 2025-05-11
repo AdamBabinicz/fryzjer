@@ -27,7 +27,7 @@ const GallerySlider = () => {
     : desktopTotalSlides;
 
   // Definicje klas wysokości dla obszaru, który zajmuje obrazek (i tło)
-  const mobileImageCanvasHeightClass = "h-96"; // np. 24rem
+  const mobileImageCanvasHeightClass = "h-80"; // np. 24rem
   const desktopImageCanvasHeightClass = "h-[450px]";
 
   // Minimalna wysokość całego komponentu slidera
