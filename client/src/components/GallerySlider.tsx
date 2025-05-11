@@ -26,6 +26,19 @@ const GallerySlider = () => {
     ? mobileTotalSlides
     : desktopTotalSlides;
 
+  // Definicje klas wysokości dla obszaru, który zajmuje obrazek (i tło)
+  const mobileImageCanvasHeightClass = "h-96"; // np. 24rem
+  const desktopImageCanvasHeightClass = "h-[450px]";
+
+  // Minimalna wysokość całego komponentu slidera
+  const mobileMinHeightClass = "min-h-[25rem]"; // np. 24rem (wysokość obrazka) + 1rem (margines/przestrzeń)
+  const desktopMinHeightClass = "min-h-[506px]"; // np. 450px (wysokość obrazka) + 56px (kropki i margines)
+
+  // Wartości dla pozycjonowania przycisków nawigacyjnych
+  const mobileButtonsTop = "12rem"; // Połowa z 24rem (h-96)
+  const desktopButtonsTop = "225px"; // Połowa z 450px
+  const buttonsTopOffsetValue = isMobile ? mobileButtonsTop : desktopButtonsTop;
+
   const goToNextSlideStable = useCallback(() => {
     setDirection("next");
     setCurrentIndex((prev) => (prev + 1) % currentViewTotalItems);
@@ -137,7 +150,6 @@ const GallerySlider = () => {
     if (node) {
       const eventOptions = { passive: true } as AddEventListenerOptions;
       const listener = memorizedHandleTouchMove as EventListener;
-
       node.addEventListener("touchmove", listener, eventOptions);
       return () => {
         node.removeEventListener("touchmove", listener, eventOptions);
@@ -157,7 +169,6 @@ const GallerySlider = () => {
         swiped = true;
       }
     }
-
     if (isMobile && !swiped && touchStart !== 0) {
       if (resumeAutoplayTimerRef.current)
         clearTimeout(resumeAutoplayTimerRef.current);
@@ -184,23 +195,24 @@ const GallerySlider = () => {
     if (isMobile) {
       const currentImage = flattenedImages[currentIndex];
       if (!currentImage) return null;
+      // Obrazek wypełni cały obszar rodzica (motion.div), który ma w-full h-full
+      // względem kontenera tła (tego ze złotym tłem).
       return (
-        <div className="w-full h-full flex items-center justify-center p-0.5">
-          <div
-            className="gallery-item cursor-pointer overflow-hidden rounded-md shadow-md w-full h-full"
-            onClick={() => handleImageClick(currentImage)}
-          >
-            <img
-              src={currentImage.src}
-              alt={currentImage.alt}
-              className="w-full h-full object-cover transition duration-300 ease-in-out hover:scale-105 rounded-md"
-              loading="lazy"
-            />
-          </div>
+        <div // Ten div jest potrzebny jako kontener dla `onClick` i dla samego `img`
+          className="gallery-item cursor-pointer overflow-hidden rounded-md shadow-md w-full h-full"
+          onClick={() => handleImageClick(currentImage)}
+        >
+          <img
+            src={currentImage.src}
+            alt={currentImage.alt}
+            className="w-full h-full object-cover transition duration-300 ease-in-out hover:scale-105 rounded-md"
+            loading="lazy"
+          />
         </div>
       );
     }
 
+    // Widok desktopowy - tutaj siatka obrazków wypełnia całą dostępną przestrzeń
     const currentSlideData = galleryData[currentIndex];
     if (!currentSlideData || !currentSlideData.images) return null;
 
@@ -256,15 +268,6 @@ const GallerySlider = () => {
     return dots;
   };
 
-  const spaceForDotsAndMarginPx = 56;
-  const mobileImageHeight = "24rem";
-  const desktopGridHeight = "450px";
-  const contentAreaHeight = isMobile ? mobileImageHeight : desktopGridHeight;
-  const buttonsTopOffset = `calc(${contentAreaHeight} / 2)`;
-
-  const mobileContainerMinHeight = `min-h-[calc(${mobileImageHeight} + 1rem)]`;
-  const desktopContainerMinHeight = `min-h-[calc(${desktopGridHeight} + ${spaceForDotsAndMarginPx}px)]`;
-
   const handlePrevButtonClick = () => {
     goToPrevSlide();
   };
@@ -276,17 +279,21 @@ const GallerySlider = () => {
   return (
     <div
       className={`relative ${
-        isMobile ? mobileContainerMinHeight : desktopContainerMinHeight
+        isMobile ? mobileMinHeightClass : desktopMinHeightClass
       }`}
       ref={sliderRef}
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
     >
+      {/* Kontener dla tła i slajdów (obrazków) */}
       <div
-        className="relative mx-4 rounded-md overflow-hidden bg-cover bg-center bg-no-repeat"
+        className={`relative mx-4 rounded-md overflow-hidden bg-cover bg-center bg-no-repeat ${
+          isMobile
+            ? mobileImageCanvasHeightClass
+            : desktopImageCanvasHeightClass
+        }`}
         style={{
           backgroundImage: `url(${backgroundImageUrl})`,
-          height: contentAreaHeight,
         }}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
@@ -305,18 +312,19 @@ const GallerySlider = () => {
             }}
             custom={direction}
             transition={{ duration: 0.5 }}
-            className="absolute top-0 left-0 w-full h-full"
+            className="absolute top-0 left-0 w-full h-full" // Ten w-full h-full odnosi się do rodzica (kontenera tła)
           >
             {renderContent()}
           </motion.div>
         </AnimatePresence>
       </div>
 
+      {/* Przyciski nawigacyjne */}
       <button
         onClick={handlePrevButtonClick}
         onPointerUp={isMobile ? handlePrevButtonClick : undefined}
         className="absolute left-0 transform -translate-y-1/2 -translate-x-0 md:-translate-x-1/2 bg-accent text-white p-3 rounded-r-md md:rounded-full opacity-70 hover:opacity-100 transition duration-300 ease-in-out z-10 cursor-pointer"
-        style={{ top: buttonsTopOffset }}
+        style={{ top: buttonsTopOffsetValue }}
         aria-label={t("accessibility.previousSlide")}
       >
         <FaChevronLeft />
@@ -326,12 +334,13 @@ const GallerySlider = () => {
         onClick={handleNextButtonClick}
         onPointerUp={isMobile ? handleNextButtonClick : undefined}
         className="absolute right-0 transform -translate-y-1/2 translate-x-0 md:translate-x-1/2 bg-accent text-white p-3 rounded-l-md md:rounded-full opacity-70 hover:opacity-100 transition duration-300 ease-in-out z-10 cursor-pointer"
-        style={{ top: buttonsTopOffset }}
+        style={{ top: buttonsTopOffsetValue }}
         aria-label={t("accessibility.nextSlide")}
       >
         <FaChevronRight />
       </button>
 
+      {/* Kropki nawigacyjne (tylko desktop) */}
       {!isMobile && (
         <div className="flex justify-center items-center mt-6 gap-2">
           {renderDots()}
