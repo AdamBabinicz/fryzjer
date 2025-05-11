@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { motion, AnimatePresence } from "framer-motion";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
@@ -15,77 +15,169 @@ const GallerySlider = () => {
   const [direction, setDirection] = useState<"next" | "prev">("next");
   const sliderRef = useRef<HTMLDivElement>(null);
   const isMobile = useIsMobile();
+  const [isPaused, setIsPaused] = useState(false);
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const resumeAutoplayTimerRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Flatten gallery data for mobile view
   const flattenedImages = galleryData.flatMap((slide) => slide.images);
-  const totalItems = isMobile ? flattenedImages.length : galleryData.length;
+  const desktopTotalSlides = galleryData.length;
+  const mobileTotalSlides = flattenedImages.length;
+  const currentViewTotalItems = isMobile
+    ? mobileTotalSlides
+    : desktopTotalSlides;
 
-  // Auto slide functionality
+  const goToNextSlideStable = useCallback(() => {
+    setDirection("next");
+    setCurrentIndex((prev) => (prev + 1) % currentViewTotalItems);
+  }, [currentViewTotalItems]);
+
+  const pauseAutoplay = (resumeAfterMs?: number) => {
+    setIsPaused(true);
+    if (resumeAutoplayTimerRef.current) {
+      clearTimeout(resumeAutoplayTimerRef.current);
+    }
+    if (resumeAfterMs) {
+      resumeAutoplayTimerRef.current = setTimeout(() => {
+        setIsPaused(false);
+      }, resumeAfterMs);
+    }
+  };
+
+  const resumeAutoplay = () => {
+    if (resumeAutoplayTimerRef.current) {
+      clearTimeout(resumeAutoplayTimerRef.current);
+    }
+    setIsPaused(false);
+  };
+
   useEffect(() => {
-    const interval = setInterval(() => {
-      goToPrevSlide();
-    }, 5000);
+    const clearAutoplayInterval = () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
+      }
+    };
 
-    return () => clearInterval(interval);
-  }, [currentIndex]);
+    if (!isPaused && currentViewTotalItems > 1) {
+      clearAutoplayInterval();
+      intervalRef.current = setInterval(goToNextSlideStable, 5000);
+    } else {
+      clearAutoplayInterval();
+    }
+    return () => {
+      clearAutoplayInterval();
+      if (resumeAutoplayTimerRef.current) {
+        clearTimeout(resumeAutoplayTimerRef.current);
+      }
+    };
+  }, [isPaused, currentViewTotalItems, goToNextSlideStable]);
 
-  const goToSlide = (slideIndex: number) => {
+  const goToSlide = (slideIndex: number, newDirection?: "next" | "prev") => {
+    pauseAutoplay(isMobile ? 8000 : undefined);
     let newIndex = slideIndex;
-    if (newIndex < 0) newIndex = totalItems - 1;
-    if (newIndex >= totalItems) newIndex = 0;
+    if (newIndex < 0) newIndex = currentViewTotalItems - 1;
+    if (newIndex >= currentViewTotalItems) newIndex = 0;
 
+    if (newDirection) {
+      setDirection(newDirection);
+    } else {
+      if (newIndex > currentIndex) {
+        if (currentIndex === 0 && newIndex === currentViewTotalItems - 1) {
+          setDirection("prev");
+        } else {
+          setDirection("next");
+        }
+      } else if (newIndex < currentIndex) {
+        if (currentIndex === currentViewTotalItems - 1 && newIndex === 0) {
+          setDirection("next");
+        } else {
+          setDirection("prev");
+        }
+      }
+    }
     setCurrentIndex(newIndex);
   };
 
   const goToPrevSlide = () => {
+    pauseAutoplay(isMobile ? 8000 : undefined);
     setDirection("prev");
-    goToSlide(currentIndex - 1);
+    setCurrentIndex(
+      (prev) => (prev - 1 + currentViewTotalItems) % currentViewTotalItems
+    );
   };
 
   const goToNextSlide = () => {
+    pauseAutoplay(isMobile ? 8000 : undefined);
     setDirection("next");
-    goToSlide(currentIndex + 1);
+    setCurrentIndex((prev) => (prev + 1) % currentViewTotalItems);
   };
 
-  // Touch handlers for mobile swiping
   const handleTouchStart = (e: React.TouchEvent) => {
-    setTouchStart(e.targetTouches[0].clientX);
+    if (isMobile) {
+      pauseAutoplay();
+    }
+    if (e.targetTouches && e.targetTouches.length > 0) {
+      setTouchStart(e.targetTouches[0].clientX);
+      setTouchEnd(0);
+    }
   };
 
   const handleTouchMove = (e: React.TouchEvent) => {
-    setTouchEnd(e.targetTouches[0].clientX);
+    if (e.targetTouches && e.targetTouches.length > 0) {
+      setTouchEnd(e.targetTouches[0].clientX);
+    }
   };
 
   const handleTouchEnd = () => {
-    if (touchStart - touchEnd > 50) {
-      // Swipe left
-      goToNextSlide();
+    const swipeThreshold = 50;
+    let swiped = false;
+    if (touchStart !== 0 && touchEnd !== 0) {
+      if (touchStart - touchEnd > swipeThreshold) {
+        goToNextSlide();
+        swiped = true;
+      } else if (touchStart - touchEnd < -swipeThreshold) {
+        goToPrevSlide();
+        swiped = true;
+      }
     }
 
-    if (touchStart - touchEnd < -50) {
-      // Swipe right
-      goToPrevSlide();
+    if (isMobile && !swiped && touchStart !== 0) {
+      if (resumeAutoplayTimerRef.current)
+        clearTimeout(resumeAutoplayTimerRef.current);
+      resumeAutoplayTimerRef.current = setTimeout(() => {
+        setIsPaused(false);
+      }, 3000);
     }
+
+    setTouchStart(0);
+    setTouchEnd(0);
   };
 
-  // Handle image click to open modal
-  const handleImageClick = (imageData: { fullSrc: string; alt: string }) => {
-    openGalleryModal(imageData.fullSrc, imageData.alt);
+  const handleImageClick = (imageData: {
+    src: string;
+    fullSrc?: string;
+    alt: string;
+  }) => {
+    pauseAutoplay();
+    openGalleryModal(imageData.fullSrc || imageData.src, imageData.alt);
   };
 
-  const renderContent = () => {
+  const backgroundImageUrl = "/assets/62.jfif";
+
+  const renderContent = (): JSX.Element | null => {
     if (isMobile) {
       const currentImage = flattenedImages[currentIndex];
+      if (!currentImage) return null;
       return (
-        <div className="w-full">
+        <div className="w-full h-full flex items-center justify-center p-0.5">
           <div
-            className="gallery-item cursor-pointer overflow-hidden rounded-md shadow-md"
+            className="gallery-item cursor-pointer overflow-hidden rounded-md shadow-md w-full h-full"
             onClick={() => handleImageClick(currentImage)}
           >
             <img
               src={currentImage.src}
               alt={currentImage.alt}
-              className="w-full h-64 object-cover transition duration-300 ease-in-out hover:scale-105"
+              className="w-full h-full object-cover transition duration-300 ease-in-out hover:scale-105 rounded-md"
               loading="lazy"
             />
           </div>
@@ -93,18 +185,21 @@ const GallerySlider = () => {
       );
     }
 
+    const currentSlideData = galleryData[currentIndex];
+    if (!currentSlideData || !currentSlideData.images) return null;
+
     return (
-      <div className="grid grid-cols-3 gap-4">
-        {galleryData[currentIndex]?.images.map((image, index) => (
+      <div className={`grid grid-cols-3 gap-4 w-full h-full p-px`}>
+        {currentSlideData.images.map((image, index) => (
           <div
-            key={`image-${index}`}
-            className="gallery-item cursor-pointer overflow-hidden rounded-md shadow-md"
+            key={`image-${currentIndex}-${index}`}
+            className="gallery-item cursor-pointer overflow-hidden rounded-md shadow-md h-full"
             onClick={() => handleImageClick(image)}
           >
             <img
               src={image.src}
               alt={image.alt}
-              className="w-full h-64 object-cover transition duration-300 ease-in-out hover:scale-105"
+              className="w-full h-full object-cover transition duration-300 ease-in-out hover:scale-105 rounded-md"
               loading="lazy"
             />
           </div>
@@ -113,36 +208,89 @@ const GallerySlider = () => {
     );
   };
 
+  const handleMouseEnter = () => {
+    if (!isMobile) {
+      pauseAutoplay();
+    }
+  };
+
+  const handleMouseLeave = () => {
+    if (!isMobile) {
+      resumeAutoplay();
+    }
+  };
+
+  const renderDots = (): JSX.Element[] => {
+    const dots = [];
+    const itemsToIterate = currentViewTotalItems;
+    for (let i = 0; i < itemsToIterate; i++) {
+      dots.push(
+        <button
+          key={`dot-${i}`}
+          onClick={() => goToSlide(i)}
+          className={`w-3 h-3 rounded-full transition duration-300 ease-in-out ${
+            currentIndex === i
+              ? "bg-accent"
+              : "bg-neutral dark:bg-gray-600 hover:bg-accent dark:hover:bg-accent"
+          }`}
+          aria-label={t("accessibility.goToSlide", { number: i + 1 })}
+        />
+      );
+    }
+    return dots;
+  };
+
+  const spaceForDotsAndMarginPx = 56;
+  const mobileImageHeight = "24rem";
+  const desktopGridHeight = "450px";
+  const contentAreaHeight = isMobile ? mobileImageHeight : desktopGridHeight;
+  const buttonsTopOffset = `calc(${contentAreaHeight} / 2)`;
+
+  const mobileContainerMinHeight = `min-h-[calc(${mobileImageHeight} + 1rem)]`;
+  const desktopContainerMinHeight = `min-h-[calc(${desktopGridHeight} + ${spaceForDotsAndMarginPx}px)]`;
+
+  const handlePrevButtonClick = () => {
+    goToPrevSlide();
+  };
+
+  const handleNextButtonClick = () => {
+    goToNextSlide();
+  };
+
   return (
-    <div className="relative">
+    <div
+      className={`relative ${
+        isMobile ? mobileContainerMinHeight : desktopContainerMinHeight
+      }`}
+      ref={sliderRef}
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
+    >
       <div
-        ref={sliderRef}
-        onTouchStart={(e) => {
-          e.preventDefault();
-          handleTouchStart(e);
+        className="relative mx-4 rounded-md overflow-hidden bg-cover bg-center bg-no-repeat"
+        style={{
+          backgroundImage: `url(${backgroundImageUrl})`,
+          height: contentAreaHeight,
         }}
-        onTouchMove={(e) => {
-          e.preventDefault();
-          handleTouchMove(e);
-        }}
-        onTouchEnd={handleTouchEnd}
-        style={{ touchAction: "none" }}
-        className="overflow-hidden"
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
       >
-        <AnimatePresence mode="wait">
+        <AnimatePresence mode="wait" initial={false}>
           <motion.div
             key={currentIndex}
             initial={{
               opacity: 0,
-              x: direction === "next" ? 100 : -100,
+              x: direction === "next" ? "100%" : "-100%",
             }}
-            animate={{ opacity: 1, x: 0 }}
+            animate={{ opacity: 1, x: "0%" }}
             exit={{
               opacity: 0,
-              x: direction === "next" ? -100 : 100,
+              x: direction === "next" ? "-100%" : "100%",
             }}
+            custom={direction}
             transition={{ duration: 0.5 }}
-            className="px-4"
+            className="absolute top-0 left-0 w-full h-full"
           >
             {renderContent()}
           </motion.div>
@@ -150,35 +298,32 @@ const GallerySlider = () => {
       </div>
 
       <button
-        onClick={goToPrevSlide}
-        className="absolute top-1/2 left-0 transform -translate-y-1/2 bg-accent text-white p-3 rounded-r-md opacity-70 hover:opacity-100 transition duration-300 ease-in-out z-10"
+        onClick={handlePrevButtonClick}
+        onPointerUp={isMobile ? handlePrevButtonClick : undefined}
+        className="absolute left-0 transform -translate-y-1/2 -translate-x-0 md:-translate-x-1/2 bg-accent text-white p-3 rounded-r-md md:rounded-full opacity-70 hover:opacity-100 transition duration-300 ease-in-out z-10 cursor-pointer"
+        style={{ top: buttonsTopOffset }}
         aria-label={t("accessibility.previousSlide")}
       >
         <FaChevronLeft />
       </button>
 
       <button
-        onClick={goToNextSlide}
-        className="absolute top-1/2 right-0 transform -translate-y-1/2 bg-accent text-white p-3 rounded-l-md opacity-70 hover:opacity-100 transition duration-300 ease-in-out z-10"
+        onClick={handleNextButtonClick}
+        onPointerUp={isMobile ? handleNextButtonClick : undefined}
+        className="absolute right-0 transform -translate-y-1/2 translate-x-0 md:translate-x-1/2 bg-accent text-white p-3 rounded-l-md md:rounded-full opacity-70 hover:opacity-100 transition duration-300 ease-in-out z-10 cursor-pointer"
+        style={{ top: buttonsTopOffset }}
         aria-label={t("accessibility.nextSlide")}
       >
         <FaChevronRight />
       </button>
 
-      <div className="flex justify-center mt-6 gap-2">
-        {Array.from({ length: totalItems }).map((_, index) => (
-          <button
-            key={`dot-${index}`}
-            onClick={() => goToSlide(index)}
-            className={`w-3 h-3 rounded-full transition duration-300 ease-in-out ${
-              currentIndex === index
-                ? "bg-accent"
-                : "bg-neutral dark:bg-gray-600 hover:bg-accent dark:hover:bg-accent"
-            }`}
-            aria-label={t("accessibility.goToSlide", { number: index + 1 })}
-          />
-        ))}
-      </div>
+      {!isMobile && (
+        <div
+          className="flex justify-center items-center mt-6 gap-2" // mt-6 zamiast style={{ marginTop: "1.5rem" }} dla spójności z Tailwind
+        >
+          {renderDots()}
+        </div>
+      )}
     </div>
   );
 };
