@@ -118,15 +118,32 @@ const GallerySlider = () => {
     }
     if (e.targetTouches && e.targetTouches.length > 0) {
       setTouchStart(e.targetTouches[0].clientX);
-      setTouchEnd(0);
-    }
-  };
-
-  const handleTouchMove = (e: React.TouchEvent) => {
-    if (e.targetTouches && e.targetTouches.length > 0) {
       setTouchEnd(e.targetTouches[0].clientX);
     }
   };
+
+  const memorizedHandleTouchMove = useCallback(
+    (event: Event) => {
+      const touchEvent = event as TouchEvent;
+      if (touchEvent.targetTouches && touchEvent.targetTouches.length > 0) {
+        setTouchEnd(touchEvent.targetTouches[0].clientX);
+      }
+    },
+    [setTouchEnd]
+  );
+
+  useEffect(() => {
+    const node = sliderRef.current;
+    if (node) {
+      const eventOptions = { passive: true } as AddEventListenerOptions;
+      const listener = memorizedHandleTouchMove as EventListener;
+
+      node.addEventListener("touchmove", listener, eventOptions);
+      return () => {
+        node.removeEventListener("touchmove", listener, eventOptions);
+      };
+    }
+  }, [memorizedHandleTouchMove]);
 
   const handleTouchEnd = () => {
     const swipeThreshold = 50;
@@ -148,7 +165,6 @@ const GallerySlider = () => {
         setIsPaused(false);
       }, 3000);
     }
-
     setTouchStart(0);
     setTouchEnd(0);
   };
@@ -264,7 +280,6 @@ const GallerySlider = () => {
       }`}
       ref={sliderRef}
       onTouchStart={handleTouchStart}
-      onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
     >
       <div
@@ -318,9 +333,7 @@ const GallerySlider = () => {
       </button>
 
       {!isMobile && (
-        <div
-          className="flex justify-center items-center mt-6 gap-2" // mt-6 zamiast style={{ marginTop: "1.5rem" }} dla spójności z Tailwind
-        >
+        <div className="flex justify-center items-center mt-6 gap-2">
           {renderDots()}
         </div>
       )}
