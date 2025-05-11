@@ -8,12 +8,12 @@ export const teamData: TeamMember[] = [
   {
     name: "Marta",
     position: "Lead Stylist",
-    image: "/assets/15.jpg",
+    image: "/assets/29.jpg",
   },
   {
     name: "Anita",
     position: "Color Specialist",
-    image: "/assets/29.jpg",
+    image: "/assets/15.jpg",
   },
   {
     name: "Zofia",
