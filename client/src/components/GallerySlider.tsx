@@ -268,7 +268,7 @@ const GallerySlider = () => {
       onTouchEnd={handleTouchEnd}
     >
       <div
-        className="relative mx-4 rounded-md overflow-hidden bg-cover bg-center bg-no-repeat"
+        className="relative  rounded-md overflow-hidden bg-cover bg-center bg-no-repeat"
         style={{
           backgroundImage: `url(${backgroundImageUrl})`,
           height: contentAreaHeight,
