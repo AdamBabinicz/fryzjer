@@ -41,7 +41,13 @@ function App() {
   };
 
   const isSpecialPage = location === "/privacy-policy" || location === "/terms";
-
+  const handleHomeClick = () => {
+    if (isSpecialPage) {
+      window.location.href = "/";
+    } else {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  };
   const MainContent = () => (
     <>
       <Home ref={homeRef} onContactClick={() => scrollToSection(contactRef)} />
@@ -73,10 +79,7 @@ function App() {
         </a>
 
         <Navbar
-          onHomeClick={() => {
-            if (isSpecialPage) window.location.href = "/";
-            else scrollToSection(homeRef);
-          }}
+          onHomeClick={handleHomeClick}
           onAboutClick={() => {
             if (isSpecialPage) window.location.href = "/#about";
             else scrollToSection(aboutRef);
@@ -110,7 +113,7 @@ function App() {
         <Footer
           onHomeClick={() => {
             if (isSpecialPage) window.location.href = "/";
-            else scrollToSection(homeRef);
+            else window.scrollTo({ top: 0, behavior: "smooth" });
           }}
           onAboutClick={() => {
             if (isSpecialPage) window.location.href = "/#about";
