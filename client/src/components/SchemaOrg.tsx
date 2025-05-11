@@ -3,8 +3,12 @@ import { Helmet } from "react-helmet-async";
 import { useLocation } from "wouter";
 
 export const SchemaOrg = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [location] = useLocation();
+
+  // Construct canonical URL for Polish version
+  const baseUrl = "https://stylowefryzury.netlify.app";
+  const canonicalUrl = `${baseUrl}${location}`;
 
   const salonSchema = {
     "@context": "https://schema.org",
@@ -80,6 +84,12 @@ export const SchemaOrg = () => {
 
   return (
     <Helmet>
+      <link rel="canonical" href={canonicalUrl} />
+      {i18n.language === "en" && (
+        <link rel="alternate" hrefLang="en" href={`${baseUrl}/en${location}`} />
+      )}
+      <link rel="alternate" hrefLang="pl" href={canonicalUrl} />
+      <link rel="alternate" hrefLang="x-default" href={canonicalUrl} />
       <script type="application/ld+json">{JSON.stringify(salonSchema)}</script>
       <script type="application/ld+json">
         {JSON.stringify(websiteSchema)}
