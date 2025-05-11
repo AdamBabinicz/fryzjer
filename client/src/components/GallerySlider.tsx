@@ -162,7 +162,7 @@ const GallerySlider = () => {
     openGalleryModal(imageData.fullSrc || imageData.src, imageData.alt);
   };
 
-  const backgroundImageUrl = "/assets/10.jfif";
+  const backgroundImageUrl = "/assets/62.jfif";
 
   const renderContent = (): JSX.Element | null => {
     if (isMobile) {

@@ -90,7 +90,7 @@ const Navbar = ({
           <button onClick={onHomeClick} className="flex items-center">
             <img
               src={
-                isDark ? "/attached_assets/g-j.png" : "/attached_assets/g.png"
+                isDark ? "/attached_assets/g-j.avif" : "/attached_assets/g.avif"
               }
               alt="Agilera Salon Logo"
               className="h-8 mr-2"
@@ -98,7 +98,9 @@ const Navbar = ({
             <span className="text-2xl font-bold playfair tracking-wider flex items-center text-primary dark:text-[#d6f4ff]">
               <img
                 src={
-                  isDark ? "/attached_assets/a-j.png" : "/attached_assets/a.png"
+                  isDark
+                    ? "/attached_assets/a-j.avif"
+                    : "/attached_assets/a.avif"
                 }
                 alt="A letter"
                 className="h-7 inline"

@@ -25,8 +25,8 @@ const Footer = ({
   const { theme } = useTheme();
   const isDark = theme === "dark";
 
-  const grzebienSrc = isDark ? "/assets/gr-j.png" : "/assets/gr.png";
-  const literaASrc = isDark ? "/assets/a-j.png" : "/assets/a.png";
+  const grzebienSrc = isDark ? "/assets/gr-j.avif" : "/assets/gr.avif";
+  const literaASrc = isDark ? "/assets/a-j.avif" : "/assets/a.avif";
 
   return (
     <footer className="bg-background/95 text-foreground dark:bg-[#1a1a1a] dark:text-white py-12">

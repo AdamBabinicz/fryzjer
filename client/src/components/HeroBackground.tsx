@@ -9,7 +9,7 @@ const HeroBackground: React.FC<HeroBackgroundProps> = ({ className = "" }) => {
   const { t } = useTranslation();
 
   const bgStyle = {
-    backgroundImage: `url('/assets/1.png')`,
+    backgroundImage: `url('/assets/1.avif')`,
     backgroundSize: "cover",
     backgroundPosition: "center",
     backgroundRepeat: "no-repeat",

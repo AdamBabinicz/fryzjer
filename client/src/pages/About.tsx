@@ -108,13 +108,13 @@ const About = forwardRef<HTMLDivElement, {}>((_, ref) => {
             className="grid grid-cols-2 gap-4"
           >
             <img
-              src="/assets/6.png"
+              src="/assets/6.avif"
               alt={t("about.stylistWorkingImage")}
               className="w-full h-auto object-cover rounded-md shadow-lg"
               loading="lazy"
             />
             <img
-              src="/assets/47.jpg"
+              src="/assets/47.avif"
               alt={t("about.salonInteriorImage")}
               className="w-full h-auto object-cover rounded-md shadow-lg mt-8"
               loading="lazy"

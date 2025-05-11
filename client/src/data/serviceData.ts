@@ -25,7 +25,7 @@ export const haircutServices: ServiceType[] = [
       <p>Czas trwania usługi: 45-60 minut.</p>
     `,
     price: "od 80 zł",
-    image: "/assets/51.jpg",
+    image: "/assets/51.avif",
   },
   {
     id: "haircut-men",
@@ -44,7 +44,7 @@ export const haircutServices: ServiceType[] = [
       <p>Czas trwania usługi: 30-45 minut.</p>
     `,
     price: "od 45 zł",
-    image: "/assets/50.jpg",
+    image: "/assets/50.avif",
   },
   {
     id: "haircut-children",
@@ -64,7 +64,7 @@ export const haircutServices: ServiceType[] = [
       <p>Czas trwania: 20-30 minut.</p>
     `,
     price: "od 40 zł",
-    image: "/assets/1.jfif",
+    image: "/assets/60.jfif",
   },
 ];
 
@@ -87,7 +87,7 @@ export const stylingServices: ServiceType[] = [
       <p>Czas trwania: 60-90 minut w zależności od długości włosów i stopnia skomplikowania fryzury.</p>
     `,
     price: "od 150 zł",
-    image: "/assets/35.jpg",
+    image: "/assets/35.avif",
   },
   {
     id: "styling-blowout",
@@ -105,7 +105,7 @@ export const stylingServices: ServiceType[] = [
       <p>Czas trwania: 30-60 minut w zależności od długości i gęstości włosów.</p>
     `,
     price: "od 70 zł",
-    image: "/assets/45.jpg",
+    image: "/assets/45.avif",
   },
   {
     id: "styling-treatment",
@@ -125,7 +125,7 @@ export const stylingServices: ServiceType[] = [
       <p>Czas trwania: 45-60 minut.</p>
     `,
     price: "od 100 zł",
-    image: "/assets/43.jpg",
+    image: "/assets/43.avif",
   },
 ];
 
@@ -148,7 +148,7 @@ export const coloringServices: ServiceType[] = [
       <p>Czas trwania: 90-120 minut w zależności od długości włosów.</p>
     `,
     price: "od 120 zł",
-    image: "/assets/21.jpg",
+    image: "/assets/21.avif",
   },
   {
     id: "coloring-highlights",
@@ -168,7 +168,7 @@ export const coloringServices: ServiceType[] = [
       <p>Czas trwania: 120-180 minut w zależności od techniki i długości włosów.</p>
     `,
     price: "od 150 zł",
-    image: "/assets/9.jpg",
+    image: "/assets/9.avif",
   },
   {
     id: "coloring-creative",
@@ -189,6 +189,6 @@ export const coloringServices: ServiceType[] = [
       <p>Czas trwania: 180-240 minut w zależności od złożoności projektu.</p>
     `,
     price: "od 200 zł",
-    image: "/assets/39.jpg",
+    image: "/assets/39.avif",
   },
 ];

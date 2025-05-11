@@ -25,7 +25,7 @@ export const haircutServices: ServiceType[] = [
       <p>Service duration: 45-60 minutes.</p>
     `,
     price: "from PLN 80",
-    image: "/assets/51.jpg",
+    image: "/assets/51.avif",
   },
   {
     id: "haircut-men",
@@ -44,7 +44,7 @@ export const haircutServices: ServiceType[] = [
       <p>Service duration: 30-45 minutes.</p>
     `,
     price: "from PLN 45",
-    image: "/assets/50.jpg",
+    image: "/assets/50.avif",
   },
   {
     id: "haircut-children",
@@ -64,7 +64,7 @@ export const haircutServices: ServiceType[] = [
       <p>Duration: 20-30 minutes.</p>
     `,
     price: "from PLN 40",
-    image: "/assets/1.jfif",
+    image: "/assets/60.jfif",
   },
 ];
 
@@ -87,7 +87,7 @@ export const stylingServices: ServiceType[] = [
       <p>Duration: 60-90 minutes depending on hair length and style complexity.</p>
     `,
     price: "from PLN 150",
-    image: "/assets/35.jpg",
+    image: "/assets/35.avif",
   },
   {
     id: "styling-blowout",
@@ -105,7 +105,7 @@ export const stylingServices: ServiceType[] = [
       <p>Duration: 30-60 minutes depending on hair length and density.</p>
     `,
     price: "from PLN 70",
-    image: "/assets/45.jpg",
+    image: "/assets/45.avif",
   },
   {
     id: "styling-treatment",
@@ -125,7 +125,7 @@ export const stylingServices: ServiceType[] = [
       <p>Duration: 45-60 minutes.</p>
     `,
     price: "from PLN 100",
-    image: "/assets/43.jpg",
+    image: "/assets/43.avif",
   },
 ];
 
@@ -148,7 +148,7 @@ export const coloringServices: ServiceType[] = [
       <p>Duration: 90-120 minutes depending on hair length.</p>
     `,
     price: "from PLN 120",
-    image: "/assets/21.jpg",
+    image: "/assets/21.avif",
   },
   {
     id: "coloring-highlights",
@@ -168,7 +168,7 @@ export const coloringServices: ServiceType[] = [
       <p>Duration: 120-180 minutes depending on technique and hair length.</p>
     `,
     price: "from PLN 150",
-    image: "/assets/9.jpg",
+    image: "/assets/9.avif",
   },
   {
     id: "coloring-creative",
@@ -189,6 +189,6 @@ export const coloringServices: ServiceType[] = [
       <p>Duration: 180-240 minutes depending on project complexity.</p>
     `,
     price: "from PLN 200",
-    image: "/assets/39.jpg",
+    image: "/assets/39.avif",
   },
 ];
