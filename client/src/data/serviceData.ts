@@ -64,7 +64,7 @@ export const haircutServices: ServiceType[] = [
       <p>Czas trwania: 20-30 minut.</p>
     `,
     price: "od 40 zł",
-    image: "/assets/60.jfif",
+    image: "/assets/60.avif",
   },
 ];
 

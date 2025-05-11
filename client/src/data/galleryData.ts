@@ -84,7 +84,7 @@ export const galleryData: GallerySlide[] = [
         alt: "Fryzura ślubna",
       },
       {
-        src: "/assets/61.jfif",
+        src: "/assets/61.avif",
         fullSrc:
           "https://images.unsplash.com/photo-1588516903720-8ceb67f9ef84?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&h=900&q=90",
         alt: "Krótkie cięcie damskie",
