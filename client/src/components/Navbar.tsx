@@ -6,7 +6,7 @@ import ThemeToggle from "./ThemeToggle";
 import { FaBars, FaChevronDown } from "react-icons/fa";
 import { useLanguage } from "@/context/LanguageContext";
 import { useTheme } from "@/context/ThemeContext";
-import { useLocation, Link } from "wouter"; // <--- Importuj Link obok useLocation
+import { useLocation, Link } from "wouter";
 
 interface NavbarProps {
   onHomeClick: () => void;
@@ -29,34 +29,47 @@ const Navbar = ({
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isServicesDropdownOpen, setIsServicesDropdownOpen] = useState(false);
-  const [location] = useLocation(); // Tylko pobieramy lokalizację
-
+  const [location] = useLocation();
   const isHomePage = location === "/";
 
-  // Funkcja do zamykania menu mobilnego - będzie używana w Linkach
   const closeMobileMenu = () => {
     setIsMobileMenuOpen(false);
     setIsServicesDropdownOpen(false);
   };
 
   useEffect(() => {
-    closeMobileMenu(); // Zamknij menu przy zmianie języka, motywu lub lokalizacji
+    closeMobileMenu();
   }, [language, theme, location]);
-
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 10);
-    };
+    const handleScroll = () => setIsScrolled(window.scrollY > 10);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // --- Style dla linków/przycisków ---
   const navLinkBaseClasses =
     "text-primary dark:text-[#d6f4ff] hover:text-accent dark:hover:text-accent transition duration-300 ease-in-out";
   const mobileNavLinkBaseClasses =
     "block w-full text-left px-3 py-2 text-primary dark:text-white hover:bg-neutral dark:hover:bg-gray-700 rounded-md";
-  const flexAlignCenterClasses = "flex items-center"; // Dla spójności dla przycisku Services
+  const flexAlignCenterClasses = "flex items-center";
+
+  const handleMobileLinkClick = (scrollFunc: () => void) => {
+    scrollFunc();
+    closeMobileMenu();
+  };
+  // Specjalna obsługa dla kliknięcia w 'Usługi' na home (rozwija/zwija lub przewija)
+  const handleMobileServicesClick = () => {
+    if (isServicesDropdownOpen) {
+      onServicesClick(); // Przewiń do sekcji jeśli dropdown był otwarty
+      closeMobileMenu();
+    } else {
+      setIsServicesDropdownOpen(true); // Otwórz dropdown jeśli był zamknięty
+    }
+  };
+  // Obsługa kliknięcia w podkategorię usługi
+  const handleMobileSubServiceClick = (scrollFunc: () => void) => {
+    scrollFunc(); // Wywołaj dedykowaną funkcję przewijania (jeśli masz) lub onServicesClick
+    closeMobileMenu();
+  };
 
   return (
     <header
@@ -68,18 +81,17 @@ const Navbar = ({
       )}
     >
       <nav className="max-w-[1400px] mx-auto px-4 sm:px-6 md:px-8 py-4 flex items-center justify-between">
-        {/* Logo - teraz używa Link jeśli nie na home */}
+        {/* Logo */}
         <div className="flex items-center">
           {isHomePage ? (
             <button onClick={onHomeClick} className={flexAlignCenterClasses}>
-              {/* ... img logo ... */}
               <img
                 src={
                   theme === "dark"
                     ? "/attached_assets/g-j.avif"
                     : "/attached_assets/g.avif"
                 }
-                alt="Agilera Salon Logo"
+                alt="Logo"
                 className="h-8 mr-2"
               />
               <span className="text-2xl font-bold playfair tracking-wider flex items-center text-primary dark:text-[#d6f4ff]">
@@ -89,7 +101,7 @@ const Navbar = ({
                       ? "/attached_assets/a-j.avif"
                       : "/attached_assets/a.avif"
                   }
-                  alt="A letter"
+                  alt="A"
                   className="h-7 inline"
                 />
                 GILERA
@@ -97,14 +109,13 @@ const Navbar = ({
             </button>
           ) : (
             <Link href="/" className={flexAlignCenterClasses}>
-              {/* ... img logo ... */}
               <img
                 src={
                   theme === "dark"
                     ? "/attached_assets/g-j.avif"
                     : "/attached_assets/g.avif"
                 }
-                alt="Agilera Salon Logo"
+                alt="Logo"
                 className="h-8 mr-2"
               />
               <span className="text-2xl font-bold playfair tracking-wider flex items-center text-primary dark:text-[#d6f4ff]">
@@ -114,7 +125,7 @@ const Navbar = ({
                       ? "/attached_assets/a-j.avif"
                       : "/attached_assets/a.avif"
                   }
-                  alt="A letter"
+                  alt="A"
                   className="h-7 inline"
                 />
                 GILERA
@@ -122,19 +133,17 @@ const Navbar = ({
             </Link>
           )}
         </div>
-
-        {/* Przycisk menu mobilnego */}
+        {/* Mobile Toggle */}
         <button
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           className="md:hidden flex items-center text-primary dark:text-[#d6f4ff]"
           aria-label={t("accessibility.toggleMenu")}
         >
+          {" "}
           <FaBars className="text-xl" />
         </button>
-
-        {/* Nawigacja desktop */}
+        {/* Desktop Nav */}
         <div className="hidden md:flex items-center space-x-8">
-          {/* Home */}
           {isHomePage ? (
             <button onClick={onHomeClick} className={navLinkBaseClasses}>
               {t("nav.home")}
@@ -144,7 +153,6 @@ const Navbar = ({
               {t("nav.home")}
             </Link>
           )}
-          {/* About */}
           {isHomePage ? (
             <button onClick={onAboutClick} className={navLinkBaseClasses}>
               {t("nav.about")}
@@ -154,8 +162,8 @@ const Navbar = ({
               {t("nav.about")}
             </Link>
           )}
-          {/* Services */}
           <div className="relative">
+            {" "}
             {isHomePage ? (
               <button
                 onClick={onServicesClick}
@@ -172,7 +180,6 @@ const Navbar = ({
               </Link>
             )}
           </div>
-          {/* Gallery */}
           {isHomePage ? (
             <button onClick={onGalleryClick} className={navLinkBaseClasses}>
               {t("nav.gallery")}
@@ -182,7 +189,6 @@ const Navbar = ({
               {t("nav.gallery")}
             </Link>
           )}
-          {/* Contact */}
           {isHomePage ? (
             <button onClick={onContactClick} className={navLinkBaseClasses}>
               {t("nav.contact")}
@@ -193,15 +199,13 @@ const Navbar = ({
             </Link>
           )}
         </div>
-
-        {/* Kontrolki desktop */}
+        {/* Desktop Toggles */}
         <div className="hidden md:flex items-center space-x-4">
           <LanguageSelector />
           <ThemeToggle />
         </div>
       </nav>
-
-      {/* Menu mobilne */}
+      {/* Mobile Menu */}
       <div
         className={cn(
           "md:hidden overflow-hidden transition-all duration-500 ease-in-out",
@@ -210,13 +214,10 @@ const Navbar = ({
         style={{ pointerEvents: isMobileMenuOpen ? "auto" : "none" }}
       >
         <div className="px-2 pt-2 pb-20 space-y-1 bg-white dark:bg-[#253754] shadow-md">
-          {/* Home */}
+          {/* Mobile Links */}
           {isHomePage ? (
             <button
-              onClick={() => {
-                onHomeClick();
-                closeMobileMenu();
-              }}
+              onClick={() => handleMobileLinkClick(onHomeClick)}
               className={mobileNavLinkBaseClasses}
             >
               {t("nav.home")}
@@ -230,13 +231,9 @@ const Navbar = ({
               {t("nav.home")}
             </Link>
           )}
-          {/* About */}
           {isHomePage ? (
             <button
-              onClick={() => {
-                onAboutClick();
-                closeMobileMenu();
-              }}
+              onClick={() => handleMobileLinkClick(onAboutClick)}
               className={mobileNavLinkBaseClasses}
             >
               {t("nav.about")}
@@ -251,11 +248,11 @@ const Navbar = ({
             </Link>
           )}
 
-          {/* --- Sekcja Usługi Mobile --- */}
-          {/* Główny przycisk Services (rozwijanie/przewijanie/nawigacja) */}
+          {/* --- Mobile Services Section --- */}
           {isHomePage ? (
+            // Na home page, ten przycisk rozwija/zwija dropdown LUB przewija do sekcji #services
             <button
-              onClick={() => setIsServicesDropdownOpen(!isServicesDropdownOpen)} // Na home tylko rozwija/zwija dropdown
+              onClick={handleMobileServicesClick}
               className="flex justify-between items-center w-full px-3 py-2 text-primary dark:text-white hover:bg-neutral dark:hover:bg-gray-700 rounded-md"
             >
               {t("nav.services")}
@@ -267,19 +264,17 @@ const Navbar = ({
               />
             </button>
           ) : (
-            // Na podstronie, przycisk "Services" nawiguje do sekcji #services na stronie głównej
+            // Na podstronie, ten przycisk jest linkiem do #services
             <Link
               href="/#services"
               onClick={closeMobileMenu}
-              className="flex justify-between items-center w-full px-3 py-2 text-primary dark:text-white hover:bg-neutral dark:hover:bg-gray-700 rounded-md"
+              className={mobileNavLinkBaseClasses}
             >
               {t("nav.services")}
-              {/* Opcjonalnie można usunąć strzałkę, gdy jest to Link */}
-              {/* <FaChevronDown className="text-xs" /> */}
             </Link>
           )}
 
-          {/* Dropdown z podkategoriami - widoczny tylko na stronie głównej i gdy otwarty */}
+          {/* Dropdown - tylko na home page */}
           {isHomePage && (
             <div
               className={cn(
@@ -289,45 +284,44 @@ const Navbar = ({
                   : "max-h-0 opacity-0"
               )}
             >
-              {/* Te buttony działają tylko na stronie głównej i przewijają */}
+              {/* Zakładam, że masz funkcje do przewijania do podsekcji, np. onHaircutClick, lub używasz ogólnej onServicesClick */}
               <button
-                onClick={() => {
-                  onServicesClick();
-                  /* Można dodać specyficzne przewijanie */ closeMobileMenu();
-                }}
+                onClick={() =>
+                  handleMobileSubServiceClick(
+                    onServicesClick /* lub onHaircutClick */
+                  )
+                }
                 className={mobileNavLinkBaseClasses}
               >
                 {t("services.haircut")}
               </button>
               <button
-                onClick={() => {
-                  onServicesClick();
-                  /* Można dodać specyficzne przewijanie */ closeMobileMenu();
-                }}
+                onClick={() =>
+                  handleMobileSubServiceClick(
+                    onServicesClick /* lub onStylingClick */
+                  )
+                }
                 className={mobileNavLinkBaseClasses}
               >
                 {t("services.styling")}
               </button>
               <button
-                onClick={() => {
-                  onServicesClick();
-                  /* Można dodać specyficzne przewijanie */ closeMobileMenu();
-                }}
+                onClick={() =>
+                  handleMobileSubServiceClick(
+                    onServicesClick /* lub onColoringClick */
+                  )
+                }
                 className={mobileNavLinkBaseClasses}
               >
                 {t("services.coloring")}
               </button>
             </div>
           )}
-          {/* --- Koniec Sekcji Usługi Mobile --- */}
+          {/* --- End Mobile Services Section --- */}
 
-          {/* Gallery */}
           {isHomePage ? (
             <button
-              onClick={() => {
-                onGalleryClick();
-                closeMobileMenu();
-              }}
+              onClick={() => handleMobileLinkClick(onGalleryClick)}
               className={mobileNavLinkBaseClasses}
             >
               {t("nav.gallery")}
@@ -341,13 +335,9 @@ const Navbar = ({
               {t("nav.gallery")}
             </Link>
           )}
-          {/* Contact */}
           {isHomePage ? (
             <button
-              onClick={() => {
-                onContactClick();
-                closeMobileMenu();
-              }}
+              onClick={() => handleMobileLinkClick(onContactClick)}
               className={mobileNavLinkBaseClasses}
             >
               {t("nav.contact")}
@@ -362,7 +352,7 @@ const Navbar = ({
             </Link>
           )}
 
-          {/* Kontrolki mobilne */}
+          {/* Mobile Toggles */}
           <div className="flex items-center justify-between px-3 pt-4">
             <div className="flex-1">
               <LanguageSelector isMobile={true} />
