@@ -21,12 +21,29 @@ const Footer = ({
   onContactClick,
 }: FooterProps) => {
   const { t } = useTranslation();
-  // const { toast } = useToast(); // Usunięte
   const { theme } = useTheme();
   const isDark = theme === "dark";
 
   const grzebienSrc = isDark ? "/assets/gr-j.avif" : "/assets/gr.avif";
   const literaASrc = isDark ? "/assets/a-j.avif" : "/assets/a.avif";
+
+  const startYear = 2025;
+  const currentYearRaw = getCurrentYear();
+  const currentYearNumber =
+    typeof currentYearRaw === "string"
+      ? parseInt(currentYearRaw, 10)
+      : currentYearRaw;
+
+  let yearDisplay: string;
+
+  if (!isNaN(currentYearNumber) && currentYearNumber === startYear) {
+    yearDisplay = startYear.toString();
+  } else if (!isNaN(currentYearNumber)) {
+    yearDisplay = `${startYear} - ${currentYearNumber}`;
+  } else {
+    yearDisplay = startYear.toString();
+    console.error("Invalid year received from getCurrentYear:", currentYearRaw);
+  }
 
   return (
     <footer className="bg-background/95 text-foreground dark:bg-[#1a1a1a] dark:text-white py-12">
@@ -54,7 +71,7 @@ const Footer = ({
                 <FaFacebookF />
               </a>
               <a
-                href="https://instagram.com" // Zastąp prawdziwymi linkami
+                href="https://instagram.com"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-gray-500 dark:text-white hover:text-accent transition duration-300 ease-in-out"
@@ -63,7 +80,7 @@ const Footer = ({
                 <FaInstagram />
               </a>
               <a
-                href="https://twitter.com" // Zastąp prawdziwymi linkami
+                href="https://twitter.com"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-gray-500 dark:text-white hover:text-accent transition duration-300 ease-in-out"
@@ -142,7 +159,7 @@ const Footer = ({
 
         <div className="border-t border-gray-200 dark:border-gray-800 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
           <p className="text-gray-500 dark:text-gray-300 text-sm mb-4 md:mb-0">
-            2025 - {getCurrentYear()} {t("footer.copyright")}
+            {yearDisplay} {t("footer.copyright")}
           </p>
           <div className="flex space-x-4">
             <Link

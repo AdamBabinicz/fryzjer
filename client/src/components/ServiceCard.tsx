@@ -39,7 +39,7 @@ const ServiceCard = ({ service, className, onClick }: ServiceCardProps) => {
         <p className="text-gray-600 dark:text-gray-300 mb-4">
           {service.shortDescription}
         </p>
-        <div className="flex justify-between items-center">
+        <div className="flex justify-between items-center gap-x-2">
           <span className="text-accent font-bold text-xl">{service.price}</span>
           <button
             onClick={handleLearnMore}
