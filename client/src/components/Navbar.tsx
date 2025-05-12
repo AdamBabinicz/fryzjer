@@ -6,7 +6,7 @@ import ThemeToggle from "./ThemeToggle";
 import { FaBars, FaChevronDown } from "react-icons/fa";
 import { useLanguage } from "@/context/LanguageContext";
 import { useTheme } from "@/context/ThemeContext";
-import { useLocation } from "wouter"; // <--- Importuj hook useLocation
+import { useLocation, Link } from "wouter"; // <--- Importuj Link obok useLocation
 
 interface NavbarProps {
   onHomeClick: () => void;
@@ -29,15 +29,19 @@ const Navbar = ({
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isServicesDropdownOpen, setIsServicesDropdownOpen] = useState(false);
-  const [location, setLocation] = useLocation(); // <--- Pobierz bieżącą lokalizację i funkcję do nawigacji
+  const [location] = useLocation(); // Tylko pobieramy lokalizację
 
-  // Sprawdź, czy jesteśmy na stronie głównej
   const isHomePage = location === "/";
 
-  useEffect(() => {
+  // Funkcja do zamykania menu mobilnego - będzie używana w Linkach
+  const closeMobileMenu = () => {
     setIsMobileMenuOpen(false);
     setIsServicesDropdownOpen(false);
-  }, [language, theme, location]); // <-- Dodaj location do zależności, aby zamknąć menu przy zmianie trasy
+  };
+
+  useEffect(() => {
+    closeMobileMenu(); // Zamknij menu przy zmianie języka, motywu lub lokalizacji
+  }, [language, theme, location]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -47,34 +51,12 @@ const Navbar = ({
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Funkcja pomocnicza do obsługi kliknięć w linki nawigacyjne
-  const handleNavClick = (scrollCallback: () => void, targetHash: string) => {
-    if (isHomePage) {
-      scrollCallback(); // Jeśli na stronie głównej, przewiń płynnie
-    } else {
-      setLocation(`/${targetHash}`); // Jeśli na innej stronie, nawiguj do strony głównej z hashem
-    }
-    setIsMobileMenuOpen(false);
-    setIsServicesDropdownOpen(false);
-  };
-
-  // Funkcja do przewijania do sekcji usług na stronie głównej
-  const scrollToServiceSection = (sectionId: string) => {
-    if (isHomePage) {
-      const element = document.getElementById(sectionId);
-      if (element) {
-        window.scrollTo({
-          top: element.offsetTop - 100, // Dostosuj offset
-          behavior: "smooth",
-        });
-      }
-    } else {
-      // Jeśli nie na stronie głównej, nawiguj do strony głównej z hashem sekcji
-      setLocation(`/#${sectionId}`);
-    }
-    setIsMobileMenuOpen(false);
-    setIsServicesDropdownOpen(false); // Zamknij też dropdown
-  };
+  // --- Style dla linków/przycisków ---
+  const navLinkBaseClasses =
+    "text-primary dark:text-[#d6f4ff] hover:text-accent dark:hover:text-accent transition duration-300 ease-in-out";
+  const mobileNavLinkBaseClasses =
+    "block w-full text-left px-3 py-2 text-primary dark:text-white hover:bg-neutral dark:hover:bg-gray-700 rounded-md";
+  const flexAlignCenterClasses = "flex items-center"; // Dla spójności dla przycisku Services
 
   return (
     <header
@@ -86,35 +68,59 @@ const Navbar = ({
       )}
     >
       <nav className="max-w-[1400px] mx-auto px-4 sm:px-6 md:px-8 py-4 flex items-center justify-between">
-        {/* Logo - kliknięcie zawsze powinno prowadzić do strony głównej */}
+        {/* Logo - teraz używa Link jeśli nie na home */}
         <div className="flex items-center">
-          <button
-            onClick={() => handleNavClick(onHomeClick, "")}
-            className="flex items-center"
-          >
-            {/* ... img logo ... */}
-            <img
-              src={
-                theme === "dark"
-                  ? "/attached_assets/g-j.avif"
-                  : "/attached_assets/g.avif"
-              }
-              alt="Agilera Salon Logo"
-              className="h-8 mr-2"
-            />
-            <span className="text-2xl font-bold playfair tracking-wider flex items-center text-primary dark:text-[#d6f4ff]">
+          {isHomePage ? (
+            <button onClick={onHomeClick} className={flexAlignCenterClasses}>
+              {/* ... img logo ... */}
               <img
                 src={
                   theme === "dark"
-                    ? "/attached_assets/a-j.avif"
-                    : "/attached_assets/a.avif"
+                    ? "/attached_assets/g-j.avif"
+                    : "/attached_assets/g.avif"
                 }
-                alt="A letter"
-                className="h-7 inline"
+                alt="Agilera Salon Logo"
+                className="h-8 mr-2"
               />
-              GILERA
-            </span>
-          </button>
+              <span className="text-2xl font-bold playfair tracking-wider flex items-center text-primary dark:text-[#d6f4ff]">
+                <img
+                  src={
+                    theme === "dark"
+                      ? "/attached_assets/a-j.avif"
+                      : "/attached_assets/a.avif"
+                  }
+                  alt="A letter"
+                  className="h-7 inline"
+                />
+                GILERA
+              </span>
+            </button>
+          ) : (
+            <Link href="/" className={flexAlignCenterClasses}>
+              {/* ... img logo ... */}
+              <img
+                src={
+                  theme === "dark"
+                    ? "/attached_assets/g-j.avif"
+                    : "/attached_assets/g.avif"
+                }
+                alt="Agilera Salon Logo"
+                className="h-8 mr-2"
+              />
+              <span className="text-2xl font-bold playfair tracking-wider flex items-center text-primary dark:text-[#d6f4ff]">
+                <img
+                  src={
+                    theme === "dark"
+                      ? "/attached_assets/a-j.avif"
+                      : "/attached_assets/a.avif"
+                  }
+                  alt="A letter"
+                  className="h-7 inline"
+                />
+                GILERA
+              </span>
+            </Link>
+          )}
         </div>
 
         {/* Przycisk menu mobilnego */}
@@ -128,38 +134,64 @@ const Navbar = ({
 
         {/* Nawigacja desktop */}
         <div className="hidden md:flex items-center space-x-8">
-          <button
-            onClick={() => handleNavClick(onHomeClick, "")} // Użyj nowej funkcji obsługi
-            className="text-primary dark:text-[#d6f4ff] hover:text-accent dark:hover:text-accent transition duration-300 ease-in-out"
-          >
-            {t("nav.home")}
-          </button>
-          <button
-            onClick={() => handleNavClick(onAboutClick, "#about")} // Użyj nowej funkcji obsługi
-            className="text-primary dark:text-[#d6f4ff] hover:text-accent dark:hover:text-accent transition duration-300 ease-in-out"
-          >
-            {t("nav.about")}
-          </button>
-          <div className="relative">
-            <button
-              onClick={() => handleNavClick(onServicesClick, "#services")} // Użyj nowej funkcji obsługi
-              className="flex items-center text-primary dark:text-[#d6f4ff] hover:text-accent dark:hover:text-accent transition duration-300 ease-in-out"
-            >
-              {t("nav.services")}
+          {/* Home */}
+          {isHomePage ? (
+            <button onClick={onHomeClick} className={navLinkBaseClasses}>
+              {t("nav.home")}
             </button>
+          ) : (
+            <Link href="/" className={navLinkBaseClasses}>
+              {t("nav.home")}
+            </Link>
+          )}
+          {/* About */}
+          {isHomePage ? (
+            <button onClick={onAboutClick} className={navLinkBaseClasses}>
+              {t("nav.about")}
+            </button>
+          ) : (
+            <Link href="/#about" className={navLinkBaseClasses}>
+              {t("nav.about")}
+            </Link>
+          )}
+          {/* Services */}
+          <div className="relative">
+            {isHomePage ? (
+              <button
+                onClick={onServicesClick}
+                className={cn(navLinkBaseClasses, flexAlignCenterClasses)}
+              >
+                {t("nav.services")}
+              </button>
+            ) : (
+              <Link
+                href="/#services"
+                className={cn(navLinkBaseClasses, flexAlignCenterClasses)}
+              >
+                {t("nav.services")}
+              </Link>
+            )}
           </div>
-          <button
-            onClick={() => handleNavClick(onGalleryClick, "#gallery")} // Użyj nowej funkcji obsługi
-            className="text-primary dark:text-[#d6f4ff] hover:text-accent dark:hover:text-accent transition duration-300 ease-in-out"
-          >
-            {t("nav.gallery")}
-          </button>
-          <button
-            onClick={() => handleNavClick(onContactClick, "#contact")} // Użyj nowej funkcji obsługi
-            className="text-primary dark:text-[#d6f4ff] hover:text-accent dark:hover:text-accent transition duration-300 ease-in-out"
-          >
-            {t("nav.contact")}
-          </button>
+          {/* Gallery */}
+          {isHomePage ? (
+            <button onClick={onGalleryClick} className={navLinkBaseClasses}>
+              {t("nav.gallery")}
+            </button>
+          ) : (
+            <Link href="/#gallery" className={navLinkBaseClasses}>
+              {t("nav.gallery")}
+            </Link>
+          )}
+          {/* Contact */}
+          {isHomePage ? (
+            <button onClick={onContactClick} className={navLinkBaseClasses}>
+              {t("nav.contact")}
+            </button>
+          ) : (
+            <Link href="/#contact" className={navLinkBaseClasses}>
+              {t("nav.contact")}
+            </Link>
+          )}
         </div>
 
         {/* Kontrolki desktop */}
@@ -178,74 +210,157 @@ const Navbar = ({
         style={{ pointerEvents: isMobileMenuOpen ? "auto" : "none" }}
       >
         <div className="px-2 pt-2 pb-20 space-y-1 bg-white dark:bg-[#253754] shadow-md">
-          <button
-            onClick={() => handleNavClick(onHomeClick, "")} // Użyj nowej funkcji obsługi
-            className="block w-full text-left px-3 py-2 text-primary dark:text-white hover:bg-neutral dark:hover:bg-gray-700 rounded-md"
-          >
-            {t("nav.home")}
-          </button>
-          <button
-            onClick={() => handleNavClick(onAboutClick, "#about")} // Użyj nowej funkcji obsługi
-            className="block w-full text-left px-3 py-2 text-primary dark:text-white hover:bg-neutral dark:hover:bg-gray-700 rounded-md"
-          >
-            {t("nav.about")}
-          </button>
+          {/* Home */}
+          {isHomePage ? (
+            <button
+              onClick={() => {
+                onHomeClick();
+                closeMobileMenu();
+              }}
+              className={mobileNavLinkBaseClasses}
+            >
+              {t("nav.home")}
+            </button>
+          ) : (
+            <Link
+              href="/"
+              onClick={closeMobileMenu}
+              className={mobileNavLinkBaseClasses}
+            >
+              {t("nav.home")}
+            </Link>
+          )}
+          {/* About */}
+          {isHomePage ? (
+            <button
+              onClick={() => {
+                onAboutClick();
+                closeMobileMenu();
+              }}
+              className={mobileNavLinkBaseClasses}
+            >
+              {t("nav.about")}
+            </button>
+          ) : (
+            <Link
+              href="/#about"
+              onClick={closeMobileMenu}
+              className={mobileNavLinkBaseClasses}
+            >
+              {t("nav.about")}
+            </Link>
+          )}
 
-          {/* Dropdown Usługi */}
-          <button
-            onClick={() => setIsServicesDropdownOpen(!isServicesDropdownOpen)}
-            className="flex justify-between items-center w-full px-3 py-2 text-primary dark:text-white hover:bg-neutral dark:hover:bg-gray-700 rounded-md"
-          >
-            {t("nav.services")}
-            <FaChevronDown
+          {/* --- Sekcja Usługi Mobile --- */}
+          {/* Główny przycisk Services (rozwijanie/przewijanie/nawigacja) */}
+          {isHomePage ? (
+            <button
+              onClick={() => setIsServicesDropdownOpen(!isServicesDropdownOpen)} // Na home tylko rozwija/zwija dropdown
+              className="flex justify-between items-center w-full px-3 py-2 text-primary dark:text-white hover:bg-neutral dark:hover:bg-gray-700 rounded-md"
+            >
+              {t("nav.services")}
+              <FaChevronDown
+                className={cn(
+                  "text-xs transition-transform duration-300",
+                  isServicesDropdownOpen ? "rotate-180" : "rotate-0"
+                )}
+              />
+            </button>
+          ) : (
+            // Na podstronie, przycisk "Services" nawiguje do sekcji #services na stronie głównej
+            <Link
+              href="/#services"
+              onClick={closeMobileMenu}
+              className="flex justify-between items-center w-full px-3 py-2 text-primary dark:text-white hover:bg-neutral dark:hover:bg-gray-700 rounded-md"
+            >
+              {t("nav.services")}
+              {/* Opcjonalnie można usunąć strzałkę, gdy jest to Link */}
+              {/* <FaChevronDown className="text-xs" /> */}
+            </Link>
+          )}
+
+          {/* Dropdown z podkategoriami - widoczny tylko na stronie głównej i gdy otwarty */}
+          {isHomePage && (
+            <div
               className={cn(
-                "text-xs transition-transform duration-300",
-                isServicesDropdownOpen ? "rotate-180" : "rotate-0"
+                "overflow-hidden transition-all duration-300 ease-in-out pl-4",
+                isServicesDropdownOpen
+                  ? "max-h-[200px] opacity-100"
+                  : "max-h-0 opacity-0"
               )}
-            />
-          </button>
-          <div
-            className={cn(
-              "overflow-hidden transition-all duration-300 ease-in-out pl-4",
-              isServicesDropdownOpen
-                ? "max-h-[200px] opacity-100"
-                : "max-h-0 opacity-0"
-            )}
-          >
-            {/* Przyciski podmenu usług teraz używają nowej funkcji scrollToServiceSection */}
-            <button
-              onClick={() => scrollToServiceSection("services-haircut")}
-              className="block w-full text-left px-3 py-2 text-primary dark:text-white hover:bg-neutral dark:hover:bg-gray-700 rounded-md"
             >
-              {t("services.haircut")}
-            </button>
-            <button
-              onClick={() => scrollToServiceSection("services-styling")}
-              className="block w-full text-left px-3 py-2 text-primary dark:text-white hover:bg-neutral dark:hover:bg-gray-700 rounded-md"
-            >
-              {t("services.styling")}
-            </button>
-            <button
-              onClick={() => scrollToServiceSection("services-coloring")}
-              className="block w-full text-left px-3 py-2 text-primary dark:text-white hover:bg-neutral dark:hover:bg-gray-700 rounded-md"
-            >
-              {t("services.coloring")}
-            </button>
-          </div>
-          {/* Koniec Dropdown Usługi */}
+              {/* Te buttony działają tylko na stronie głównej i przewijają */}
+              <button
+                onClick={() => {
+                  onServicesClick();
+                  /* Można dodać specyficzne przewijanie */ closeMobileMenu();
+                }}
+                className={mobileNavLinkBaseClasses}
+              >
+                {t("services.haircut")}
+              </button>
+              <button
+                onClick={() => {
+                  onServicesClick();
+                  /* Można dodać specyficzne przewijanie */ closeMobileMenu();
+                }}
+                className={mobileNavLinkBaseClasses}
+              >
+                {t("services.styling")}
+              </button>
+              <button
+                onClick={() => {
+                  onServicesClick();
+                  /* Można dodać specyficzne przewijanie */ closeMobileMenu();
+                }}
+                className={mobileNavLinkBaseClasses}
+              >
+                {t("services.coloring")}
+              </button>
+            </div>
+          )}
+          {/* --- Koniec Sekcji Usługi Mobile --- */}
 
-          <button
-            onClick={() => handleNavClick(onGalleryClick, "#gallery")} // Użyj nowej funkcji obsługi
-            className="block w-full text-left px-3 py-2 text-primary dark:text-white hover:bg-neutral dark:hover:bg-gray-700 rounded-md"
-          >
-            {t("nav.gallery")}
-          </button>
-          <button
-            onClick={() => handleNavClick(onContactClick, "#contact")} // Użyj nowej funkcji obsługi
-            className="block w-full text-left px-3 py-2 text-primary dark:text-white hover:bg-neutral dark:hover:bg-gray-700 rounded-md"
-          >
-            {t("nav.contact")}
-          </button>
+          {/* Gallery */}
+          {isHomePage ? (
+            <button
+              onClick={() => {
+                onGalleryClick();
+                closeMobileMenu();
+              }}
+              className={mobileNavLinkBaseClasses}
+            >
+              {t("nav.gallery")}
+            </button>
+          ) : (
+            <Link
+              href="/#gallery"
+              onClick={closeMobileMenu}
+              className={mobileNavLinkBaseClasses}
+            >
+              {t("nav.gallery")}
+            </Link>
+          )}
+          {/* Contact */}
+          {isHomePage ? (
+            <button
+              onClick={() => {
+                onContactClick();
+                closeMobileMenu();
+              }}
+              className={mobileNavLinkBaseClasses}
+            >
+              {t("nav.contact")}
+            </button>
+          ) : (
+            <Link
+              href="/#contact"
+              onClick={closeMobileMenu}
+              className={mobileNavLinkBaseClasses}
+            >
+              {t("nav.contact")}
+            </Link>
+          )}
 
           {/* Kontrolki mobilne */}
           <div className="flex items-center justify-between px-3 pt-4">
