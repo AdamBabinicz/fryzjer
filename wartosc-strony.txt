@@ -10,19 +10,6 @@ Responsywność: Strona dostosowuje się do różnych rozdzielczości ekranów, 
 
 Szybkość ładowania: Dzięki hostowaniu na Netlify, strona prawdopodobnie charakteryzuje się dobrą wydajnością.
 
-SEO: Brak własnej domeny (np. .pl) może ograniczać widoczność w wynikach wyszukiwania.
-
-3. Obecność online
-Domena: Użycie subdomeny Netlify (netlify.app) może wpływać na postrzeganą profesjonalność strony.
-
-Media społecznościowe: Brak bezpośrednich linków do profili społecznościowych może ograniczać zasięg i interakcję z klientami.
-Netlify Support Forums
-+5
-Netlify
-+5
-Netlify
-+5
-
 💰 Szacunkowa wartość rynkowa
 Biorąc pod uwagę powyższe aspekty, wartość strony można oszacować na podstawie:
 
@@ -40,4 +27,3 @@ Optymalizacja SEO: Dodanie odpowiednich meta tagów, opisów usług i lokalnych 
 Integracja z mediami społecznościowymi: Dodanie linków do profili na Facebooku czy Instagramie zwiększy zaangażowanie klientów.
 
 Dodanie funkcji rezerwacji online: Umożliwienie klientom umawiania wizyt przez stronę zwiększy jej funkcjonalność.
-
