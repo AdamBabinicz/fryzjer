@@ -13,8 +13,7 @@ export const galleryData: GallerySlide[] = [
     images: [
       {
         src: "/assets/2.avif",
-        fullSrc:
-          "https://images.unsplash.com/photo-1605497788044-5a32c7078486?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&h=900&q=90",
+        fullSrc: "/assets/2.avif",
         alt: "Fryzura damska - blond",
       },
       {
