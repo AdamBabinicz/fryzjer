@@ -164,7 +164,9 @@
     scroll-behavior: smooth;
     overflow-x: hidden;
   }
-
+  body {
+    overflow-x: hidden;
+  }
   .custom-transition {
     @apply transition duration-300 ease-in-out;
   }
