@@ -139,7 +139,7 @@ const ServiceModal = () => {
                   variants={itemVariants}
                   className="text-accent font-bold text-xl"
                 >
-                  {serviceData.price}
+                  &nbsp;{serviceData.price}
                 </motion.span>
                 <motion.button
                   onClick={handleBookAppointment}
