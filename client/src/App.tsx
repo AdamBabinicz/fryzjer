@@ -51,24 +51,16 @@ function App() {
       const currentRefIdMap = refIdMap();
       const targetId = currentRefIdMap.get(ref);
       if (ref === homeRef) {
-        console.log(`Scrolling to TOP (Home)`);
         window.scrollTo({ top: 0, behavior });
         if (location === "/") {
-          console.log("Replacing state, removing hash for home");
           history.replaceState(null, "", window.location.pathname);
         }
       } else if (ref?.current) {
         const offset = 80;
         const topPos = ref.current.offsetTop - offset;
-
-        console.log(
-          `Scrolling to ref for ID ${targetId ?? "unknown"} at top: ${topPos}`
-        );
         window.scrollTo({ top: topPos, behavior });
-
         if (location === "/") {
           if (targetId !== undefined && targetId !== "") {
-            console.log(`Replacing state with hash: #${targetId}`);
             history.replaceState(null, "", `#${targetId}`);
           }
         }
@@ -79,38 +71,49 @@ function App() {
     [location, refIdMap]
   );
 
+  const scrollToSubSection = useCallback(
+    (id: string, behavior: ScrollBehavior = "smooth") => {
+      const element = document.getElementById(id);
+      if (element) {
+        const offset = 80;
+        const topPos = element.offsetTop - offset;
+        window.scrollTo({ top: topPos, behavior });
+        if (location === "/") {
+          history.replaceState(null, "", `#${id}`);
+        }
+      } else {
+        console.warn(`Sub-section element with ID ${id} not found.`);
+        scrollToSection(servicesRef, behavior);
+      }
+    },
+    [location, scrollToSection, servicesRef]
+  );
+
   useEffect(() => {
     const currentPath = location;
     const hash = window.location.hash;
     const currentRefIdMap = refIdMap();
 
-    console.log(`Effect: Location=${currentPath}, Hash=${hash}`);
-
     if (currentPath === "/" && hash) {
       const timer = setTimeout(() => {
         const id = hash.substring(1);
-        console.log(`Effect: Processing initial hash: ${id}`);
-
         let targetRef: React.RefObject<HTMLDivElement> | null = null;
         currentRefIdMap.forEach((refId, ref) => {
           if (refId === id) targetRef = ref;
         });
 
-        if (
-          !targetRef &&
-          (id === "services-haircut" ||
-            id === "services-styling" ||
-            id === "services-coloring")
-        ) {
-          targetRef = servicesRef;
-        }
+        const isSubService =
+          id === "services-haircut" ||
+          id === "services-styling" ||
+          id === "services-coloring";
 
-        if (targetRef) {
+        if (!targetRef && isSubService) {
+          scrollToSubSection(id, "auto"); // Przewiń do podsekcji
+        } else if (targetRef) {
           scrollToSection(targetRef, "auto");
         } else {
           const element = document.getElementById(id);
           if (element) {
-            console.log(`Effect Fallback: Scrolling to element ID: ${id}`);
             window.scrollTo({ top: element.offsetTop - 80, behavior: "auto" });
           } else {
             console.warn(
@@ -119,10 +122,9 @@ function App() {
           }
         }
       }, 150);
-
       return () => clearTimeout(timer);
     }
-  }, [location, scrollToSection, refIdMap]);
+  }, [location, scrollToSection, scrollToSubSection, refIdMap]);
 
   const MainContent = () => (
     <>
@@ -145,16 +147,18 @@ function App() {
         <a
           href="#main-content"
           className="sr-only focus:not-sr-only focus:absolute focus:p-4 focus:bg-accent focus:text-white focus:z-50"
+          aria-label={t("accessibility.skipToContent")}
         ></a>
-
         <Navbar
           onHomeClick={() => scrollToSection(homeRef)}
           onAboutClick={() => scrollToSection(aboutRef)}
           onServicesClick={() => scrollToSection(servicesRef)}
           onGalleryClick={() => scrollToSection(galleryRef)}
           onContactClick={() => scrollToSection(contactRef)}
+          onHaircutClick={() => scrollToSubSection("services-haircut")}
+          onStylingClick={() => scrollToSubSection("services-styling")}
+          onColoringClick={() => scrollToSubSection("services-coloring")}
         />
-
         <main id="main-content">
           <Switch>
             <Route path="/" component={MainContent} />
@@ -163,7 +167,6 @@ function App() {
             <Route component={NotFound} />
           </Switch>
         </main>
-
         <Footer
           onHomeClick={() => scrollToSection(homeRef)}
           onAboutClick={() => scrollToSection(aboutRef)}
@@ -171,11 +174,9 @@ function App() {
           onGalleryClick={() => scrollToSection(galleryRef)}
           onContactClick={() => scrollToSection(contactRef)}
         />
-
         <GalleryModal />
         <ServiceModal />
         <ScrollToTop />
-        {/* Ten komponent działa poprawnie, bo używa top: 0 */}
       </HelmetProvider>
     </ServiceProvider>
   );

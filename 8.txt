@@ -1,0 +1,2519 @@
+import { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
+import { cn } from "@/lib/utils";
+import LanguageSelector from "./LanguageSelector";
+import ThemeToggle from "./ThemeToggle";
+import { FaBars, FaChevronDown } from "react-icons/fa";
+
+const useIsDarkMode = () => {
+  const [isDark, setIsDark] = useState(false);
+
+  useEffect(() => {
+    const checkDarkMode = () => {
+      setIsDark(document.documentElement.classList.contains("dark"));
+    };
+
+    checkDarkMode();
+
+    const observer = new MutationObserver(checkDarkMode);
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["class"],
+    });
+
+    return () => observer.disconnect();
+  }, []);
+
+  return isDark;
+};
+
+interface NavbarProps {
+  onHomeClick: () => void;
+  onAboutClick: () => void;
+  onServicesClick: () => void;
+  onGalleryClick: () => void;
+  onContactClick: () => void;
+}
+
+const Navbar = ({
+  onHomeClick,
+  onAboutClick,
+  onServicesClick,
+  onGalleryClick,
+  onContactClick,
+}: NavbarProps) => {
+  const { t } = useTranslation();
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isServicesDropdownOpen, setIsServicesDropdownOpen] = useState(false);
+
+  // Handle scrolling effect
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 10);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  const handleLinkClick = (callback: () => void) => {
+    callback();
+    setIsMobileMenuOpen(false);
+  };
+
+  const scrollToServiceSection = (sectionId: string) => {
+    const element = document.getElementById(sectionId);
+    if (element) {
+      window.scrollTo({
+        top: element.offsetTop - 100,
+        behavior: "smooth",
+      });
+    }
+
+    setIsMobileMenuOpen(false);
+  };
+
+  const isDark = useIsDarkMode();
+
+  return (
+    <header
+      className={cn(
+        "fixed top-0 left-0 right-0 z-50 transition duration-300 ease-in-out",
+        isScrolled
+          ? "bg-white dark:bg-[#121e33] shadow-md"
+          : "bg-white/90 dark:bg-[#121e33]/90"
+      )}
+    >
+      <nav className="max-w-[1400px] mx-auto px-4 sm:px-6 md:px-8 py-4 flex items-center justify-between">
+        <div className="flex items-center">
+          <button onClick={onHomeClick} className="flex items-center">
+            <img
+              src={
+                isDark ? "/attached_assets/g-j.avif" : "/attached_assets/g.avif"
+              }
+              alt="Agilera Salon Logo"
+              className="h-8 mr-2"
+            />
+            <span className="text-2xl font-bold playfair tracking-wider flex items-center text-primary dark:text-[#d6f4ff]">
+              <img
+                src={
+                  isDark
+                    ? "/attached_assets/a-j.avif"
+                    : "/attached_assets/a.avif"
+                }
+                alt="A letter"
+                className="h-7 inline"
+              />
+              GILERA
+            </span>
+          </button>
+        </div>
+
+        <button
+          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          className="md:hidden flex items-center text-primary dark:text-[#d6f4ff]"
+          aria-label={t("accessibility.toggleMenu")}
+        >
+          <FaBars className="text-xl" />
+        </button>
+
+        <div className="hidden md:flex items-center space-x-8">
+          <button
+            onClick={onHomeClick}
+            className="text-primary dark:text-[#d6f4ff] hover:text-accent dark:hover:text-accent transition duration-300 ease-in-out"
+          >
+            {t("nav.home")}
+          </button>
+
+          <button
+            onClick={onAboutClick}
+            className="text-primary dark:text-[#d6f4ff]  hover:text-accent dark:hover:text-accent transition duration-300 ease-in-out"
+          >
+            {t("nav.about")}
+          </button>
+
+          <div className="relative">
+            <button
+              onClick={onServicesClick}
+              className="flex items-center text-primary dark:text-[#d6f4ff] hover:text-accent dark:hover:text-accent transition duration-300 ease-in-out"
+            >
+              {t("nav.services")}
+            </button>
+          </div>
+
+          <button
+            onClick={onGalleryClick}
+            className="text-primary dark:text-[#d6f4ff]  hover:text-accent dark:hover:text-accent transition duration-300 ease-in-out"
+          >
+            {t("nav.gallery")}
+          </button>
+
+          <button
+            onClick={onContactClick}
+            className="text-primary dark:text-[#d6f4ff]  hover:text-accent dark:hover:text-accent transition duration-300 ease-in-out"
+          >
+            {t("nav.contact")}
+          </button>
+        </div>
+
+        <div className="hidden md:flex items-center space-x-4">
+          <LanguageSelector />
+          <ThemeToggle />
+        </div>
+      </nav>
+
+      <div className={`md:hidden ${isMobileMenuOpen ? "block" : "hidden"}`}>
+        <div className="px-2 pt-2 pb-3 space-y-1 bg-white dark:bg-[#253754] shadow-md">
+          <button
+            onClick={() => handleLinkClick(onHomeClick)}
+            className="block w-full text-left px-3 py-2 text-primary dark:text-white hover:bg-neutral dark:hover:bg-gray-700 rounded-md"
+          >
+            {t("nav.home")}
+          </button>
+
+          <button
+            onClick={() => handleLinkClick(onAboutClick)}
+            className="block w-full text-left px-3 py-2 text-primary dark:text-white hover:bg-neutral dark:hover:bg-gray-700 rounded-md"
+          >
+            {t("nav.about")}
+          </button>
+
+          <button
+            onClick={() => setIsServicesDropdownOpen(!isServicesDropdownOpen)}
+            className="flex justify-between items-center w-full px-3 py-2 text-primary dark:text-white hover:bg-neutral dark:hover:bg-gray-700 rounded-md"
+          >
+            {t("nav.services")} <FaChevronDown className="text-xs" />
+          </button>
+
+          <div
+            className={`pl-4 ${isServicesDropdownOpen ? "block" : "hidden"}`}
+          >
+            <button
+              onClick={() => scrollToServiceSection("services-haircut")}
+              className="block w-full text-left px-3 py-2 text-primary dark:text-white hover:bg-neutral dark:hover:bg-gray-700 rounded-md"
+            >
+              {t("services.haircut")}
+            </button>
+            <button
+              onClick={() => scrollToServiceSection("services-styling")}
+              className="block w-full text-left px-3 py-2 text-primary dark:text-white hover:bg-neutral dark:hover:bg-gray-700 rounded-md"
+            >
+              {t("services.styling")}
+            </button>
+            <button
+              onClick={() => scrollToServiceSection("services-coloring")}
+              className="block w-full text-left px-3 py-2 text-primary dark:text-white hover:bg-neutral dark:hover:bg-gray-700 rounded-md"
+            >
+              {t("services.coloring")}
+            </button>
+          </div>
+
+          <button
+            onClick={() => handleLinkClick(onGalleryClick)}
+            className="block w-full text-left px-3 py-2 text-primary dark:text-white hover:bg-neutral dark:hover:bg-gray-700 rounded-md"
+          >
+            {t("nav.gallery")}
+          </button>
+
+          <button
+            onClick={() => handleLinkClick(onContactClick)}
+            className="block w-full text-left px-3 py-2 text-primary dark:text-white hover:bg-neutral dark:hover:bg-gray-700 rounded-md"
+          >
+            {t("nav.contact")}
+          </button>
+
+          <div className="flex items-center justify-between px-3 py-2">
+            <LanguageSelector isMobile={true} />
+            <ThemeToggle isMobile={true} />
+          </div>
+        </div>
+      </div>
+    </header>
+  );
+};
+
+export default Navbar;
+
+
+-------------------------------
+
+import { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
+import { cn } from "@/lib/utils";
+import LanguageSelector from "./LanguageSelector";
+import ThemeToggle from "./ThemeToggle";
+import { FaBars, FaChevronDown } from "react-icons/fa";
+import { useLanguage } from "@/context/LanguageContext";
+import { useTheme } from "@/context/ThemeContext";
+
+interface NavbarProps {
+  onHomeClick: () => void;
+  onAboutClick: () => void;
+  onServicesClick: () => void;
+  onGalleryClick: () => void;
+  onContactClick: () => void;
+}
+
+const Navbar = ({
+  onHomeClick,
+  onAboutClick,
+  onServicesClick,
+  onGalleryClick,
+  onContactClick,
+}: NavbarProps) => {
+  const { t } = useTranslation();
+  const { language } = useLanguage();
+  const { theme } = useTheme();
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isServicesDropdownOpen, setIsServicesDropdownOpen] = useState(false);
+
+  // Close mobile menu on language or theme change
+  useEffect(() => {
+    setIsMobileMenuOpen(false);
+  }, [language, theme]);
+
+  // Handle scrolling effect
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 10);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  const handleLinkClick = (callback: () => void) => {
+    callback();
+    setIsMobileMenuOpen(false);
+  };
+
+  const scrollToServiceSection = (sectionId: string) => {
+    const element = document.getElementById(sectionId);
+    if (element) {
+      window.scrollTo({
+        top: element.offsetTop - 100,
+        behavior: "smooth",
+      });
+    }
+    setIsMobileMenuOpen(false);
+  };
+
+  return (
+    <header
+      className={cn(
+        "fixed top-0 left-0 right-0 z-50 transition duration-300 ease-in-out",
+        isScrolled
+          ? "bg-white dark:bg-[#121e33] shadow-md"
+          : "bg-white/90 dark:bg-[#121e33]/90"
+      )}
+    >
+      <nav className="max-w-[1400px] mx-auto px-4 sm:px-6 md:px-8 py-4 flex items-center justify-between">
+        <div className="flex items-center">
+          <button onClick={onHomeClick} className="flex items-center">
+            <img
+              src={
+                theme === "dark"
+                  ? "/attached_assets/g-j.avif"
+                  : "/attached_assets/g.avif"
+              }
+              alt="Agilera Salon Logo"
+              className="h-8 mr-2"
+            />
+            <span className="text-2xl font-bold playfair tracking-wider flex items-center text-primary dark:text-[#d6f4ff]">
+              <img
+                src={
+                  theme === "dark"
+                    ? "/attached_assets/a-j.avif"
+                    : "/attached_assets/a.avif"
+                }
+                alt="A letter"
+                className="h-7 inline"
+              />
+              GILERA
+            </span>
+          </button>
+        </div>
+
+        <button
+          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          className="md:hidden flex items-center text-primary dark:text-[#d6f4ff]"
+          aria-label={t("accessibility.toggleMenu")}
+        >
+          <FaBars className="text-xl" />
+        </button>
+
+        <div className="hidden md:flex items-center space-x-8">
+          <button
+            onClick={onHomeClick}
+            className="text-primary dark:text-[#d6f4ff] hover:text-accent dark:hover:text-accent transition duration-300 ease-in-out"
+          >
+            {t("nav.home")}
+          </button>
+
+          <button
+            onClick={onAboutClick}
+            className="text-primary dark:text-[#d6f4ff] hover:text-accent dark:hover:text-accent transition duration-300 ease-in-out"
+          >
+            {t("nav.about")}
+          </button>
+
+          <div className="relative">
+            <button
+              onClick={onServicesClick}
+              className="flex items-center text-primary dark:text-[#d6f4ff] hover:text-accent dark:hover:text-accent transition duration-300 ease-in-out"
+            >
+              {t("nav.services")}
+            </button>
+          </div>
+
+          <button
+            onClick={onGalleryClick}
+            className="text-primary dark:text-[#d6f4ff] hover:text-accent dark:hover:text-accent transition duration-300 ease-in-out"
+          >
+            {t("nav.gallery")}
+          </button>
+
+          <button
+            onClick={onContactClick}
+            className="text-primary dark:text-[#d6f4ff] hover:text-accent dark:hover:text-accent transition duration-300 ease-in-out"
+          >
+            {t("nav.contact")}
+          </button>
+        </div>
+
+        <div className="hidden md:flex items-center space-x-4">
+          <LanguageSelector />
+          <ThemeToggle />
+        </div>
+      </nav>
+
+      <div className={`md:hidden ${isMobileMenuOpen ? "block" : "hidden"}`}>
+        <div className="px-2 pt-2 pb-3 space-y-1 bg-white dark:bg-[#253754] shadow-md">
+          <button
+            onClick={() => handleLinkClick(onHomeClick)}
+            className="block w-full text-left px-3 py-2 text-primary dark:text-white hover:bg-neutral dark:hover:bg-gray-700 rounded-md"
+          >
+            {t("nav.home")}
+          </button>
+
+          <button
+            onClick={() => handleLinkClick(onAboutClick)}
+            className="block w-full text-left px-3 py-2 text-primary dark:text-white hover:bg-neutral dark:hover:bg-gray-700 rounded-md"
+          >
+            {t("nav.about")}
+          </button>
+
+          <button
+            onClick={() => setIsServicesDropdownOpen(!isServicesDropdownOpen)}
+            className="flex justify-between items-center w-full px-3 py-2 text-primary dark:text-white hover:bg-neutral dark:hover:bg-gray-700 rounded-md"
+          >
+            {t("nav.services")} <FaChevronDown className="text-xs" />
+          </button>
+
+          <div
+            className={`pl-4 ${isServicesDropdownOpen ? "block" : "hidden"}`}
+          >
+            <button
+              onClick={() => scrollToServiceSection("services-haircut")}
+              className="block w-full text-left px-3 py-2 text-primary dark:text-white hover:bg-neutral dark:hover:bg-gray-700 rounded-md"
+            >
+              {t("services.haircut")}
+            </button>
+            <button
+              onClick={() => scrollToServiceSection("services-styling")}
+              className="block w-full text-left px-3 py-2 text-primary dark:text-white hover:bg-neutral dark:hover:bg-gray-700 rounded-md"
+            >
+              {t("services.styling")}
+            </button>
+            <button
+              onClick={() => scrollToServiceSection("services-coloring")}
+              className="block w-full text-left px-3 py-2 text-primary dark:text-white hover:bg-neutral dark:hover:bg-gray-700 rounded-md"
+            >
+              {t("services.coloring")}
+            </button>
+          </div>
+
+          <button
+            onClick={() => handleLinkClick(onGalleryClick)}
+            className="block w-full text-left px-3 py-2 text-primary dark:text-white hover:bg-neutral dark:hover:bg-gray-700 rounded-md"
+          >
+            {t("nav.gallery")}
+          </button>
+
+          <button
+            onClick={() => handleLinkClick(onContactClick)}
+            className="block w-full text-left px-3 py-2 text-primary dark:text-white hover:bg-neutral dark:hover:bg-gray-700 rounded-md"
+          >
+            {t("nav.contact")}
+          </button>
+
+          <div className="flex items-center justify-between px-3 py-2">
+            <LanguageSelector isMobile={true} />
+            <ThemeToggle isMobile={true} />
+          </div>
+        </div>
+      </div>
+    </header>
+  );
+};
+
+export default Navbar;
+
+
+--------------------------------
+
+import { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
+import { cn } from "@/lib/utils";
+import LanguageSelector from "./LanguageSelector";
+import ThemeToggle from "./ThemeToggle";
+import { FaBars, FaChevronDown } from "react-icons/fa";
+import { useLanguage } from "@/context/LanguageContext";
+import { useTheme } from "@/context/ThemeContext";
+
+interface NavbarProps {
+  onHomeClick: () => void;
+  onAboutClick: () => void;
+  onServicesClick: () => void;
+  onGalleryClick: () => void;
+  onContactClick: () => void;
+}
+
+const Navbar = ({
+  onHomeClick,
+  onAboutClick,
+  onServicesClick,
+  onGalleryClick,
+  onContactClick,
+}: NavbarProps) => {
+  const { t } = useTranslation();
+  const { language } = useLanguage();
+  const { theme } = useTheme();
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isServicesDropdownOpen, setIsServicesDropdownOpen] = useState(false);
+
+  // Close mobile menu on language or theme change
+  useEffect(() => {
+    setIsMobileMenuOpen(false);
+  }, [language, theme]);
+
+  // Handle scrolling effect
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 10);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  const handleLinkClick = (callback: () => void) => {
+    callback();
+    setIsMobileMenuOpen(false);
+  };
+
+  const scrollToServiceSection = (sectionId: string) => {
+    const element = document.getElementById(sectionId);
+    if (element) {
+      window.scrollTo({
+        top: element.offsetTop - 100,
+        behavior: "smooth",
+      });
+    }
+    setIsMobileMenuOpen(false);
+  };
+
+  return (
+    <header
+      className={cn(
+        "fixed top-0 left-0 right-0 z-50 transition duration-500 ease-in-out",
+        isScrolled
+          ? "bg-white dark:bg-[#121e33] shadow-md"
+          : "bg-white/90 dark:bg-[#121e33]/90"
+      )}
+    >
+      <nav className="max-w-[1400px] mx-auto px-4 sm:px-6 md:px-8 py-4 flex items-center justify-between">
+        <div className="flex items-center">
+          <button onClick={onHomeClick} className="flex items-center">
+            <img
+              src={
+                theme === "dark"
+                  ? "/attached_assets/g-j.avif"
+                  : "/attached_assets/g.avif"
+              }
+              alt="Agilera Salon Logo"
+              className="h-8 mr-2"
+            />
+            <span className="text-2xl font-bold playfair tracking-wider flex items-center text-primary dark:text-[#d6f4ff]">
+              <img
+                src={
+                  theme === "dark"
+                    ? "/attached_assets/a-j.avif"
+                    : "/attached_assets/a.avif"
+                }
+                alt="A letter"
+                className="h-7 inline"
+              />
+              GILERA
+            </span>
+          </button>
+        </div>
+
+        <button
+          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          className="md:hidden flex items-center text-primary dark:text-[#d6f4ff]"
+          aria-label={t("accessibility.toggleMenu")}
+        >
+          <FaBars className="text-xl" />
+        </button>
+
+        <div className="hidden md:flex items-center space-x-8">
+          <button
+            onClick={onHomeClick}
+            className="text-primary dark:text-[#d6f4ff] hover:text-accent dark:hover:text-accent transition duration-300 ease-in-out"
+          >
+            {t("nav.home")}
+          </button>
+
+          <button
+            onClick={onAboutClick}
+            className="text-primary dark:text-[#d6f4ff] hover:text-accent dark:hover:text-accent transition duration-300 ease-in-out"
+          >
+            {t("nav.about")}
+          </button>
+
+          <div className="relative">
+            <button
+              onClick={onServicesClick}
+              className="flex items-center text-primary dark:text-[#d6f4ff] hover:text-accent dark:hover:text-accent transition duration-300 ease-in-out"
+            >
+              {t("nav.services")}
+            </button>
+          </div>
+
+          <button
+            onClick={onGalleryClick}
+            className="text-primary dark:text-[#d6f4ff] hover:text-accent dark:hover:text-accent transition duration-300 ease-in-out"
+          >
+            {t("nav.gallery")}
+          </button>
+
+          <button
+            onClick={onContactClick}
+            className="text-primary dark:text-[#d6f4ff] hover:text-accent dark:hover:text-accent transition duration-300 ease-in-out"
+          >
+            {t("nav.contact")}
+          </button>
+        </div>
+
+        <div className="hidden md:flex items-center space-x-4">
+          <LanguageSelector />
+          <ThemeToggle />
+        </div>
+      </nav>
+
+      <div className={`md:hidden ${isMobileMenuOpen ? "block" : "hidden"}`}>
+        <div className="px-2 pt-2 pb-3 space-y-1 bg-white dark:bg-[#253754] shadow-md">
+          <button
+            onClick={() => handleLinkClick(onHomeClick)}
+            className="block w-full text-left px-3 py-2 text-primary dark:text-white hover:bg-neutral dark:hover:bg-gray-700 rounded-md"
+          >
+            {t("nav.home")}
+          </button>
+
+          <button
+            onClick={() => handleLinkClick(onAboutClick)}
+            className="block w-full text-left px-3 py-2 text-primary dark:text-white hover:bg-neutral dark:hover:bg-gray-700 rounded-md"
+          >
+            {t("nav.about")}
+          </button>
+
+          <button
+            onClick={() => setIsServicesDropdownOpen(!isServicesDropdownOpen)}
+            className="flex justify-between items-center w-full px-3 py-2 text-primary dark:text-white hover:bg-neutral dark:hover:bg-gray-700 rounded-md"
+          >
+            {t("nav.services")} <FaChevronDown className="text-xs" />
+          </button>
+
+          <div
+            className={`pl-4 ${isServicesDropdownOpen ? "block" : "hidden"}`}
+          >
+            <button
+              onClick={() => scrollToServiceSection("services-haircut")}
+              className="block w-full text-left px-3 py-2 text-primary dark:text-white hover:bg-neutral dark:hover:bg-gray-700 rounded-md"
+            >
+              {t("services.haircut")}
+            </button>
+            <button
+              onClick={() => scrollToServiceSection("services-styling")}
+              className="block w-full text-left px-3 py-2 text-primary dark:text-white hover:bg-neutral dark:hover:bg-gray-700 rounded-md"
+            >
+              {t("services.styling")}
+            </button>
+            <button
+              onClick={() => scrollToServiceSection("services-coloring")}
+              className="block w-full text-left px-3 py-2 text-primary dark:text-white hover:bg-neutral dark:hover:bg-gray-700 rounded-md"
+            >
+              {t("services.coloring")}
+            </button>
+          </div>
+
+          <button
+            onClick={() => handleLinkClick(onGalleryClick)}
+            className="block w-full text-left px-3 py-2 text-primary dark:text-white hover:bg-neutral dark:hover:bg-gray-700 rounded-md"
+          >
+            {t("nav.gallery")}
+          </button>
+
+          <button
+            onClick={() => handleLinkClick(onContactClick)}
+            className="block w-full text-left px-3 py-2 text-primary dark:text-white hover:bg-neutral dark:hover:bg-gray-700 rounded-md"
+          >
+            {t("nav.contact")}
+          </button>
+
+          <div className="flex items-center justify-between px-3 py-2">
+            <LanguageSelector isMobile={true} />
+            <ThemeToggle isMobile={true} />
+          </div>
+        </div>
+      </div>
+    </header>
+  );
+};
+
+export default Navbar;
+
+
+------------------------------
+
+import { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
+import { cn } from "@/lib/utils";
+import LanguageSelector from "./LanguageSelector";
+import ThemeToggle from "./ThemeToggle";
+import { FaBars, FaChevronDown } from "react-icons/fa";
+import { useLanguage } from "@/context/LanguageContext";
+import { useTheme } from "@/context/ThemeContext";
+
+interface NavbarProps {
+  onHomeClick: () => void;
+  onAboutClick: () => void;
+  onServicesClick: () => void;
+  onGalleryClick: () => void;
+  onContactClick: () => void;
+}
+
+const Navbar = ({
+  onHomeClick,
+  onAboutClick,
+  onServicesClick,
+  onGalleryClick,
+  onContactClick,
+}: NavbarProps) => {
+  const { t } = useTranslation();
+  const { language } = useLanguage();
+  const { theme } = useTheme();
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isServicesDropdownOpen, setIsServicesDropdownOpen] = useState(false);
+
+  useEffect(() => {
+    setIsMobileMenuOpen(false);
+    setIsServicesDropdownOpen(false);
+  }, [language, theme]);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 10);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  const handleLinkClick = (callback: () => void) => {
+    callback();
+    setIsMobileMenuOpen(false);
+    setIsServicesDropdownOpen(false);
+  };
+
+  const scrollToServiceSection = (sectionId: string) => {
+    const element = document.getElementById(sectionId);
+    if (element) {
+      window.scrollTo({
+        top: element.offsetTop - 100,
+        behavior: "smooth",
+      });
+    }
+    setIsMobileMenuOpen(false);
+    setIsServicesDropdownOpen(false);
+  };
+
+  return (
+    <header
+      className={cn(
+        "fixed top-0 left-0 right-0 z-50 transition duration-500 ease-in-out",
+        isScrolled
+          ? "bg-white dark:bg-[#121e33] shadow-md"
+          : "bg-white/90 dark:bg-[#121e33]/90"
+      )}
+    >
+      <nav className="max-w-[1400px] mx-auto px-4 sm:px-6 md:px-8 py-4 flex items-center justify-between">
+        <div className="flex items-center">
+          <button
+            onClick={() => handleLinkClick(onHomeClick)}
+            className="flex items-center"
+          >
+            <img
+              src={
+                theme === "dark"
+                  ? "/attached_assets/g-j.avif"
+                  : "/attached_assets/g.avif"
+              }
+              alt="Agilera Salon Logo"
+              className="h-8 mr-2"
+            />
+            <span className="text-2xl font-bold playfair tracking-wider flex items-center text-primary dark:text-[#d6f4ff]">
+              <img
+                src={
+                  theme === "dark"
+                    ? "/attached_assets/a-j.avif"
+                    : "/attached_assets/a.avif"
+                }
+                alt="A letter"
+                className="h-7 inline"
+              />
+              GILERA
+            </span>
+          </button>
+        </div>
+
+        <button
+          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          className="md:hidden flex items-center text-primary dark:text-[#d6f4ff]"
+          aria-label={t("accessibility.toggleMenu")}
+        >
+          <FaBars className="text-xl" />
+        </button>
+
+        <div className="hidden md:flex items-center space-x-8">
+          <button
+            onClick={onHomeClick}
+            className="text-primary dark:text-[#d6f4ff] hover:text-accent dark:hover:text-accent transition duration-300 ease-in-out"
+          >
+            {t("nav.home")}
+          </button>
+          <button
+            onClick={onAboutClick}
+            className="text-primary dark:text-[#d6f4ff] hover:text-accent dark:hover:text-accent transition duration-300 ease-in-out"
+          >
+            {t("nav.about")}
+          </button>
+
+          <div className="relative">
+            <button
+              onClick={onServicesClick}
+              className="flex items-center text-primary dark:text-[#d6f4ff] hover:text-accent dark:hover:text-accent transition duration-300 ease-in-out"
+            >
+              {t("nav.services")}
+            </button>
+          </div>
+
+          <button
+            onClick={onGalleryClick}
+            className="text-primary dark:text-[#d6f4ff] hover:text-accent dark:hover:text-accent transition duration-300 ease-in-out"
+          >
+            {t("nav.gallery")}
+          </button>
+
+          <button
+            onClick={onContactClick}
+            className="text-primary dark:text-[#d6f4ff] hover:text-accent dark:hover:text-accent transition duration-300 ease-in-out"
+          >
+            {t("nav.contact")}
+          </button>
+        </div>
+
+        <div className="hidden md:flex items-center space-x-4">
+          <LanguageSelector />
+          <ThemeToggle />
+        </div>
+      </nav>
+
+      <div
+        className={cn(
+          "md:hidden overflow-hidden transition-all duration-500 ease-in-out",
+          isMobileMenuOpen ? "max-h-[700px] opacity-100" : "max-h-0 opacity-0" // Zwiększona wartość max-height
+        )}
+        style={{ pointerEvents: isMobileMenuOpen ? "auto" : "none" }}
+      >
+        <div className="px-2 pt-2 pb-6 space-y-1 bg-white dark:bg-[#253754] shadow-md">
+          {" "}
+          {/* Zwiększony padding-bottom */}
+          <button
+            onClick={() => handleLinkClick(onHomeClick)}
+            className="block w-full text-left px-3 py-2 text-primary dark:text-white hover:bg-neutral dark:hover:bg-gray-700 rounded-md"
+          >
+            {t("nav.home")}
+          </button>
+          <button
+            onClick={() => handleLinkClick(onAboutClick)}
+            className="block w-full text-left px-3 py-2 text-primary dark:text-white hover:bg-neutral dark:hover:bg-gray-700 rounded-md"
+          >
+            {t("nav.about")}
+          </button>
+          <button
+            onClick={() => setIsServicesDropdownOpen(!isServicesDropdownOpen)}
+            className="flex justify-between items-center w-full px-3 py-2 text-primary dark:text-white hover:bg-neutral dark:hover:bg-gray-700 rounded-md"
+          >
+            {t("nav.services")}
+            <FaChevronDown
+              className={cn(
+                "text-xs transition-transform duration-300",
+                isServicesDropdownOpen ? "rotate-180" : "rotate-0"
+              )}
+            />
+          </button>
+          <div
+            className={cn(
+              "overflow-hidden transition-all duration-300 ease-in-out pl-4",
+              isServicesDropdownOpen
+                ? "max-h-[200px] opacity-100"
+                : "max-h-0 opacity-0"
+            )}
+          >
+            <button
+              onClick={() => scrollToServiceSection("services-haircut")}
+              className="block w-full text-left px-3 py-2 text-primary dark:text-white hover:bg-neutral dark:hover:bg-gray-700 rounded-md"
+            >
+              {t("services.haircut")}
+            </button>
+            <button
+              onClick={() => scrollToServiceSection("services-styling")}
+              className="block w-full text-left px-3 py-2 text-primary dark:text-white hover:bg-neutral dark:hover:bg-gray-700 rounded-md"
+            >
+              {t("services.styling")}
+            </button>
+            <button
+              onClick={() => scrollToServiceSection("services-coloring")}
+              className="block w-full text-left px-3 py-2 text-primary dark:text-white hover:bg-neutral dark:hover:bg-gray-700 rounded-md"
+            >
+              {t("services.coloring")}
+            </button>
+          </div>
+          <button
+            onClick={() => handleLinkClick(onGalleryClick)}
+            className="block w-full text-left px-3 py-2 text-primary dark:text-white hover:bg-neutral dark:hover:bg-gray-700 rounded-md"
+          >
+            {t("nav.gallery")}
+          </button>
+          <button
+            onClick={() => handleLinkClick(onContactClick)}
+            className="block w-full text-left px-3 py-2 text-primary dark:text-white hover:bg-neutral dark:hover:bg-gray-700 rounded-md"
+          >
+            {t("nav.contact")}
+          </button>
+          <div className="flex items-center justify-between px-3 pt-4 pb-2">
+            {" "}
+            {/* Dodano pt-4 dla lepszego odstępu */}
+            <LanguageSelector isMobile={true} />
+            <ThemeToggle isMobile={true} />
+          </div>
+        </div>
+      </div>
+    </header>
+  );
+};
+
+export default Navbar;
+
+
+-----------------------------
+
+import { useState, useEffect, useRef, useCallback } from "react";
+import { useTranslation } from "react-i18next";
+import { motion, AnimatePresence } from "framer-motion";
+import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
+import { useGalleryModal } from "@/context/GalleryContext";
+import { galleryData } from "@/data/galleryData";
+import { useIsMobile } from "@/hooks/use-mobile";
+
+const GallerySlider = () => {
+  const { t } = useTranslation();
+  const { openGalleryModal } = useGalleryModal();
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [touchStart, setTouchStart] = useState(0);
+  const [touchEnd, setTouchEnd] = useState(0);
+  const [direction, setDirection] = useState<"next" | "prev">("next");
+  const sliderRef = useRef<HTMLDivElement>(null);
+  const isMobile = useIsMobile();
+  const [isPaused, setIsPaused] = useState(false);
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const resumeAutoplayTimerRef = useRef<NodeJS.Timeout | null>(null);
+
+  const flattenedImages = galleryData.flatMap((slide) => slide.images);
+  const desktopTotalSlides = galleryData.length;
+  const mobileTotalSlides = flattenedImages.length;
+  const currentViewTotalItems = isMobile
+    ? mobileTotalSlides
+    : desktopTotalSlides;
+
+  const goToNextSlideStable = useCallback(() => {
+    setDirection("next");
+    setCurrentIndex((prev) => (prev + 1) % currentViewTotalItems);
+  }, [currentViewTotalItems]);
+
+  const pauseAutoplay = (resumeAfterMs?: number) => {
+    setIsPaused(true);
+    if (resumeAutoplayTimerRef.current) {
+      clearTimeout(resumeAutoplayTimerRef.current);
+    }
+    if (resumeAfterMs) {
+      resumeAutoplayTimerRef.current = setTimeout(() => {
+        setIsPaused(false);
+      }, resumeAfterMs);
+    }
+  };
+
+  const resumeAutoplay = () => {
+    if (resumeAutoplayTimerRef.current) {
+      clearTimeout(resumeAutoplayTimerRef.current);
+    }
+    setIsPaused(false);
+  };
+
+  useEffect(() => {
+    const clearAutoplayInterval = () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
+      }
+    };
+
+    if (!isPaused && currentViewTotalItems > 1) {
+      clearAutoplayInterval();
+      intervalRef.current = setInterval(goToNextSlideStable, 5000);
+    } else {
+      clearAutoplayInterval();
+    }
+    return () => {
+      clearAutoplayInterval();
+      if (resumeAutoplayTimerRef.current) {
+        clearTimeout(resumeAutoplayTimerRef.current);
+      }
+    };
+  }, [isPaused, currentViewTotalItems, goToNextSlideStable]);
+
+  const goToSlide = (slideIndex: number, newDirection?: "next" | "prev") => {
+    pauseAutoplay(isMobile ? 8000 : undefined);
+    let newIndex = slideIndex;
+    if (newIndex < 0) newIndex = currentViewTotalItems - 1;
+    if (newIndex >= currentViewTotalItems) newIndex = 0;
+
+    if (newDirection) {
+      setDirection(newDirection);
+    } else {
+      if (newIndex > currentIndex) {
+        if (currentIndex === 0 && newIndex === currentViewTotalItems - 1) {
+          setDirection("prev");
+        } else {
+          setDirection("next");
+        }
+      } else if (newIndex < currentIndex) {
+        if (currentIndex === currentViewTotalItems - 1 && newIndex === 0) {
+          setDirection("next");
+        } else {
+          setDirection("prev");
+        }
+      }
+    }
+    setCurrentIndex(newIndex);
+  };
+
+  const goToPrevSlide = () => {
+    pauseAutoplay(isMobile ? 8000 : undefined);
+    setDirection("prev");
+    setCurrentIndex(
+      (prev) => (prev - 1 + currentViewTotalItems) % currentViewTotalItems
+    );
+  };
+
+  const goToNextSlide = () => {
+    pauseAutoplay(isMobile ? 8000 : undefined);
+    setDirection("next");
+    setCurrentIndex((prev) => (prev + 1) % currentViewTotalItems);
+  };
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    if (isMobile) {
+      pauseAutoplay();
+    }
+    if (e.targetTouches && e.targetTouches.length > 0) {
+      setTouchStart(e.targetTouches[0].clientX);
+      setTouchEnd(0);
+    }
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (e.targetTouches && e.targetTouches.length > 0) {
+      setTouchEnd(e.targetTouches[0].clientX);
+    }
+  };
+
+  const handleTouchEnd = () => {
+    const swipeThreshold = 50;
+    let swiped = false;
+    if (touchStart !== 0 && touchEnd !== 0) {
+      if (touchStart - touchEnd > swipeThreshold) {
+        goToNextSlide();
+        swiped = true;
+      } else if (touchStart - touchEnd < -swipeThreshold) {
+        goToPrevSlide();
+        swiped = true;
+      }
+    }
+
+    if (isMobile && !swiped && touchStart !== 0) {
+      if (resumeAutoplayTimerRef.current)
+        clearTimeout(resumeAutoplayTimerRef.current);
+      resumeAutoplayTimerRef.current = setTimeout(() => {
+        setIsPaused(false);
+      }, 3000);
+    }
+
+    setTouchStart(0);
+    setTouchEnd(0);
+  };
+
+  const handleImageClick = (imageData: {
+    src: string;
+    fullSrc?: string;
+    alt: string;
+  }) => {
+    pauseAutoplay();
+    openGalleryModal(imageData.fullSrc || imageData.src, imageData.alt);
+  };
+
+  const backgroundImageUrl = "/assets/62.avif";
+
+  const renderContent = (): JSX.Element | null => {
+    if (isMobile) {
+      const currentImage = flattenedImages[currentIndex];
+      if (!currentImage) return null;
+      return (
+        <div className="w-full h-full flex items-center justify-center p-0.5">
+          <div
+            className="gallery-item cursor-pointer overflow-hidden rounded-md shadow-md w-full h-full"
+            onClick={() => handleImageClick(currentImage)}
+          >
+            <img
+              src={currentImage.src}
+              alt={currentImage.alt}
+              className="w-full h-full object-cover transition duration-300 ease-in-out hover:scale-105 rounded-md"
+              loading="lazy"
+            />
+          </div>
+        </div>
+      );
+    }
+
+    const currentSlideData = galleryData[currentIndex];
+    if (!currentSlideData || !currentSlideData.images) return null;
+
+    return (
+      <div className={`grid grid-cols-3 gap-4 w-full h-full p-px`}>
+        {currentSlideData.images.map((image, index) => (
+          <div
+            key={`image-${currentIndex}-${index}`}
+            className="gallery-item cursor-pointer overflow-hidden rounded-md shadow-md h-full"
+            onClick={() => handleImageClick(image)}
+          >
+            <img
+              src={image.src}
+              alt={image.alt}
+              className="w-full h-full object-cover transition duration-300 ease-in-out hover:scale-105 rounded-md"
+              loading="lazy"
+            />
+          </div>
+        ))}
+      </div>
+    );
+  };
+
+  const handleMouseEnter = () => {
+    if (!isMobile) {
+      pauseAutoplay();
+    }
+  };
+
+  const handleMouseLeave = () => {
+    if (!isMobile) {
+      resumeAutoplay();
+    }
+  };
+
+  const renderDots = (): JSX.Element[] => {
+    const dots = [];
+    const itemsToIterate = currentViewTotalItems;
+    for (let i = 0; i < itemsToIterate; i++) {
+      dots.push(
+        <button
+          key={`dot-${i}`}
+          onClick={() => goToSlide(i)}
+          className={`w-3 h-3 rounded-full transition duration-300 ease-in-out ${
+            currentIndex === i
+              ? "bg-accent"
+              : "bg-neutral dark:bg-gray-600 hover:bg-accent dark:hover:bg-accent"
+          }`}
+          aria-label={t("accessibility.goToSlide", { number: i + 1 })}
+        />
+      );
+    }
+    return dots;
+  };
+
+  const spaceForDotsAndMarginPx = 56;
+  const mobileImageHeight = "24rem";
+  const desktopGridHeight = "450px";
+  const contentAreaHeight = isMobile ? mobileImageHeight : desktopGridHeight;
+  const buttonsTopOffset = `calc(${contentAreaHeight} / 2)`;
+
+  const mobileContainerMinHeight = `min-h-[calc(${mobileImageHeight} + 1rem)]`;
+  const desktopContainerMinHeight = `min-h-[calc(${desktopGridHeight} + ${spaceForDotsAndMarginPx}px)]`;
+
+  const handlePrevButtonClick = () => {
+    goToPrevSlide();
+  };
+
+  const handleNextButtonClick = () => {
+    goToNextSlide();
+  };
+
+  return (
+    <div
+      className={`relative ${
+        isMobile ? mobileContainerMinHeight : desktopContainerMinHeight
+      }`}
+      ref={sliderRef}
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
+    >
+      <div
+        className="relative  rounded-md overflow-hidden bg-cover bg-center bg-no-repeat"
+        style={{
+          backgroundImage: `url(${backgroundImageUrl})`,
+          height: contentAreaHeight,
+        }}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+      >
+        <AnimatePresence mode="wait" initial={false}>
+          <motion.div
+            key={currentIndex}
+            initial={{
+              opacity: 0,
+              x: direction === "next" ? "100%" : "-100%",
+            }}
+            animate={{ opacity: 1, x: "0%" }}
+            exit={{
+              opacity: 0,
+              x: direction === "next" ? "-100%" : "100%",
+            }}
+            custom={direction}
+            transition={{ duration: 0.5 }}
+            className="absolute top-0 left-0 w-full h-full"
+          >
+            {renderContent()}
+          </motion.div>
+        </AnimatePresence>
+      </div>
+
+      <button
+        onClick={handlePrevButtonClick}
+        onPointerUp={isMobile ? handlePrevButtonClick : undefined}
+        className="absolute left-0 transform -translate-y-1/2 -translate-x-0 md:-translate-x-1/2 bg-accent text-white p-3 rounded-r-md md:rounded-full opacity-70 hover:opacity-100 transition duration-300 ease-in-out z-10 cursor-pointer"
+        style={{ top: buttonsTopOffset }}
+        aria-label={t("accessibility.previousSlide")}
+      >
+        <FaChevronLeft />
+      </button>
+
+      <button
+        onClick={handleNextButtonClick}
+        onPointerUp={isMobile ? handleNextButtonClick : undefined}
+        className="absolute right-0 transform -translate-y-1/2 translate-x-0 md:translate-x-1/2 bg-accent text-white p-3 rounded-l-md md:rounded-full opacity-70 hover:opacity-100 transition duration-300 ease-in-out z-10 cursor-pointer"
+        style={{ top: buttonsTopOffset }}
+        aria-label={t("accessibility.nextSlide")}
+      >
+        <FaChevronRight />
+      </button>
+
+      {!isMobile && (
+        <div
+          className="flex justify-center items-center mt-6 gap-2" // mt-6 zamiast style={{ marginTop: "1.5rem" }} dla spójności z Tailwind
+        >
+          {renderDots()}
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default GallerySlider;
+
+
+----------------------------------
+
+import React from "react";
+import { useTranslation } from "react-i18next";
+import { Link } from "wouter";
+import { FaFacebookF, FaInstagram, FaTwitter } from "react-icons/fa";
+import { getCurrentYear } from "@/lib/utils";
+import { useTheme } from "@/context/ThemeContext";
+
+interface FooterProps {
+  onHomeClick: () => void;
+  onAboutClick: () => void;
+  onServicesClick: () => void;
+  onGalleryClick: () => void;
+  onContactClick: () => void;
+}
+
+const Footer = ({
+  onHomeClick,
+  onAboutClick,
+  onServicesClick,
+  onGalleryClick,
+  onContactClick,
+}: FooterProps) => {
+  const { t } = useTranslation();
+  // const { toast } = useToast(); // Usunięte
+  const { theme } = useTheme();
+  const isDark = theme === "dark";
+
+  const grzebienSrc = isDark ? "/assets/gr-j.avif" : "/assets/gr.avif";
+  const literaASrc = isDark ? "/assets/a-j.avif" : "/assets/a.avif";
+
+  return (
+    <footer className="bg-background/95 text-foreground dark:bg-[#1a1a1a] dark:text-white py-12">
+      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 md:px-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div>
+            <div className="flex items-center mb-6">
+              <img src={grzebienSrc} alt="Grzebień Logo" className="h-8 mr-2" />
+              <img src={literaASrc} alt="A letter" className="h-6 inline" />
+              <span className="text-xl font-bold playfair tracking-wider text-primary dark:text-[#d6f4ff]">
+                GILERA
+              </span>
+            </div>
+            <p className="text-gray-500 dark:text-gray-300 mb-6">
+              {t("footer.description")}
+            </p>
+            <div className="flex space-x-4">
+              <a
+                href="https://facebook.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-gray-500 dark:text-white hover:text-accent transition duration-300 ease-in-out"
+                aria-label="Facebook"
+              >
+                <FaFacebookF />
+              </a>
+              <a
+                href="https://instagram.com" // Zastąp prawdziwymi linkami
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-gray-500 dark:text-white hover:text-accent transition duration-300 ease-in-out"
+                aria-label="Instagram"
+              >
+                <FaInstagram />
+              </a>
+              <a
+                href="https://twitter.com" // Zastąp prawdziwymi linkami
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-gray-500 dark:text-white hover:text-accent transition duration-300 ease-in-out"
+                aria-label="Twitter"
+              >
+                <FaTwitter />
+              </a>
+            </div>
+          </div>
+
+          <div>
+            <h4 className="text-xl font-semibold playfair mb-6">
+              {t("footer.quickLinks")}
+            </h4>
+            <ul className="space-y-3">
+              <li>
+                <button
+                  onClick={onHomeClick}
+                  className="text-gray-500 dark:text-gray-300 hover:text-accent transition duration-300 ease-in-out"
+                >
+                  {t("nav.home")}
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={onAboutClick}
+                  className="text-gray-500 dark:text-gray-300 hover:text-accent transition duration-300 ease-in-out"
+                >
+                  {t("nav.about")}
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={onServicesClick}
+                  className="text-gray-500 dark:text-gray-300 hover:text-accent transition duration-300 ease-in-out"
+                >
+                  {t("nav.services")}
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={onGalleryClick}
+                  className="text-gray-500 dark:text-gray-300 hover:text-accent transition duration-300 ease-in-out"
+                >
+                  {t("nav.gallery")}
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={onContactClick}
+                  className="text-gray-500 dark:text-gray-300 hover:text-accent transition duration-300 ease-in-out"
+                >
+                  {t("nav.contact")}
+                </button>
+              </li>
+            </ul>
+          </div>
+
+          <div>
+            <h4 className="text-xl font-semibold playfair mb-6">
+              {t("footer.openingHours")}
+            </h4>
+            <ul className="space-y-2 text-gray-500 dark:text-gray-300">
+              <li>{t("footer.monday")}: 9:00 - 7:00</li>
+              <li>{t("footer.tuesday")}: 9:00 - 17:00</li>
+              <li>{t("footer.wednesday")}: 9:00 - 17:00</li>
+              <li>{t("footer.thursday")}: 9:00 - 17:00</li>
+              <li>{t("footer.friday")}: 9:00 - 17:00</li>
+              <li>{t("footer.saturday")}: 9:00 - 14:00</li>
+              <li>
+                {t("footer.sunday")}: {t("footer.closed")}
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div className="border-t border-gray-200 dark:border-gray-800 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
+          <p className="text-gray-500 dark:text-gray-300 text-sm mb-4 md:mb-0">
+            2025 - {getCurrentYear()} {t("footer.copyright")}
+          </p>
+          <div className="flex space-x-4">
+            <Link
+              href="/privacy-policy"
+              className="text-gray-500 dark:text-gray-300 hover:text-accent text-sm transition duration-300 ease-in-out"
+            >
+              {t("footer.privacyPolicy")}
+            </Link>
+            <Link
+              href="/terms"
+              className="text-gray-500 dark:text-gray-300 hover:text-accent text-sm transition duration-300 ease-in-out"
+            >
+              {t("footer.terms")}
+            </Link>
+          </div>
+        </div>
+      </div>
+    </footer>
+  );
+};
+
+export default Footer;
+
+
+-----------------------------
+
+import { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
+import { cn } from "@/lib/utils";
+import LanguageSelector from "./LanguageSelector";
+import ThemeToggle from "./ThemeToggle";
+import { FaBars, FaChevronDown } from "react-icons/fa";
+import { useLanguage } from "@/context/LanguageContext";
+import { useTheme } from "@/context/ThemeContext";
+
+interface NavbarProps {
+  onHomeClick: () => void;
+  onAboutClick: () => void;
+  onServicesClick: () => void;
+  onGalleryClick: () => void;
+  onContactClick: () => void;
+}
+
+const Navbar = ({
+  onHomeClick,
+  onAboutClick,
+  onServicesClick,
+  onGalleryClick,
+  onContactClick,
+}: NavbarProps) => {
+  const { t } = useTranslation();
+  const { language } = useLanguage();
+  const { theme } = useTheme();
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isServicesDropdownOpen, setIsServicesDropdownOpen] = useState(false);
+
+  useEffect(() => {
+    // Zamknij menu przy zmianie języka/motywu
+    setIsMobileMenuOpen(false);
+    setIsServicesDropdownOpen(false);
+  }, [language, theme]);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 10);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  const handleLinkClick = (callback: () => void) => {
+    callback();
+    setIsMobileMenuOpen(false);
+    setIsServicesDropdownOpen(false);
+  };
+
+  const scrollToServiceSection = (sectionId: string) => {
+    const element = document.getElementById(sectionId);
+    if (element) {
+      window.scrollTo({
+        top: element.offsetTop - 100,
+        behavior: "smooth",
+      });
+    }
+    setIsMobileMenuOpen(false);
+    setIsServicesDropdownOpen(false);
+  };
+
+  return (
+    <header
+      className={cn(
+        "fixed top-0 left-0 right-0 z-50 transition duration-500 ease-in-out",
+        isScrolled
+          ? "bg-white dark:bg-[#121e33] shadow-md"
+          : "bg-white/90 dark:bg-[#121e33]/90"
+      )}
+    >
+      <nav className="max-w-[1400px] mx-auto px-4 sm:px-6 md:px-8 py-4 flex items-center justify-between">
+        {/* Logo */}
+        <div className="flex items-center">
+          <button
+            onClick={() => handleLinkClick(onHomeClick)}
+            className="flex items-center"
+          >
+            <img
+              src={
+                theme === "dark"
+                  ? "/attached_assets/g-j.avif"
+                  : "/attached_assets/g.avif"
+              }
+              alt="Agilera Salon Logo"
+              className="h-8 mr-2"
+            />
+            <span className="text-2xl font-bold playfair tracking-wider flex items-center text-primary dark:text-[#d6f4ff]">
+              <img
+                src={
+                  theme === "dark"
+                    ? "/attached_assets/a-j.avif"
+                    : "/attached_assets/a.avif"
+                }
+                alt="A letter"
+                className="h-7 inline"
+              />
+              GILERA
+            </span>
+          </button>
+        </div>
+
+        {/* Mobile Menu Toggle */}
+        <button
+          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          className="md:hidden flex items-center text-primary dark:text-[#d6f4ff]"
+          aria-label={t("accessibility.toggleMenu")}
+        >
+          <FaBars className="text-xl" />
+        </button>
+
+        {/* Desktop Nav */}
+        <div className="hidden md:flex items-center space-x-8">
+          <button
+            onClick={onHomeClick}
+            className="text-primary dark:text-[#d6f4ff] hover:text-accent dark:hover:text-accent transition duration-300 ease-in-out"
+          >
+            {t("nav.home")}
+          </button>
+          <button
+            onClick={onAboutClick}
+            className="text-primary dark:text-[#d6f4ff] hover:text-accent dark:hover:text-accent transition duration-300 ease-in-out"
+          >
+            {t("nav.about")}
+          </button>
+          <div className="relative">
+            <button
+              onClick={onServicesClick}
+              className="flex items-center text-primary dark:text-[#d6f4ff] hover:text-accent dark:hover:text-accent transition duration-300 ease-in-out"
+            >
+              {t("nav.services")}
+            </button>
+          </div>
+          <button
+            onClick={onGalleryClick}
+            className="text-primary dark:text-[#d6f4ff] hover:text-accent dark:hover:text-accent transition duration-300 ease-in-out"
+          >
+            {t("nav.gallery")}
+          </button>
+          <button
+            onClick={onContactClick}
+            className="text-primary dark:text-[#d6f4ff] hover:text-accent dark:hover:text-accent transition duration-300 ease-in-out"
+          >
+            {t("nav.contact")}
+          </button>
+        </div>
+
+        {/* Desktop Toggles */}
+        <div className="hidden md:flex items-center space-x-4">
+          <LanguageSelector />
+          <ThemeToggle />
+        </div>
+      </nav>
+
+      {/* Mobile Menu Container */}
+      <div
+        className={cn(
+          "md:hidden overflow-hidden transition-all duration-500 ease-in-out",
+          // Użyj max-h-screen dla maksymalnej wysokości, gdy otwarte
+          isMobileMenuOpen ? "max-h-screen opacity-100" : "max-h-0 opacity-0"
+        )}
+        style={{ pointerEvents: isMobileMenuOpen ? "auto" : "none" }}
+      >
+        {/* Dodaj bardzo duży padding-bottom, np. pb-20 lub więcej */}
+        <div className="px-2 pt-2 pb-20 space-y-1 bg-white dark:bg-[#253754] shadow-md">
+          {/* Mobile Links */}
+          <button
+            onClick={() => handleLinkClick(onHomeClick)}
+            className="block w-full text-left px-3 py-2 text-primary dark:text-white hover:bg-neutral dark:hover:bg-gray-700 rounded-md"
+          >
+            {t("nav.home")}
+          </button>
+          <button
+            onClick={() => handleLinkClick(onAboutClick)}
+            className="block w-full text-left px-3 py-2 text-primary dark:text-white hover:bg-neutral dark:hover:bg-gray-700 rounded-md"
+          >
+            {t("nav.about")}
+          </button>
+
+          {/* Services Dropdown */}
+          <button
+            onClick={() => setIsServicesDropdownOpen(!isServicesDropdownOpen)}
+            className="flex justify-between items-center w-full px-3 py-2 text-primary dark:text-white hover:bg-neutral dark:hover:bg-gray-700 rounded-md"
+          >
+            {t("nav.services")}
+            <FaChevronDown
+              className={cn(
+                "text-xs transition-transform duration-300",
+                isServicesDropdownOpen ? "rotate-180" : "rotate-0"
+              )}
+            />
+          </button>
+          <div
+            className={cn(
+              "overflow-hidden transition-all duration-300 ease-in-out pl-4",
+              isServicesDropdownOpen
+                ? "max-h-[200px] opacity-100"
+                : "max-h-0 opacity-0"
+            )}
+          >
+            <button
+              onClick={() => scrollToServiceSection("services-haircut")}
+              className="block w-full text-left px-3 py-2 text-primary dark:text-white hover:bg-neutral dark:hover:bg-gray-700 rounded-md"
+            >
+              {t("services.haircut")}
+            </button>
+            <button
+              onClick={() => scrollToServiceSection("services-styling")}
+              className="block w-full text-left px-3 py-2 text-primary dark:text-white hover:bg-neutral dark:hover:bg-gray-700 rounded-md"
+            >
+              {t("services.styling")}
+            </button>
+            <button
+              onClick={() => scrollToServiceSection("services-coloring")}
+              className="block w-full text-left px-3 py-2 text-primary dark:text-white hover:bg-neutral dark:hover:bg-gray-700 rounded-md"
+            >
+              {t("services.coloring")}
+            </button>
+          </div>
+
+          {/* Other Mobile Links */}
+          <button
+            onClick={() => handleLinkClick(onGalleryClick)}
+            className="block w-full text-left px-3 py-2 text-primary dark:text-white hover:bg-neutral dark:hover:bg-gray-700 rounded-md"
+          >
+            {t("nav.gallery")}
+          </button>
+          <button
+            onClick={() => handleLinkClick(onContactClick)}
+            className="block w-full text-left px-3 py-2 text-primary dark:text-white hover:bg-neutral dark:hover:bg-gray-700 rounded-md"
+          >
+            {t("nav.contact")}
+          </button>
+
+          {/* Mobile Toggles Container - dodaj odstęp poniżej */}
+          <div className="flex items-center justify-between px-3 pt-4 ">
+            {" "}
+            {/* Usunięto pb-2, bo główny div ma duży pb */}
+            {/* Upewnij się, że LanguageSelector ma wystarczająco miejsca *nad* sobą w razie potrzeby */}
+            <div className="flex-1">
+              {" "}
+              {/* Opcjonalnie, aby dać więcej miejsca */}
+              <LanguageSelector isMobile={true} />
+            </div>
+            <ThemeToggle isMobile={true} />
+          </div>
+        </div>
+      </div>
+    </header>
+  );
+};
+
+export default Navbar;
+
+
+--------------------------------
+
+import { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
+import { cn } from "@/lib/utils";
+import LanguageSelector from "./LanguageSelector";
+import ThemeToggle from "./ThemeToggle";
+import { FaBars, FaChevronDown } from "react-icons/fa";
+import { useLanguage } from "@/context/LanguageContext";
+import { useTheme } from "@/context/ThemeContext";
+import { useLocation } from "wouter"; // <--- Importuj hook useLocation
+
+interface NavbarProps {
+  onHomeClick: () => void;
+  onAboutClick: () => void;
+  onServicesClick: () => void;
+  onGalleryClick: () => void;
+  onContactClick: () => void;
+}
+
+const Navbar = ({
+  onHomeClick,
+  onAboutClick,
+  onServicesClick,
+  onGalleryClick,
+  onContactClick,
+}: NavbarProps) => {
+  const { t } = useTranslation();
+  const { language } = useLanguage();
+  const { theme } = useTheme();
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isServicesDropdownOpen, setIsServicesDropdownOpen] = useState(false);
+  const [location, setLocation] = useLocation(); // <--- Pobierz bieżącą lokalizację i funkcję do nawigacji
+
+  // Sprawdź, czy jesteśmy na stronie głównej
+  const isHomePage = location === "/";
+
+  useEffect(() => {
+    setIsMobileMenuOpen(false);
+    setIsServicesDropdownOpen(false);
+  }, [language, theme, location]); // <-- Dodaj location do zależności, aby zamknąć menu przy zmianie trasy
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 10);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  // Funkcja pomocnicza do obsługi kliknięć w linki nawigacyjne
+  const handleNavClick = (scrollCallback: () => void, targetHash: string) => {
+    if (isHomePage) {
+      scrollCallback(); // Jeśli na stronie głównej, przewiń płynnie
+    } else {
+      setLocation(`/${targetHash}`); // Jeśli na innej stronie, nawiguj do strony głównej z hashem
+    }
+    setIsMobileMenuOpen(false);
+    setIsServicesDropdownOpen(false);
+  };
+
+  // Funkcja do przewijania do sekcji usług na stronie głównej
+  const scrollToServiceSection = (sectionId: string) => {
+    if (isHomePage) {
+      const element = document.getElementById(sectionId);
+      if (element) {
+        window.scrollTo({
+          top: element.offsetTop - 100, // Dostosuj offset
+          behavior: "smooth",
+        });
+      }
+    } else {
+      // Jeśli nie na stronie głównej, nawiguj do strony głównej z hashem sekcji
+      setLocation(`/#${sectionId}`);
+    }
+    setIsMobileMenuOpen(false);
+    setIsServicesDropdownOpen(false); // Zamknij też dropdown
+  };
+
+  return (
+    <header
+      className={cn(
+        "fixed top-0 left-0 right-0 z-50 transition duration-500 ease-in-out",
+        isScrolled
+          ? "bg-white dark:bg-[#121e33] shadow-md"
+          : "bg-white/90 dark:bg-[#121e33]/90"
+      )}
+    >
+      <nav className="max-w-[1400px] mx-auto px-4 sm:px-6 md:px-8 py-4 flex items-center justify-between">
+        {/* Logo - kliknięcie zawsze powinno prowadzić do strony głównej */}
+        <div className="flex items-center">
+          <button
+            onClick={() => handleNavClick(onHomeClick, "")}
+            className="flex items-center"
+          >
+            {/* ... img logo ... */}
+            <img
+              src={
+                theme === "dark"
+                  ? "/attached_assets/g-j.avif"
+                  : "/attached_assets/g.avif"
+              }
+              alt="Agilera Salon Logo"
+              className="h-8 mr-2"
+            />
+            <span className="text-2xl font-bold playfair tracking-wider flex items-center text-primary dark:text-[#d6f4ff]">
+              <img
+                src={
+                  theme === "dark"
+                    ? "/attached_assets/a-j.avif"
+                    : "/attached_assets/a.avif"
+                }
+                alt="A letter"
+                className="h-7 inline"
+              />
+              GILERA
+            </span>
+          </button>
+        </div>
+
+        {/* Przycisk menu mobilnego */}
+        <button
+          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          className="md:hidden flex items-center text-primary dark:text-[#d6f4ff]"
+          aria-label={t("accessibility.toggleMenu")}
+        >
+          <FaBars className="text-xl" />
+        </button>
+
+        {/* Nawigacja desktop */}
+        <div className="hidden md:flex items-center space-x-8">
+          <button
+            onClick={() => handleNavClick(onHomeClick, "")} // Użyj nowej funkcji obsługi
+            className="text-primary dark:text-[#d6f4ff] hover:text-accent dark:hover:text-accent transition duration-300 ease-in-out"
+          >
+            {t("nav.home")}
+          </button>
+          <button
+            onClick={() => handleNavClick(onAboutClick, "#about")} // Użyj nowej funkcji obsługi
+            className="text-primary dark:text-[#d6f4ff] hover:text-accent dark:hover:text-accent transition duration-300 ease-in-out"
+          >
+            {t("nav.about")}
+          </button>
+          <div className="relative">
+            <button
+              onClick={() => handleNavClick(onServicesClick, "#services")} // Użyj nowej funkcji obsługi
+              className="flex items-center text-primary dark:text-[#d6f4ff] hover:text-accent dark:hover:text-accent transition duration-300 ease-in-out"
+            >
+              {t("nav.services")}
+            </button>
+          </div>
+          <button
+            onClick={() => handleNavClick(onGalleryClick, "#gallery")} // Użyj nowej funkcji obsługi
+            className="text-primary dark:text-[#d6f4ff] hover:text-accent dark:hover:text-accent transition duration-300 ease-in-out"
+          >
+            {t("nav.gallery")}
+          </button>
+          <button
+            onClick={() => handleNavClick(onContactClick, "#contact")} // Użyj nowej funkcji obsługi
+            className="text-primary dark:text-[#d6f4ff] hover:text-accent dark:hover:text-accent transition duration-300 ease-in-out"
+          >
+            {t("nav.contact")}
+          </button>
+        </div>
+
+        {/* Kontrolki desktop */}
+        <div className="hidden md:flex items-center space-x-4">
+          <LanguageSelector />
+          <ThemeToggle />
+        </div>
+      </nav>
+
+      {/* Menu mobilne */}
+      <div
+        className={cn(
+          "md:hidden overflow-hidden transition-all duration-500 ease-in-out",
+          isMobileMenuOpen ? "max-h-screen opacity-100" : "max-h-0 opacity-0"
+        )}
+        style={{ pointerEvents: isMobileMenuOpen ? "auto" : "none" }}
+      >
+        <div className="px-2 pt-2 pb-20 space-y-1 bg-white dark:bg-[#253754] shadow-md">
+          <button
+            onClick={() => handleNavClick(onHomeClick, "")} // Użyj nowej funkcji obsługi
+            className="block w-full text-left px-3 py-2 text-primary dark:text-white hover:bg-neutral dark:hover:bg-gray-700 rounded-md"
+          >
+            {t("nav.home")}
+          </button>
+          <button
+            onClick={() => handleNavClick(onAboutClick, "#about")} // Użyj nowej funkcji obsługi
+            className="block w-full text-left px-3 py-2 text-primary dark:text-white hover:bg-neutral dark:hover:bg-gray-700 rounded-md"
+          >
+            {t("nav.about")}
+          </button>
+
+          {/* Dropdown Usługi */}
+          <button
+            onClick={() => setIsServicesDropdownOpen(!isServicesDropdownOpen)}
+            className="flex justify-between items-center w-full px-3 py-2 text-primary dark:text-white hover:bg-neutral dark:hover:bg-gray-700 rounded-md"
+          >
+            {t("nav.services")}
+            <FaChevronDown
+              className={cn(
+                "text-xs transition-transform duration-300",
+                isServicesDropdownOpen ? "rotate-180" : "rotate-0"
+              )}
+            />
+          </button>
+          <div
+            className={cn(
+              "overflow-hidden transition-all duration-300 ease-in-out pl-4",
+              isServicesDropdownOpen
+                ? "max-h-[200px] opacity-100"
+                : "max-h-0 opacity-0"
+            )}
+          >
+            {/* Przyciski podmenu usług teraz używają nowej funkcji scrollToServiceSection */}
+            <button
+              onClick={() => scrollToServiceSection("services-haircut")}
+              className="block w-full text-left px-3 py-2 text-primary dark:text-white hover:bg-neutral dark:hover:bg-gray-700 rounded-md"
+            >
+              {t("services.haircut")}
+            </button>
+            <button
+              onClick={() => scrollToServiceSection("services-styling")}
+              className="block w-full text-left px-3 py-2 text-primary dark:text-white hover:bg-neutral dark:hover:bg-gray-700 rounded-md"
+            >
+              {t("services.styling")}
+            </button>
+            <button
+              onClick={() => scrollToServiceSection("services-coloring")}
+              className="block w-full text-left px-3 py-2 text-primary dark:text-white hover:bg-neutral dark:hover:bg-gray-700 rounded-md"
+            >
+              {t("services.coloring")}
+            </button>
+          </div>
+          {/* Koniec Dropdown Usługi */}
+
+          <button
+            onClick={() => handleNavClick(onGalleryClick, "#gallery")} // Użyj nowej funkcji obsługi
+            className="block w-full text-left px-3 py-2 text-primary dark:text-white hover:bg-neutral dark:hover:bg-gray-700 rounded-md"
+          >
+            {t("nav.gallery")}
+          </button>
+          <button
+            onClick={() => handleNavClick(onContactClick, "#contact")} // Użyj nowej funkcji obsługi
+            className="block w-full text-left px-3 py-2 text-primary dark:text-white hover:bg-neutral dark:hover:bg-gray-700 rounded-md"
+          >
+            {t("nav.contact")}
+          </button>
+
+          {/* Kontrolki mobilne */}
+          <div className="flex items-center justify-between px-3 pt-4">
+            <div className="flex-1">
+              <LanguageSelector isMobile={true} />
+            </div>
+            <ThemeToggle isMobile={true} />
+          </div>
+        </div>
+      </div>
+    </header>
+  );
+};
+
+export default Navbar;
+
+
+---------------------------
+
+import { useRef } from "react";
+import { Helmet } from "react-helmet-async";
+import { useTranslation } from "react-i18next";
+import { Switch, Route, useLocation } from "wouter";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
+import Home from "@/pages/Home";
+import About from "@/pages/About";
+import Services from "@/pages/Services";
+import Gallery from "@/pages/Gallery";
+import Contact from "@/pages/Contact";
+import PrivacyPolicy from "@/pages/PrivacyPolicy";
+import Terms from "@/pages/Terms";
+import NotFound from "@/pages/not-found";
+import GalleryModal from "@/components/GalleryModal";
+import ServiceModal from "@/components/ServiceModal";
+import { useLanguage } from "@/context/LanguageContext";
+import { ServiceProvider } from "@/context/ServiceContext";
+import ScrollToTop from "@/components/ScrollToTop";
+import { HelmetProvider } from "react-helmet-async";
+import { SchemaOrg } from "./components/SchemaOrg";
+
+function App() {
+  const { t } = useTranslation();
+  const { language } = useLanguage();
+  const [location] = useLocation();
+
+  const homeRef = useRef<HTMLDivElement>(null);
+  const aboutRef = useRef<HTMLDivElement>(null);
+  const servicesRef = useRef<HTMLDivElement>(null);
+  const galleryRef = useRef<HTMLDivElement>(null);
+  const contactRef = useRef<HTMLDivElement>(null);
+
+  const scrollToSection = (ref: React.RefObject<HTMLDivElement>) => {
+    if (ref.current) {
+      window.scrollTo({
+        top: ref.current.offsetTop - 80,
+        behavior: "smooth",
+      });
+    }
+  };
+
+  const isSpecialPage = location === "/privacy-policy" || location === "/terms";
+  const handleHomeClick = () => {
+    if (isSpecialPage) {
+      window.location.href = "/";
+    } else {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  };
+  const MainContent = () => (
+    <>
+      <Home ref={homeRef} onContactClick={() => scrollToSection(contactRef)} />
+      <About ref={aboutRef} />
+      <Services ref={servicesRef} />
+      <Gallery ref={galleryRef} />
+      <Contact ref={contactRef} />
+    </>
+  );
+
+  return (
+    <ServiceProvider>
+      <HelmetProvider>
+        <Helmet>
+          <html lang={language} />
+          <title>{t("meta.title")}</title>
+          <meta name="description" content={t("meta.description")} />
+          <meta property="og:title" content={t("meta.ogTitle")} />
+          <meta property="og:description" content={t("meta.ogDescription")} />
+        </Helmet>
+
+        <SchemaOrg />
+
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:absolute focus:p-4 focus:bg-accent focus:text-white focus:z-50"
+        >
+          {t("accessibility.skipToContent")}
+        </a>
+
+        <Navbar
+          onHomeClick={handleHomeClick}
+          onAboutClick={() => {
+            if (isSpecialPage) window.location.href = "/#about";
+            else scrollToSection(aboutRef);
+          }}
+          onServicesClick={() => {
+            if (isSpecialPage) window.location.href = "/#services";
+            else scrollToSection(servicesRef);
+          }}
+          onGalleryClick={() => {
+            if (isSpecialPage) window.location.href = "/#gallery";
+            else scrollToSection(galleryRef);
+          }}
+          onContactClick={() => {
+            if (isSpecialPage) window.location.href = "/#contact";
+            else scrollToSection(contactRef);
+          }}
+        />
+
+        <main
+          id="main-content"
+          className="max-w-[1400px] mx-auto px-4 sm:px-6 md:px-8"
+        >
+          <Switch>
+            <Route path="/" component={MainContent} />
+            <Route path="/privacy-policy" component={PrivacyPolicy} />
+            <Route path="/terms" component={Terms} />
+            <Route component={NotFound} />
+          </Switch>
+        </main>
+
+        <Footer
+          onHomeClick={() => {
+            if (isSpecialPage) window.location.href = "/";
+            else window.scrollTo({ top: 0, behavior: "smooth" });
+          }}
+          onAboutClick={() => {
+            if (isSpecialPage) window.location.href = "/#about";
+            else scrollToSection(aboutRef);
+          }}
+          onServicesClick={() => {
+            if (isSpecialPage) window.location.href = "/#services";
+            else scrollToSection(servicesRef);
+          }}
+          onGalleryClick={() => {
+            if (isSpecialPage) window.location.href = "/#gallery";
+            else scrollToSection(galleryRef);
+          }}
+          onContactClick={() => {
+            if (isSpecialPage) window.location.href = "/#contact";
+            else scrollToSection(contactRef);
+          }}
+        />
+
+        <GalleryModal />
+        <ServiceModal />
+        <ScrollToTop />
+      </HelmetProvider>
+    </ServiceProvider>
+  );
+}
+
+export default App;
+
+
+-------------------------
+
+import React, { useRef, useEffect } from "react"; // <-- Dodaj import useEffect
+import { Helmet } from "react-helmet-async";
+import { useTranslation } from "react-i18next";
+import { Switch, Route, useLocation, Link } from "wouter"; // <-- Dodaj import Link
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
+// Importuj komponenty sekcji, upewnij się, że akceptują ref przez forwardRef
+import Home from "@/pages/Home";
+import About from "@/pages/About"; // Zakładam, że About, Services itd. używają forwardRef
+import Services from "@/pages/Services";
+import Gallery from "@/pages/Gallery";
+import Contact from "@/pages/Contact";
+import PrivacyPolicy from "@/pages/PrivacyPolicy";
+import Terms from "@/pages/Terms";
+import NotFound from "@/pages/not-found";
+import GalleryModal from "@/components/GalleryModal";
+import ServiceModal from "@/components/ServiceModal";
+import { useLanguage } from "@/context/LanguageContext";
+import { ServiceProvider } from "@/context/ServiceContext";
+import ScrollToTop from "@/components/ScrollToTop";
+import { HelmetProvider } from "react-helmet-async";
+import { SchemaOrg } from "./components/SchemaOrg";
+
+function App() {
+  const { t } = useTranslation();
+  const { language } = useLanguage();
+  const [location] = useLocation(); // Tylko odczyt lokalizacji
+
+  const homeRef = useRef<HTMLDivElement>(null);
+  const aboutRef = useRef<HTMLDivElement>(null);
+  const servicesRef = useRef<HTMLDivElement>(null);
+  const galleryRef = useRef<HTMLDivElement>(null);
+  const contactRef = useRef<HTMLDivElement>(null);
+
+  // --- Funkcja do płynnego przewijania ---
+  const scrollToSection = (
+    ref: React.RefObject<HTMLDivElement>,
+    behavior: ScrollBehavior = "smooth" // Domyślnie smooth
+  ) => {
+    if (ref?.current) {
+      const offset = 80; // Dostosuj offset
+      const topPos = ref.current.offsetTop - offset;
+      console.log(
+        `Scrolling to ref ${
+          ref === aboutRef ? "About" : ref === servicesRef ? "Services" : "..."
+        } at top: ${topPos}`
+      );
+      window.scrollTo({ top: topPos, behavior });
+    } else {
+      console.warn("Scroll target ref is not available.");
+      // Fallback - próba przewinięcia do góry jeśli ref jest homeRef lub nieznany
+      if (ref === homeRef) {
+        window.scrollTo({ top: 0, behavior });
+      }
+    }
+  };
+
+  // --- Logika obsługi hasha po zmianie lokalizacji ---
+  useEffect(() => {
+    const currentPath = location; // Aktualna ścieżka z wouter
+    const hash = window.location.hash; // Hash z natywnego obiektu location
+
+    console.log(`Location changed: Path=${currentPath}, Hash=${hash}`);
+
+    // Sprawdzamy hash TYLKO jeśli jesteśmy na ścieżce głównej '/'
+    // i jeśli hash faktycznie istnieje
+    if (currentPath === "/" && hash) {
+      // Krótkie opóźnienie dla pewności, że DOM jest gotowy
+      const timer = setTimeout(() => {
+        const id = hash.substring(1);
+        console.log(`Processing hash on '/' route: ${id}`);
+        let targetRef: React.RefObject<HTMLDivElement> | null = null;
+
+        // Mapowanie ID na Ref
+        switch (id) {
+          case "about":
+            targetRef = aboutRef;
+            break;
+          case "services":
+            targetRef = servicesRef;
+            break;
+          case "gallery":
+            targetRef = galleryRef;
+            break;
+          case "contact":
+            targetRef = contactRef;
+            break;
+          case "home":
+            targetRef = homeRef;
+            break; // lub przewiń do 0
+          // Obsłuż podsekcje usług, jeśli mają własne ID
+          case "services-haircut": // Zakładając, że masz ID 'services-haircut' w komponencie Services
+          case "services-styling":
+          case "services-coloring":
+            targetRef = servicesRef; // Najpierw przewiń do głównej sekcji usług
+            // Możesz dodać bardziej precyzyjne przewijanie do pod-ID, jeśli istnieją
+            break;
+          default:
+            console.warn(`No ref mapping found for hash: ${id}`);
+        }
+
+        if (targetRef) {
+          scrollToSection(targetRef, "auto"); // Użyj 'auto' dla natychmiastowego skoku po załadowaniu
+        } else {
+          // Opcjonalny fallback na getElementById, jeśli mapowanie refów zawiedzie
+          const element = document.getElementById(id);
+          if (element) {
+            console.log(`Fallback: Scrolling to element ID: ${id}`);
+            window.scrollTo({ top: element.offsetTop - 80, behavior: "auto" });
+          }
+        }
+      }, 150); // Zwiększono lekko opóźnienie na wszelki wypadek
+
+      return () => clearTimeout(timer); // Cleanup
+    }
+  }, [location]); // Uruchom ten efekt, gdy zmieni się `location` z woutera
+
+  // Komponent renderujący główne sekcje
+  const MainContent = () => (
+    <>
+      {/* Upewnij się, że komponenty Home, About itd. przyjmują ref (forwardRef) */}
+      <Home ref={homeRef} onContactClick={() => scrollToSection(contactRef)} />
+      <About ref={aboutRef} />
+      <Services ref={servicesRef} />
+      <Gallery ref={galleryRef} />
+      <Contact ref={contactRef} />
+    </>
+  );
+
+  return (
+    <ServiceProvider>
+      <HelmetProvider>
+        <Helmet>
+          {/* ... meta tagi ... */}
+          <html lang={language} />
+          <title>{t("meta.title")}</title>
+          <meta name="description" content={t("meta.description")} />
+        </Helmet>
+        <SchemaOrg />
+
+        <a href="#main-content" className="sr-only ...">
+          {" "}
+          {/* ... skip link ... */}{" "}
+        </a>
+
+        {/* Navbar przekazuje teraz TYLKO funkcje przewijania.
+            Logika warunkowa isHomePage/isSpecialPage jest w Navbar.tsx */}
+        <Navbar
+          onHomeClick={() => scrollToSection(homeRef)}
+          onAboutClick={() => scrollToSection(aboutRef)}
+          onServicesClick={() => scrollToSection(servicesRef)}
+          onGalleryClick={() => scrollToSection(galleryRef)}
+          onContactClick={() => scrollToSection(contactRef)}
+        />
+
+        <main id="main-content">
+          {" "}
+          {/* Usunięto klasy Tailwind z main, aby sekcje mogły zajmować całą szerokość */}
+          <Switch>
+            {/* Główna trasa renderuje MainContent */}
+            <Route path="/" component={MainContent} />
+            <Route path="/privacy-policy" component={PrivacyPolicy} />
+            <Route path="/terms" component={Terms} />
+            <Route component={NotFound} />
+          </Switch>
+        </main>
+
+        {/* Footer przekazuje teraz TYLKO funkcje przewijania */}
+        <Footer
+          onHomeClick={() => scrollToSection(homeRef)}
+          onAboutClick={() => scrollToSection(aboutRef)}
+          onServicesClick={() => scrollToSection(servicesRef)}
+          onGalleryClick={() => scrollToSection(galleryRef)}
+          onContactClick={() => scrollToSection(contactRef)}
+        />
+
+        <GalleryModal />
+        <ServiceModal />
+        <ScrollToTop />
+      </HelmetProvider>
+    </ServiceProvider>
+  );
+}
+
+export default App;
+
+
+---------------------------
+
+{
+  "include": ["client/src/**/*", "shared/**/*", "server/**/*"],
+  "exclude": ["node_modules", "build", "dist", "**/*.test.ts"],
+  "compilerOptions": {
+    "incremental": true,
+    "tsBuildInfoFile": "./node_modules/typescript/tsbuildinfo",
+    "noEmit": true,
+    "module": "ESNext",
+    "strict": true,
+    "lib": ["esnext", "dom", "dom.iterable"],
+    "jsx": "preserve",
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "allowImportingTsExtensions": true,
+    "moduleResolution": "bundler",
+    "baseUrl": ".",
+    "types": ["node", "vite/client"],
+    "paths": {
+      "@/*": ["./client/src/*"],
+      "@shared/*": ["./shared/*"]
+    }
+  }
+}
+
+
+------------------------------
+
+import React, { useRef, useEffect } from "react";
+import { Helmet } from "react-helmet-async";
+import { useTranslation } from "react-i18next";
+import { Switch, Route, useLocation, Link } from "wouter";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
+import Home from "@/pages/Home";
+import About from "@/pages/About";
+import Services from "@/pages/Services";
+import Gallery from "@/pages/Gallery";
+import Contact from "@/pages/Contact";
+import PrivacyPolicy from "@/pages/PrivacyPolicy";
+import Terms from "@/pages/Terms";
+import NotFound from "@/pages/not-found";
+import GalleryModal from "@/components/GalleryModal";
+import ServiceModal from "@/components/ServiceModal";
+import { useLanguage } from "@/context/LanguageContext";
+import { ServiceProvider } from "@/context/ServiceContext";
+import ScrollToTop from "@/components/ScrollToTop";
+import { HelmetProvider } from "react-helmet-async";
+import { SchemaOrg } from "./components/SchemaOrg";
+
+function App() {
+  const { t } = useTranslation();
+  const { language } = useLanguage();
+  const [location] = useLocation();
+
+  const homeRef = useRef<HTMLDivElement>(null);
+  const aboutRef = useRef<HTMLDivElement>(null);
+  const servicesRef = useRef<HTMLDivElement>(null);
+  const galleryRef = useRef<HTMLDivElement>(null);
+  const contactRef = useRef<HTMLDivElement>(null);
+
+  // Mapowanie Ref na ID (hash)
+  const refIdMap = new Map<React.RefObject<HTMLDivElement>, string>([
+    [homeRef, ""], // Home - pusty hash lub można usunąć
+    [aboutRef, "about"],
+    [servicesRef, "services"],
+    [galleryRef, "gallery"],
+    [contactRef, "contact"],
+  ]);
+
+  const scrollToSection = (
+    ref: React.RefObject<HTMLDivElement>,
+    behavior: ScrollBehavior = "smooth"
+  ) => {
+    if (ref?.current) {
+      const offset = 80;
+      const topPos = ref.current.offsetTop - offset;
+      const targetId = refIdMap.get(ref); // Pobierz ID z mapy
+
+      console.log(
+        `Scrolling to ref for ID ${targetId ?? "home"} at top: ${topPos}`
+      );
+      window.scrollTo({ top: topPos, behavior });
+
+      // --- AKTUALIZACJA HASHA ---
+      // Aktualizuj hash tylko jeśli jesteśmy na stronie głównej ('/')
+      // i jeśli znaleziono ID dla tego refa
+      if (location === "/") {
+        if (targetId !== undefined && targetId !== "") {
+          // Użyj replaceState, aby nie dodawać do historii
+          console.log(`Replacing state with hash: #${targetId}`);
+          history.replaceState(null, "", `#${targetId}`);
+        } else if (targetId === "") {
+          // Jeśli celem jest 'home' (pusty targetId), usuń hash
+          console.log("Replacing state, removing hash for home");
+          history.replaceState(null, "", window.location.pathname); // Zostaw tylko ścieżkę
+        }
+      }
+      // --- KONIEC AKTUALIZACJI HASHA ---
+    } else {
+      console.warn("Scroll target ref is not available.");
+      // Jeśli celem był home i ref zawiódł, też usuń hash
+      if (location === "/" && ref === homeRef) {
+        console.log("Replacing state, removing hash for home (ref failed)");
+        history.replaceState(null, "", window.location.pathname);
+      }
+    }
+  };
+
+  // Efekt do obsługi *początkowego* hasha po nawigacji z innej strony
+  useEffect(() => {
+    const currentPath = location;
+    const hash = window.location.hash;
+
+    console.log(`Effect: Location=${currentPath}, Hash=${hash}`);
+
+    if (currentPath === "/" && hash) {
+      const timer = setTimeout(() => {
+        const id = hash.substring(1);
+        console.log(`Effect: Processing initial hash: ${id}`);
+
+        let targetRef: React.RefObject<HTMLDivElement> | null = null;
+        for (const [ref, refId] of refIdMap.entries()) {
+          if (refId === id) {
+            targetRef = ref;
+            break;
+          }
+        }
+        // Obsługa podsekcji usług (jeśli potrzebne)
+        if (
+          !targetRef &&
+          (id === "services-haircut" ||
+            id === "services-styling" ||
+            id === "services-coloring")
+        ) {
+          targetRef = servicesRef; // Przewiń do głównej sekcji
+          // TODO: Dodać precyzyjne przewijanie do pod-ID jeśli istnieje
+        }
+
+        if (targetRef) {
+          scrollToSection(targetRef, "auto"); // Użyj zmodyfikowanej funkcji, ale z 'auto'
+        } else {
+          const element = document.getElementById(id);
+          if (element) {
+            console.log(`Effect Fallback: Scrolling to element ID: ${id}`);
+            window.scrollTo({ top: element.offsetTop - 80, behavior: "auto" });
+            // Czy tutaj też aktualizować hash? Raczej nie, bo już jest w URL.
+          } else {
+            console.warn(
+              `Effect: Element/Ref for initial hash ${id} not found.`
+            );
+          }
+        }
+      }, 150);
+
+      return () => clearTimeout(timer);
+    }
+  }, [location]); // Nadal zależny od location
+
+  const MainContent = () => (
+    /* ... bez zmian ... */
+    <>
+      <Home ref={homeRef} onContactClick={() => scrollToSection(contactRef)} />
+      <About ref={aboutRef} />
+      <Services ref={servicesRef} />
+      <Gallery ref={galleryRef} />
+      <Contact ref={contactRef} />
+    </>
+  );
+
+  return (
+    <ServiceProvider>
+      <HelmetProvider>
+        <Helmet> {/* ... meta tagi ... */} </Helmet>
+        <SchemaOrg />
+        <a href="#main-content" className="sr-only ...">
+          {" "}
+          {/* ... skip link ... */}{" "}
+        </a>
+
+        {/* Navbar i Footer nadal przekazują tylko funkcje scrollToSection */}
+        <Navbar
+          onHomeClick={() => scrollToSection(homeRef)}
+          onAboutClick={() => scrollToSection(aboutRef)}
+          onServicesClick={() => scrollToSection(servicesRef)}
+          onGalleryClick={() => scrollToSection(galleryRef)}
+          onContactClick={() => scrollToSection(contactRef)}
+        />
+
+        <main id="main-content">
+          <Switch>
+            <Route path="/" component={MainContent} />
+            <Route path="/privacy-policy" component={PrivacyPolicy} />
+            <Route path="/terms" component={Terms} />
+            <Route component={NotFound} />
+          </Switch>
+        </main>
+
+        <Footer
+          onHomeClick={() => scrollToSection(homeRef)}
+          onAboutClick={() => scrollToSection(aboutRef)}
+          onServicesClick={() => scrollToSection(servicesRef)}
+          onGalleryClick={() => scrollToSection(galleryRef)}
+          onContactClick={() => scrollToSection(contactRef)}
+        />
+
+        <GalleryModal />
+        <ServiceModal />
+        <ScrollToTop />
+      </HelmetProvider>
+    </ServiceProvider>
+  );
+}
+
+export default App;

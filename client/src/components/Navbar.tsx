@@ -14,6 +14,11 @@ interface NavbarProps {
   onServicesClick: () => void;
   onGalleryClick: () => void;
   onContactClick: () => void;
+  // --- DODANE BRAKUJĄCE PROPSY ---
+  onHaircutClick: () => void;
+  onStylingClick: () => void;
+  onColoringClick: () => void;
+  // ---------------------------------
 }
 
 const Navbar = ({
@@ -22,7 +27,12 @@ const Navbar = ({
   onServicesClick,
   onGalleryClick,
   onContactClick,
-}: NavbarProps) => {
+  // --- DODANE BRAKUJĄCE PROPSY ---
+  onHaircutClick,
+  onStylingClick,
+  onColoringClick,
+}: // ---------------------------------
+NavbarProps) => {
   const { t } = useTranslation();
   const { language } = useLanguage();
   const { theme } = useTheme();
@@ -40,6 +50,7 @@ const Navbar = ({
   useEffect(() => {
     closeMobileMenu();
   }, [language, theme, location]);
+
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 10);
     window.addEventListener("scroll", handleScroll);
@@ -56,20 +67,17 @@ const Navbar = ({
     scrollFunc();
     closeMobileMenu();
   };
-  // Specjalna obsługa dla kliknięcia w 'Usługi' na home (rozwija/zwija lub przewija)
+
   const handleMobileServicesClick = () => {
     if (isServicesDropdownOpen) {
-      onServicesClick(); // Przewiń do sekcji jeśli dropdown był otwarty
+      onServicesClick();
       closeMobileMenu();
     } else {
-      setIsServicesDropdownOpen(true); // Otwórz dropdown jeśli był zamknięty
+      setIsServicesDropdownOpen(true);
     }
   };
-  // Obsługa kliknięcia w podkategorię usługi
-  const handleMobileSubServiceClick = (scrollFunc: () => void) => {
-    scrollFunc(); // Wywołaj dedykowaną funkcję przewijania (jeśli masz) lub onServicesClick
-    closeMobileMenu();
-  };
+
+  // Usunięto handleMobileSubServiceClick - nie jest już potrzebna
 
   return (
     <header
@@ -81,7 +89,6 @@ const Navbar = ({
       )}
     >
       <nav className="max-w-[1400px] mx-auto px-4 sm:px-6 md:px-8 py-4 flex items-center justify-between">
-        {/* Logo */}
         <div className="flex items-center">
           {isHomePage ? (
             <button onClick={onHomeClick} className={flexAlignCenterClasses}>
@@ -133,16 +140,13 @@ const Navbar = ({
             </Link>
           )}
         </div>
-        {/* Mobile Toggle */}
         <button
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           className="md:hidden flex items-center text-primary dark:text-[#d6f4ff]"
           aria-label={t("accessibility.toggleMenu")}
         >
-          {" "}
           <FaBars className="text-xl" />
         </button>
-        {/* Desktop Nav */}
         <div className="hidden md:flex items-center space-x-8">
           {isHomePage ? (
             <button onClick={onHomeClick} className={navLinkBaseClasses}>
@@ -163,7 +167,6 @@ const Navbar = ({
             </Link>
           )}
           <div className="relative">
-            {" "}
             {isHomePage ? (
               <button
                 onClick={onServicesClick}
@@ -199,13 +202,11 @@ const Navbar = ({
             </Link>
           )}
         </div>
-        {/* Desktop Toggles */}
         <div className="hidden md:flex items-center space-x-4">
           <LanguageSelector />
           <ThemeToggle />
         </div>
       </nav>
-      {/* Mobile Menu */}
       <div
         className={cn(
           "md:hidden overflow-hidden transition-all duration-500 ease-in-out",
@@ -214,7 +215,6 @@ const Navbar = ({
         style={{ pointerEvents: isMobileMenuOpen ? "auto" : "none" }}
       >
         <div className="px-2 pt-2 pb-20 space-y-1 bg-white dark:bg-[#253754] shadow-md">
-          {/* Mobile Links */}
           {isHomePage ? (
             <button
               onClick={() => handleMobileLinkClick(onHomeClick)}
@@ -247,10 +247,7 @@ const Navbar = ({
               {t("nav.about")}
             </Link>
           )}
-
-          {/* --- Mobile Services Section --- */}
           {isHomePage ? (
-            // Na home page, ten przycisk rozwija/zwija dropdown LUB przewija do sekcji #services
             <button
               onClick={handleMobileServicesClick}
               className="flex justify-between items-center w-full px-3 py-2 text-primary dark:text-white hover:bg-neutral dark:hover:bg-gray-700 rounded-md"
@@ -264,7 +261,6 @@ const Navbar = ({
               />
             </button>
           ) : (
-            // Na podstronie, ten przycisk jest linkiem do #services
             <Link
               href="/#services"
               onClick={closeMobileMenu}
@@ -273,8 +269,6 @@ const Navbar = ({
               {t("nav.services")}
             </Link>
           )}
-
-          {/* Dropdown - tylko na home page */}
           {isHomePage && (
             <div
               className={cn(
@@ -284,41 +278,35 @@ const Navbar = ({
                   : "max-h-0 opacity-0"
               )}
             >
-              {/* Zakładam, że masz funkcje do przewijania do podsekcji, np. onHaircutClick, lub używasz ogólnej onServicesClick */}
               <button
-                onClick={() =>
-                  handleMobileSubServiceClick(
-                    onServicesClick /* lub onHaircutClick */
-                  )
-                }
+                onClick={() => {
+                  onHaircutClick();
+                  closeMobileMenu();
+                }}
                 className={mobileNavLinkBaseClasses}
               >
                 {t("services.haircut")}
               </button>
               <button
-                onClick={() =>
-                  handleMobileSubServiceClick(
-                    onServicesClick /* lub onStylingClick */
-                  )
-                }
+                onClick={() => {
+                  onStylingClick();
+                  closeMobileMenu();
+                }}
                 className={mobileNavLinkBaseClasses}
               >
                 {t("services.styling")}
               </button>
               <button
-                onClick={() =>
-                  handleMobileSubServiceClick(
-                    onServicesClick /* lub onColoringClick */
-                  )
-                }
+                onClick={() => {
+                  onColoringClick();
+                  closeMobileMenu();
+                }}
                 className={mobileNavLinkBaseClasses}
               >
                 {t("services.coloring")}
               </button>
             </div>
           )}
-          {/* --- End Mobile Services Section --- */}
-
           {isHomePage ? (
             <button
               onClick={() => handleMobileLinkClick(onGalleryClick)}
@@ -351,8 +339,6 @@ const Navbar = ({
               {t("nav.contact")}
             </Link>
           )}
-
-          {/* Mobile Toggles */}
           <div className="flex items-center justify-between px-3 pt-4">
             <div className="flex-1">
               <LanguageSelector isMobile={true} />
