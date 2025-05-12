@@ -1,0 +1,1724 @@
+import { useRef } from "react";
+import { Helmet } from "react-helmet-async";
+import { useTranslation } from "react-i18next";
+import { Switch, Route, useLocation } from "wouter";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
+import Home from "@/pages/Home";
+import About from "@/pages/About";
+import Services from "@/pages/Services";
+import Gallery from "@/pages/Gallery";
+import Contact from "@/pages/Contact";
+import PrivacyPolicy from "@/pages/PrivacyPolicy";
+import Terms from "@/pages/Terms";
+import NotFound from "@/pages/not-found";
+import GalleryModal from "@/components/GalleryModal";
+import ServiceModal from "@/components/ServiceModal";
+import { useLanguage } from "@/context/LanguageContext";
+import { ServiceProvider } from "@/context/ServiceContext";
+import ScrollToTop from "@/components/ScrollToTop";
+import { HelmetProvider } from "react-helmet-async";
+import { SchemaOrg } from "./components/SchemaOrg";
+
+function App() {
+  const { t } = useTranslation();
+  const { language } = useLanguage();
+  const [location] = useLocation();
+
+  const homeRef = useRef<HTMLDivElement>(null);
+  const aboutRef = useRef<HTMLDivElement>(null);
+  const servicesRef = useRef<HTMLDivElement>(null);
+  const galleryRef = useRef<HTMLDivElement>(null);
+  const contactRef = useRef<HTMLDivElement>(null);
+
+  const scrollToSection = (ref: React.RefObject<HTMLDivElement>) => {
+    if (ref.current) {
+      window.scrollTo({
+        top: ref.current.offsetTop - 80,
+        behavior: "smooth",
+      });
+    }
+  };
+
+  const isSpecialPage = location === "/privacy-policy" || location === "/terms";
+
+  const MainContent = () => (
+    <>
+      <Home ref={homeRef} onContactClick={() => scrollToSection(contactRef)} />
+      <About ref={aboutRef} />
+      <Services ref={servicesRef} />
+      <Gallery ref={galleryRef} />
+      <Contact ref={contactRef} />
+    </>
+  );
+
+  return (
+    <ServiceProvider>
+      <HelmetProvider>
+        <Helmet>
+          <html lang={language} />
+          <title>{t("meta.title")}</title>
+          <meta name="description" content={t("meta.description")} />
+          <meta property="og:title" content={t("meta.ogTitle")} />
+          <meta property="og:description" content={t("meta.ogDescription")} />
+        </Helmet>
+
+        <SchemaOrg />
+
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:absolute focus:p-4 focus:bg-accent focus:text-white focus:z-50"
+        >
+          {t("accessibility.skipToContent")}
+        </a>
+
+        <Navbar
+          onHomeClick={() => {
+            if (isSpecialPage) window.location.href = "/";
+            else scrollToSection(homeRef);
+          }}
+          onAboutClick={() => {
+            if (isSpecialPage) window.location.href = "/#about";
+            else scrollToSection(aboutRef);
+          }}
+          onServicesClick={() => {
+            if (isSpecialPage) window.location.href = "/#services";
+            else scrollToSection(servicesRef);
+          }}
+          onGalleryClick={() => {
+            if (isSpecialPage) window.location.href = "/#gallery";
+            else scrollToSection(galleryRef);
+          }}
+          onContactClick={() => {
+            if (isSpecialPage) window.location.href = "/#contact";
+            else scrollToSection(contactRef);
+          }}
+        />
+
+        <main
+          id="main-content"
+          className="max-w-[1400px] mx-auto px-4 sm:px-6 md:px-8"
+        >
+          <Switch>
+            <Route path="/" component={MainContent} />
+            <Route path="/privacy-policy" component={PrivacyPolicy} />
+            <Route path="/terms" component={Terms} />
+            <Route component={NotFound} />
+          </Switch>
+        </main>
+
+        <Footer
+          onHomeClick={() => {
+            if (isSpecialPage) window.location.href = "/";
+            else scrollToSection(homeRef);
+          }}
+          onAboutClick={() => {
+            if (isSpecialPage) window.location.href = "/#about";
+            else scrollToSection(aboutRef);
+          }}
+          onServicesClick={() => {
+            if (isSpecialPage) window.location.href = "/#services";
+            else scrollToSection(servicesRef);
+          }}
+          onGalleryClick={() => {
+            if (isSpecialPage) window.location.href = "/#gallery";
+            else scrollToSection(galleryRef);
+          }}
+          onContactClick={() => {
+            if (isSpecialPage) window.location.href = "/#contact";
+            else scrollToSection(contactRef);
+          }}
+        />
+
+        <GalleryModal />
+        <ServiceModal />
+        <ScrollToTop />
+      </HelmetProvider>
+    </ServiceProvider>
+  );
+}
+
+export default App;
+
+
+-----------------------------
+
+import { useTranslation } from "react-i18next";
+import { Helmet } from "react-helmet-async";
+import { useLocation } from "wouter";
+
+export const SchemaOrg = () => {
+  const { t } = useTranslation();
+  const [location] = useLocation();
+
+  const salonSchema = {
+    "@context": "https://schema.org",
+    "@type": "HairSalon",
+    "@id": "https://stylowefryzury.netlify.app",
+    name: t("schema.salonName"),
+    description: t("schema.salonDescription"),
+    address: {
+      "@type": "PostalAddress",
+      streetAddress: t("schema.streetAddress"),
+      addressLocality: "Radom",
+      postalCode: "26-604",
+      addressCountry: "PL",
+    },
+    telephone: "+48 797 879 002",
+    email: "kontakt@agilera.pl",
+    url: "https://stylowefryzury.netlify.app",
+    image: "/assets/a.png",
+    priceRange: "$$",
+    openingHoursSpecification: [
+      {
+        "@type": "OpeningHoursSpecification",
+        dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+        opens: "09:00",
+        closes: "17:00",
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        dayOfWeek: "Saturday",
+        opens: "09:00",
+        closes: "14:00",
+      },
+    ],
+    sameAs: ["https://facebook.com/agilera", "https://instagram.com/agilera"],
+  };
+
+  const websiteSchema = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: t("schema.salonName"),
+    url: "https://stylowefryzury.netlify.app",
+    potentialAction: {
+      "@type": "SearchAction",
+      target:
+        "https://stylowefryzury.netlify.app/search?q={search_term_string}",
+      "query-input": "required name=search_term_string",
+    },
+  };
+
+  const getBreadcrumbList = () => {
+    if (location === "/") return null;
+
+    const pathSegments = location.split("/").filter(Boolean);
+    const itemListElement = pathSegments.map(
+      (segment: string, index: number) => ({
+        "@type": "ListItem",
+        position: index + 1,
+        name: t(`breadcrumbs.${segment}`),
+        item: `https://stylowefryzury.netlify.app/${pathSegments
+          .slice(0, index + 1)
+          .join("/")}`,
+      })
+    );
+
+    return {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      itemListElement,
+    };
+  };
+
+  const breadcrumbSchema = getBreadcrumbList();
+
+  return (
+    <Helmet>
+      <script type="application/ld+json">{JSON.stringify(salonSchema)}</script>
+      <script type="application/ld+json">
+        {JSON.stringify(websiteSchema)}
+      </script>
+      {breadcrumbSchema && (
+        <script type="application/ld+json">
+          {JSON.stringify(breadcrumbSchema)}
+        </script>
+      )}
+    </Helmet>
+  );
+};
+
+
+-----------------------------
+
+<!DOCTYPE html>
+<html lang="pl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Salon Fryzjerski AGILERA | Styl Klasa Precyzja</title>
+    <meta
+      name="description"
+      content="Profesjonalny salon fryzjerski damsko-męski AGILERA w Radomiu. Oferujemy strzyżenie, stylizację i koloryzację w eleganckim wydaniu. Zadbaj o swój wygląd!"
+    />
+
+    <meta property="og:title" content="Agilera Salon Fryzjerski" />
+    <meta
+      property="og:description"
+      content="Salon fryzjerski Agilera w Radomiu – profesjonalne strzyżenie, koloryzacja, stylizacja i pielęgnacja włosów. Sprawdź naszą ofertę!"
+    />
+    <meta
+      property="og:image"
+      content="https://stylowefryzury.netlify.app/assets/a.png"
+    />
+    <meta property="og:url" content="https://stylowefryzury.netlify.app" />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="pl_PL" />
+    <meta property="og:site_name" content="Agilera Salon Fryzjerski" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Agilera Salon Fryzjerski" />
+    <meta
+      name="twitter:description"
+      content="Salon fryzjerski Agilera w Radomiu – profesjonalne strzyżenie, koloryzacja, stylizacja i pielęgnacja włosów. Sprawdź naszą ofertę!"
+    />
+    <meta
+      name="twitter:image"
+      content="https://stylowefryzury.netlify.app/assets/a.png"
+    />
+    <meta name="twitter:url" content="https://stylowefryzury.netlify.app" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
+
+
+-----------------------------------
+
+<!DOCTYPE html>
+<html lang="pl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Salon Fryzjerski AGILERA | Styl Klasa Precyzja</title>
+    <meta
+      name="description"
+      content="Profesjonalny salon fryzjerski damsko-męski AGILERA w Radomiu. Oferujemy strzyżenie, stylizację i koloryzację w eleganckim wydaniu. Zadbaj o swój wygląd!"
+    />
+
+    <meta property="og:title" content="Agilera Salon Fryzjerski" />
+    <meta
+      property="og:description"
+      content="Salon fryzjerski Agilera w Radomiu – profesjonalne strzyżenie, koloryzacja, stylizacja i pielęgnacja włosów. Sprawdź naszą ofertę!"
+    />
+    <meta
+      property="og:image"
+      content="https://stylowefryzury.netlify.app/assets/a.png"
+    />
+    <meta property="og:url" content="https://stylowefryzury.netlify.app" />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="pl_PL" />
+    <meta property="og:site_name" content="Agilera Salon Fryzjerski" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Agilera Salon Fryzjerski" />
+    <meta
+      name="twitter:description"
+      content="Salon fryzjerski Agilera w Radomiu – profesjonalne strzyżenie, koloryzacja, stylizacja i pielęgnacja włosów. Sprawdź naszą ofertę!"
+    />
+    <meta
+      name="twitter:image"
+      content="https://stylowefryzury.netlify.app/assets/a.png"
+    />
+    <meta name="twitter:url" content="https://stylowefryzury.netlify.app" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
+
+
+---------------------------------------
+
+import { useState, useEffect, useRef, useCallback } from "react";
+import { useTranslation } from "react-i18next";
+import { motion, AnimatePresence } from "framer-motion";
+import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
+import { useGalleryModal } from "@/context/GalleryContext";
+import { galleryData } from "@/data/galleryData";
+import { useIsMobile } from "@/hooks/use-mobile";
+
+const GallerySlider = () => {
+  const { t } = useTranslation();
+  const { openGalleryModal } = useGalleryModal();
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [touchStart, setTouchStart] = useState(0);
+  const [touchEnd, setTouchEnd] = useState(0);
+  const [direction, setDirection] = useState<"next" | "prev">("next");
+  const sliderRef = useRef<HTMLDivElement>(null);
+  const isMobile = useIsMobile();
+  const [isPaused, setIsPaused] = useState(false);
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const resumeAutoplayTimerRef = useRef<NodeJS.Timeout | null>(null);
+
+  const flattenedImages = galleryData.flatMap((slide) => slide.images);
+  const desktopTotalSlides = galleryData.length;
+  const mobileTotalSlides = flattenedImages.length;
+  const currentViewTotalItems = isMobile
+    ? mobileTotalSlides
+    : desktopTotalSlides;
+
+  const goToNextSlideStable = useCallback(() => {
+    setDirection("next");
+    setCurrentIndex((prev) => (prev + 1) % currentViewTotalItems);
+  }, [currentViewTotalItems]);
+
+  const pauseAutoplay = (resumeAfterMs?: number) => {
+    setIsPaused(true);
+    if (resumeAutoplayTimerRef.current) {
+      clearTimeout(resumeAutoplayTimerRef.current);
+    }
+    if (resumeAfterMs) {
+      resumeAutoplayTimerRef.current = setTimeout(() => {
+        setIsPaused(false);
+      }, resumeAfterMs);
+    }
+  };
+
+  const resumeAutoplay = () => {
+    if (resumeAutoplayTimerRef.current) {
+      clearTimeout(resumeAutoplayTimerRef.current);
+    }
+    setIsPaused(false);
+  };
+
+  useEffect(() => {
+    const clearAutoplayInterval = () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
+      }
+    };
+
+    if (!isPaused && currentViewTotalItems > 1) {
+      clearAutoplayInterval();
+      intervalRef.current = setInterval(goToNextSlideStable, 5000);
+    } else {
+      clearAutoplayInterval();
+    }
+    return () => {
+      clearAutoplayInterval();
+      if (resumeAutoplayTimerRef.current) {
+        clearTimeout(resumeAutoplayTimerRef.current);
+      }
+    };
+  }, [isPaused, currentViewTotalItems, goToNextSlideStable]);
+
+  const goToSlide = (slideIndex: number, newDirection?: "next" | "prev") => {
+    pauseAutoplay(isMobile ? 8000 : undefined);
+    let newIndex = slideIndex;
+    if (newIndex < 0) newIndex = currentViewTotalItems - 1;
+    if (newIndex >= currentViewTotalItems) newIndex = 0;
+
+    if (newDirection) {
+      setDirection(newDirection);
+    } else {
+      if (newIndex > currentIndex) {
+        if (currentIndex === 0 && newIndex === currentViewTotalItems - 1) {
+          setDirection("prev");
+        } else {
+          setDirection("next");
+        }
+      } else if (newIndex < currentIndex) {
+        if (currentIndex === currentViewTotalItems - 1 && newIndex === 0) {
+          setDirection("next");
+        } else {
+          setDirection("prev");
+        }
+      }
+    }
+    setCurrentIndex(newIndex);
+  };
+
+  const goToPrevSlide = () => {
+    pauseAutoplay(isMobile ? 8000 : undefined);
+    setDirection("prev");
+    setCurrentIndex(
+      (prev) => (prev - 1 + currentViewTotalItems) % currentViewTotalItems
+    );
+  };
+
+  const goToNextSlide = () => {
+    pauseAutoplay(isMobile ? 8000 : undefined);
+    setDirection("next");
+    setCurrentIndex((prev) => (prev + 1) % currentViewTotalItems);
+  };
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    if (isMobile) {
+      pauseAutoplay();
+    }
+    if (e.targetTouches && e.targetTouches.length > 0) {
+      setTouchStart(e.targetTouches[0].clientX);
+      setTouchEnd(0);
+    }
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (e.targetTouches && e.targetTouches.length > 0) {
+      setTouchEnd(e.targetTouches[0].clientX);
+    }
+  };
+
+  const handleTouchEnd = () => {
+    const swipeThreshold = 50;
+    let swiped = false;
+    if (touchStart !== 0 && touchEnd !== 0) {
+      if (touchStart - touchEnd > swipeThreshold) {
+        goToNextSlide();
+        swiped = true;
+      } else if (touchStart - touchEnd < -swipeThreshold) {
+        goToPrevSlide();
+        swiped = true;
+      }
+    }
+
+    if (isMobile && !swiped && touchStart !== 0) {
+      if (resumeAutoplayTimerRef.current)
+        clearTimeout(resumeAutoplayTimerRef.current);
+      resumeAutoplayTimerRef.current = setTimeout(() => {
+        setIsPaused(false);
+      }, 3000);
+    }
+
+    setTouchStart(0);
+    setTouchEnd(0);
+  };
+
+  const handleImageClick = (imageData: {
+    src: string;
+    fullSrc?: string;
+    alt: string;
+  }) => {
+    pauseAutoplay();
+    openGalleryModal(imageData.fullSrc || imageData.src, imageData.alt);
+  };
+
+  const backgroundImageUrl = "/assets/62.jfif";
+
+  const renderContent = (): JSX.Element | null => {
+    if (isMobile) {
+      const currentImage = flattenedImages[currentIndex];
+      if (!currentImage) return null;
+      return (
+        <div className="w-full h-full flex items-center justify-center p-0.5">
+          <div
+            className="gallery-item cursor-pointer overflow-hidden rounded-md shadow-md w-full h-full"
+            onClick={() => handleImageClick(currentImage)}
+          >
+            <img
+              src={currentImage.src}
+              alt={currentImage.alt}
+              className="w-full h-full object-cover transition duration-300 ease-in-out hover:scale-105 rounded-md"
+              loading="lazy"
+            />
+          </div>
+        </div>
+      );
+    }
+
+    const currentSlideData = galleryData[currentIndex];
+    if (!currentSlideData || !currentSlideData.images) return null;
+
+    return (
+      <div className={`grid grid-cols-3 gap-4 w-full h-full p-px`}>
+        {currentSlideData.images.map((image, index) => (
+          <div
+            key={`image-${currentIndex}-${index}`}
+            className="gallery-item cursor-pointer overflow-hidden rounded-md shadow-md h-full"
+            onClick={() => handleImageClick(image)}
+          >
+            <img
+              src={image.src}
+              alt={image.alt}
+              className="w-full h-full object-cover transition duration-300 ease-in-out hover:scale-105 rounded-md"
+              loading="lazy"
+            />
+          </div>
+        ))}
+      </div>
+    );
+  };
+
+  const handleMouseEnter = () => {
+    if (!isMobile) {
+      pauseAutoplay();
+    }
+  };
+
+  const handleMouseLeave = () => {
+    if (!isMobile) {
+      resumeAutoplay();
+    }
+  };
+
+  const renderDots = (): JSX.Element[] => {
+    const dots = [];
+    const itemsToIterate = currentViewTotalItems;
+    for (let i = 0; i < itemsToIterate; i++) {
+      dots.push(
+        <button
+          key={`dot-${i}`}
+          onClick={() => goToSlide(i)}
+          className={`w-3 h-3 rounded-full transition duration-300 ease-in-out ${
+            currentIndex === i
+              ? "bg-accent"
+              : "bg-neutral dark:bg-gray-600 hover:bg-accent dark:hover:bg-accent"
+          }`}
+          aria-label={t("accessibility.goToSlide", { number: i + 1 })}
+        />
+      );
+    }
+    return dots;
+  };
+
+  const spaceForDotsAndMarginPx = 56;
+  const mobileImageHeight = "24rem";
+  const desktopGridHeight = "450px";
+  const contentAreaHeight = isMobile ? mobileImageHeight : desktopGridHeight;
+  const buttonsTopOffset = `calc(${contentAreaHeight} / 2)`;
+
+  const mobileContainerMinHeight = `min-h-[calc(${mobileImageHeight} + 1rem)]`;
+  const desktopContainerMinHeight = `min-h-[calc(${desktopGridHeight} + ${spaceForDotsAndMarginPx}px)]`;
+
+  const handlePrevButtonClick = () => {
+    goToPrevSlide();
+  };
+
+  const handleNextButtonClick = () => {
+    goToNextSlide();
+  };
+
+  return (
+    <div
+      className={`relative ${
+        isMobile ? mobileContainerMinHeight : desktopContainerMinHeight
+      }`}
+      ref={sliderRef}
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
+    >
+      <div
+        className="relative mx-4 rounded-md overflow-hidden bg-cover bg-center bg-no-repeat"
+        style={{
+          backgroundImage: `url(${backgroundImageUrl})`,
+          height: contentAreaHeight,
+        }}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+      >
+        <AnimatePresence mode="wait" initial={false}>
+          <motion.div
+            key={currentIndex}
+            initial={{
+              opacity: 0,
+              x: direction === "next" ? "100%" : "-100%",
+            }}
+            animate={{ opacity: 1, x: "0%" }}
+            exit={{
+              opacity: 0,
+              x: direction === "next" ? "-100%" : "100%",
+            }}
+            custom={direction}
+            transition={{ duration: 0.5 }}
+            className="absolute top-0 left-0 w-full h-full"
+          >
+            {renderContent()}
+          </motion.div>
+        </AnimatePresence>
+      </div>
+
+      <button
+        onClick={handlePrevButtonClick}
+        onPointerUp={isMobile ? handlePrevButtonClick : undefined}
+        className="absolute left-0 transform -translate-y-1/2 -translate-x-0 md:-translate-x-1/2 bg-accent text-white p-3 rounded-r-md md:rounded-full opacity-70 hover:opacity-100 transition duration-300 ease-in-out z-10 cursor-pointer"
+        style={{ top: buttonsTopOffset }}
+        aria-label={t("accessibility.previousSlide")}
+      >
+        <FaChevronLeft />
+      </button>
+
+      <button
+        onClick={handleNextButtonClick}
+        onPointerUp={isMobile ? handleNextButtonClick : undefined}
+        className="absolute right-0 transform -translate-y-1/2 translate-x-0 md:translate-x-1/2 bg-accent text-white p-3 rounded-l-md md:rounded-full opacity-70 hover:opacity-100 transition duration-300 ease-in-out z-10 cursor-pointer"
+        style={{ top: buttonsTopOffset }}
+        aria-label={t("accessibility.nextSlide")}
+      >
+        <FaChevronRight />
+      </button>
+
+      {!isMobile && (
+        <div
+          className="flex justify-center items-center mt-6 gap-2" // mt-6 zamiast style={{ marginTop: "1.5rem" }} dla spójności z Tailwind
+        >
+          {renderDots()}
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default GallerySlider;
+
+
+-----------------------------
+
+import { useState, useEffect, useRef, useCallback } from "react";
+import { useTranslation } from "react-i18next";
+import { motion, AnimatePresence } from "framer-motion";
+import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
+import { useGalleryModal } from "@/context/GalleryContext";
+import { galleryData } from "@/data/galleryData";
+import { useIsMobile } from "@/hooks/use-mobile";
+
+const GallerySlider = () => {
+  const { t } = useTranslation();
+  const { openGalleryModal } = useGalleryModal();
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [touchStart, setTouchStart] = useState(0);
+  const [touchEnd, setTouchEnd] = useState(0);
+  const [direction, setDirection] = useState<"next" | "prev">("next");
+  const sliderRef = useRef<HTMLDivElement>(null);
+  const isMobile = useIsMobile();
+  const [isPaused, setIsPaused] = useState(false);
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const resumeAutoplayTimerRef = useRef<NodeJS.Timeout | null>(null);
+
+  const flattenedImages = galleryData.flatMap((slide) => slide.images);
+  const desktopTotalSlides = galleryData.length;
+  const mobileTotalSlides = flattenedImages.length;
+  const currentViewTotalItems = isMobile
+    ? mobileTotalSlides
+    : desktopTotalSlides;
+
+  const goToNextSlideStable = useCallback(() => {
+    setDirection("next");
+    setCurrentIndex((prev) => (prev + 1) % currentViewTotalItems);
+  }, [currentViewTotalItems]);
+
+  const pauseAutoplay = (resumeAfterMs?: number) => {
+    setIsPaused(true);
+    if (resumeAutoplayTimerRef.current) {
+      clearTimeout(resumeAutoplayTimerRef.current);
+    }
+    if (resumeAfterMs) {
+      resumeAutoplayTimerRef.current = setTimeout(() => {
+        setIsPaused(false);
+      }, resumeAfterMs);
+    }
+  };
+
+  const resumeAutoplay = () => {
+    if (resumeAutoplayTimerRef.current) {
+      clearTimeout(resumeAutoplayTimerRef.current);
+    }
+    setIsPaused(false);
+  };
+
+  useEffect(() => {
+    const clearAutoplayInterval = () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
+      }
+    };
+
+    if (!isPaused && currentViewTotalItems > 1) {
+      clearAutoplayInterval();
+      intervalRef.current = setInterval(goToNextSlideStable, 5000);
+    } else {
+      clearAutoplayInterval();
+    }
+    return () => {
+      clearAutoplayInterval();
+      if (resumeAutoplayTimerRef.current) {
+        clearTimeout(resumeAutoplayTimerRef.current);
+      }
+    };
+  }, [isPaused, currentViewTotalItems, goToNextSlideStable]);
+
+  const goToSlide = (slideIndex: number, newDirection?: "next" | "prev") => {
+    pauseAutoplay(isMobile ? 8000 : undefined);
+    let newIndex = slideIndex;
+    if (newIndex < 0) newIndex = currentViewTotalItems - 1;
+    if (newIndex >= currentViewTotalItems) newIndex = 0;
+
+    if (newDirection) {
+      setDirection(newDirection);
+    } else {
+      if (newIndex > currentIndex) {
+        if (currentIndex === 0 && newIndex === currentViewTotalItems - 1) {
+          setDirection("prev");
+        } else {
+          setDirection("next");
+        }
+      } else if (newIndex < currentIndex) {
+        if (currentIndex === currentViewTotalItems - 1 && newIndex === 0) {
+          setDirection("next");
+        } else {
+          setDirection("prev");
+        }
+      }
+    }
+    setCurrentIndex(newIndex);
+  };
+
+  const goToPrevSlide = () => {
+    pauseAutoplay(isMobile ? 8000 : undefined);
+    setDirection("prev");
+    setCurrentIndex(
+      (prev) => (prev - 1 + currentViewTotalItems) % currentViewTotalItems
+    );
+  };
+
+  const goToNextSlide = () => {
+    pauseAutoplay(isMobile ? 8000 : undefined);
+    setDirection("next");
+    setCurrentIndex((prev) => (prev + 1) % currentViewTotalItems);
+  };
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    if (isMobile) {
+      pauseAutoplay();
+    }
+    if (e.targetTouches && e.targetTouches.length > 0) {
+      setTouchStart(e.targetTouches[0].clientX);
+      setTouchEnd(0);
+    }
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (e.targetTouches && e.targetTouches.length > 0) {
+      setTouchEnd(e.targetTouches[0].clientX);
+    }
+  };
+
+  const handleTouchEnd = () => {
+    const swipeThreshold = 50;
+    let swiped = false;
+    if (touchStart !== 0 && touchEnd !== 0) {
+      if (touchStart - touchEnd > swipeThreshold) {
+        goToNextSlide();
+        swiped = true;
+      } else if (touchStart - touchEnd < -swipeThreshold) {
+        goToPrevSlide();
+        swiped = true;
+      }
+    }
+
+    if (isMobile && !swiped && touchStart !== 0) {
+      if (resumeAutoplayTimerRef.current)
+        clearTimeout(resumeAutoplayTimerRef.current);
+      resumeAutoplayTimerRef.current = setTimeout(() => {
+        setIsPaused(false);
+      }, 3000);
+    }
+
+    setTouchStart(0);
+    setTouchEnd(0);
+  };
+
+  const handleImageClick = (imageData: {
+    src: string;
+    fullSrc?: string;
+    alt: string;
+  }) => {
+    pauseAutoplay();
+    openGalleryModal(imageData.fullSrc || imageData.src, imageData.alt);
+  };
+
+  const backgroundImageUrl = "/assets/62.jfif";
+
+  const renderContent = (): JSX.Element | null => {
+    if (isMobile) {
+      const currentImage = flattenedImages[currentIndex];
+      if (!currentImage) return null;
+      return (
+        <div className="w-full h-full flex items-center justify-center p-0.5">
+          <div
+            className="gallery-item cursor-pointer overflow-hidden rounded-md shadow-md w-full h-full"
+            onClick={() => handleImageClick(currentImage)}
+          >
+            <img
+              src={currentImage.src}
+              alt={currentImage.alt}
+              className="w-full h-full object-cover transition duration-300 ease-in-out hover:scale-105 rounded-md"
+              loading="lazy"
+            />
+          </div>
+        </div>
+      );
+    }
+
+    const currentSlideData = galleryData[currentIndex];
+    if (!currentSlideData || !currentSlideData.images) return null;
+
+    return (
+      <div className={`grid grid-cols-3 gap-4 w-full h-full p-px`}>
+        {currentSlideData.images.map((image, index) => (
+          <div
+            key={`image-${currentIndex}-${index}`}
+            className="gallery-item cursor-pointer overflow-hidden rounded-md shadow-md h-full"
+            onClick={() => handleImageClick(image)}
+          >
+            <img
+              src={image.src}
+              alt={image.alt}
+              className="w-full h-full object-cover transition duration-300 ease-in-out hover:scale-105 rounded-md"
+              loading="lazy"
+            />
+          </div>
+        ))}
+      </div>
+    );
+  };
+
+  const handleMouseEnter = () => {
+    if (!isMobile) {
+      pauseAutoplay();
+    }
+  };
+
+  const handleMouseLeave = () => {
+    if (!isMobile) {
+      resumeAutoplay();
+    }
+  };
+
+  const renderDots = (): JSX.Element[] => {
+    const dots = [];
+    const itemsToIterate = currentViewTotalItems;
+    for (let i = 0; i < itemsToIterate; i++) {
+      dots.push(
+        <button
+          key={`dot-${i}`}
+          onClick={() => goToSlide(i)}
+          className={`w-3 h-3 rounded-full transition duration-300 ease-in-out ${
+            currentIndex === i
+              ? "bg-accent"
+              : "bg-neutral dark:bg-gray-600 hover:bg-accent dark:hover:bg-accent"
+          }`}
+          aria-label={t("accessibility.goToSlide", { number: i + 1 })}
+        />
+      );
+    }
+    return dots;
+  };
+
+  const spaceForDotsAndMarginPx = 56;
+  const mobileImageHeight = "24rem";
+  const desktopGridHeight = "450px";
+  const contentAreaHeight = isMobile ? mobileImageHeight : desktopGridHeight;
+  const buttonsTopOffset = `calc(${contentAreaHeight} / 2)`;
+
+  const mobileContainerMinHeight = `min-h-[calc(${mobileImageHeight} + 1rem)]`;
+  const desktopContainerMinHeight = `min-h-[calc(${desktopGridHeight} + ${spaceForDotsAndMarginPx}px)]`;
+
+  const handlePrevButtonClick = () => {
+    goToPrevSlide();
+  };
+
+  const handleNextButtonClick = () => {
+    goToNextSlide();
+  };
+
+  return (
+    <div
+      className={`relative ${
+        isMobile ? mobileContainerMinHeight : desktopContainerMinHeight
+      }`}
+      ref={sliderRef}
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
+    >
+      <div
+        className="relative mx-4 rounded-md overflow-hidden bg-cover bg-center bg-no-repeat"
+        style={{
+          backgroundImage: `url(${backgroundImageUrl})`,
+          height: contentAreaHeight,
+        }}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+      >
+        <AnimatePresence mode="wait" initial={false}>
+          <motion.div
+            key={currentIndex}
+            initial={{
+              opacity: 0,
+              x: direction === "next" ? "100%" : "-100%",
+            }}
+            animate={{ opacity: 1, x: "0%" }}
+            exit={{
+              opacity: 0,
+              x: direction === "next" ? "-100%" : "100%",
+            }}
+            custom={direction}
+            transition={{ duration: 0.5 }}
+            className="absolute top-0 left-0 w-full h-full"
+          >
+            {renderContent()}
+          </motion.div>
+        </AnimatePresence>
+      </div>
+
+      <button
+        onClick={handlePrevButtonClick}
+        onPointerUp={isMobile ? handlePrevButtonClick : undefined}
+        className="absolute left-0 transform -translate-y-1/2 -translate-x-0 md:-translate-x-1/2 bg-accent text-white p-3 rounded-r-md md:rounded-full opacity-70 hover:opacity-100 transition duration-300 ease-in-out z-10 cursor-pointer"
+        style={{ top: buttonsTopOffset }}
+        aria-label={t("accessibility.previousSlide")}
+      >
+        <FaChevronLeft />
+      </button>
+
+      <button
+        onClick={handleNextButtonClick}
+        onPointerUp={isMobile ? handleNextButtonClick : undefined}
+        className="absolute right-0 transform -translate-y-1/2 translate-x-0 md:translate-x-1/2 bg-accent text-white p-3 rounded-l-md md:rounded-full opacity-70 hover:opacity-100 transition duration-300 ease-in-out z-10 cursor-pointer"
+        style={{ top: buttonsTopOffset }}
+        aria-label={t("accessibility.nextSlide")}
+      >
+        <FaChevronRight />
+      </button>
+
+      {!isMobile && (
+        <div
+          className="flex justify-center items-center mt-6 gap-2" // mt-6 zamiast style={{ marginTop: "1.5rem" }} dla spójności z Tailwind
+        >
+          {renderDots()}
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default GallerySlider;
+
+
+------------------------------
+
+import { useState, useEffect, useRef, useCallback } from "react";
+import { useTranslation } from "react-i18next";
+import { motion, AnimatePresence } from "framer-motion";
+import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
+import { useGalleryModal } from "@/context/GalleryContext";
+import { galleryData } from "@/data/galleryData";
+import { useIsMobile } from "@/hooks/use-mobile";
+
+const GallerySlider = () => {
+  const { t } = useTranslation();
+  const { openGalleryModal } = useGalleryModal();
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [touchStart, setTouchStart] = useState(0);
+  const [touchEnd, setTouchEnd] = useState(0);
+  const [direction, setDirection] = useState<"next" | "prev">("next");
+  const sliderRef = useRef<HTMLDivElement>(null);
+  const isMobile = useIsMobile();
+  const [isPaused, setIsPaused] = useState(false);
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const resumeAutoplayTimerRef = useRef<NodeJS.Timeout | null>(null);
+
+  const flattenedImages = galleryData.flatMap((slide) => slide.images);
+  const desktopTotalSlides = galleryData.length;
+  const mobileTotalSlides = flattenedImages.length;
+  const currentViewTotalItems = isMobile
+    ? mobileTotalSlides
+    : desktopTotalSlides;
+
+  const goToNextSlideStable = useCallback(() => {
+    setDirection("next");
+    setCurrentIndex((prev) => (prev + 1) % currentViewTotalItems);
+  }, [currentViewTotalItems]);
+
+  const pauseAutoplay = (resumeAfterMs?: number) => {
+    setIsPaused(true);
+    if (resumeAutoplayTimerRef.current) {
+      clearTimeout(resumeAutoplayTimerRef.current);
+    }
+    if (resumeAfterMs) {
+      resumeAutoplayTimerRef.current = setTimeout(() => {
+        setIsPaused(false);
+      }, resumeAfterMs);
+    }
+  };
+
+  const resumeAutoplay = () => {
+    if (resumeAutoplayTimerRef.current) {
+      clearTimeout(resumeAutoplayTimerRef.current);
+    }
+    setIsPaused(false);
+  };
+
+  useEffect(() => {
+    const clearAutoplayInterval = () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
+      }
+    };
+
+    if (!isPaused && currentViewTotalItems > 1) {
+      clearAutoplayInterval();
+      intervalRef.current = setInterval(goToNextSlideStable, 5000);
+    } else {
+      clearAutoplayInterval();
+    }
+    return () => {
+      clearAutoplayInterval();
+      if (resumeAutoplayTimerRef.current) {
+        clearTimeout(resumeAutoplayTimerRef.current);
+      }
+    };
+  }, [isPaused, currentViewTotalItems, goToNextSlideStable]);
+
+  const goToSlide = (slideIndex: number, newDirection?: "next" | "prev") => {
+    pauseAutoplay(isMobile ? 8000 : undefined);
+    let newIndex = slideIndex;
+    if (newIndex < 0) newIndex = currentViewTotalItems - 1;
+    if (newIndex >= currentViewTotalItems) newIndex = 0;
+
+    if (newDirection) {
+      setDirection(newDirection);
+    } else {
+      if (newIndex > currentIndex) {
+        if (currentIndex === 0 && newIndex === currentViewTotalItems - 1) {
+          setDirection("prev");
+        } else {
+          setDirection("next");
+        }
+      } else if (newIndex < currentIndex) {
+        if (currentIndex === currentViewTotalItems - 1 && newIndex === 0) {
+          setDirection("next");
+        } else {
+          setDirection("prev");
+        }
+      }
+    }
+    setCurrentIndex(newIndex);
+  };
+
+  const goToPrevSlide = () => {
+    pauseAutoplay(isMobile ? 8000 : undefined);
+    setDirection("prev");
+    setCurrentIndex(
+      (prev) => (prev - 1 + currentViewTotalItems) % currentViewTotalItems
+    );
+  };
+
+  const goToNextSlide = () => {
+    pauseAutoplay(isMobile ? 8000 : undefined);
+    setDirection("next");
+    setCurrentIndex((prev) => (prev + 1) % currentViewTotalItems);
+  };
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    if (isMobile) {
+      pauseAutoplay();
+    }
+    if (e.targetTouches && e.targetTouches.length > 0) {
+      setTouchStart(e.targetTouches[0].clientX);
+      setTouchEnd(e.targetTouches[0].clientX);
+    }
+  };
+
+  const memorizedHandleTouchMove = useCallback(
+    (event: Event) => {
+      const touchEvent = event as TouchEvent;
+      if (touchEvent.targetTouches && touchEvent.targetTouches.length > 0) {
+        setTouchEnd(touchEvent.targetTouches[0].clientX);
+      }
+    },
+    [setTouchEnd]
+  );
+
+  useEffect(() => {
+    const node = sliderRef.current;
+    if (node) {
+      const eventOptions = { passive: true } as AddEventListenerOptions;
+      const listener = memorizedHandleTouchMove as EventListener;
+
+      node.addEventListener("touchmove", listener, eventOptions);
+      return () => {
+        node.removeEventListener("touchmove", listener, eventOptions);
+      };
+    }
+  }, [memorizedHandleTouchMove]);
+
+  const handleTouchEnd = () => {
+    const swipeThreshold = 50;
+    let swiped = false;
+    if (touchStart !== 0 && touchEnd !== 0) {
+      if (touchStart - touchEnd > swipeThreshold) {
+        goToNextSlide();
+        swiped = true;
+      } else if (touchStart - touchEnd < -swipeThreshold) {
+        goToPrevSlide();
+        swiped = true;
+      }
+    }
+
+    if (isMobile && !swiped && touchStart !== 0) {
+      if (resumeAutoplayTimerRef.current)
+        clearTimeout(resumeAutoplayTimerRef.current);
+      resumeAutoplayTimerRef.current = setTimeout(() => {
+        setIsPaused(false);
+      }, 3000);
+    }
+    setTouchStart(0);
+    setTouchEnd(0);
+  };
+
+  const handleImageClick = (imageData: {
+    src: string;
+    fullSrc?: string;
+    alt: string;
+  }) => {
+    pauseAutoplay();
+    openGalleryModal(imageData.fullSrc || imageData.src, imageData.alt);
+  };
+
+  const backgroundImageUrl = "/assets/62.jfif";
+
+  const renderContent = (): JSX.Element | null => {
+    if (isMobile) {
+      const currentImage = flattenedImages[currentIndex];
+      if (!currentImage) return null;
+      return (
+        <div className="w-full h-full flex items-center justify-center p-0.5">
+          <div
+            className="gallery-item cursor-pointer overflow-hidden rounded-md shadow-md w-full h-full"
+            onClick={() => handleImageClick(currentImage)}
+          >
+            <img
+              src={currentImage.src}
+              alt={currentImage.alt}
+              className="w-full h-full object-cover transition duration-300 ease-in-out hover:scale-105 rounded-md"
+              loading="lazy"
+            />
+          </div>
+        </div>
+      );
+    }
+
+    const currentSlideData = galleryData[currentIndex];
+    if (!currentSlideData || !currentSlideData.images) return null;
+
+    return (
+      <div className={`grid grid-cols-3 gap-4 w-full h-full p-px`}>
+        {currentSlideData.images.map((image, index) => (
+          <div
+            key={`image-${currentIndex}-${index}`}
+            className="gallery-item cursor-pointer overflow-hidden rounded-md shadow-md h-full"
+            onClick={() => handleImageClick(image)}
+          >
+            <img
+              src={image.src}
+              alt={image.alt}
+              className="w-full h-full object-cover transition duration-300 ease-in-out hover:scale-105 rounded-md"
+              loading="lazy"
+            />
+          </div>
+        ))}
+      </div>
+    );
+  };
+
+  const handleMouseEnter = () => {
+    if (!isMobile) {
+      pauseAutoplay();
+    }
+  };
+
+  const handleMouseLeave = () => {
+    if (!isMobile) {
+      resumeAutoplay();
+    }
+  };
+
+  const renderDots = (): JSX.Element[] => {
+    const dots = [];
+    const itemsToIterate = currentViewTotalItems;
+    for (let i = 0; i < itemsToIterate; i++) {
+      dots.push(
+        <button
+          key={`dot-${i}`}
+          onClick={() => goToSlide(i)}
+          className={`w-3 h-3 rounded-full transition duration-300 ease-in-out ${
+            currentIndex === i
+              ? "bg-accent"
+              : "bg-neutral dark:bg-gray-600 hover:bg-accent dark:hover:bg-accent"
+          }`}
+          aria-label={t("accessibility.goToSlide", { number: i + 1 })}
+        />
+      );
+    }
+    return dots;
+  };
+
+  const spaceForDotsAndMarginPx = 56;
+  const mobileImageHeight = "24rem";
+  const desktopGridHeight = "450px";
+  const contentAreaHeight = isMobile ? mobileImageHeight : desktopGridHeight;
+  const buttonsTopOffset = `calc(${contentAreaHeight} / 2)`;
+
+  const mobileContainerMinHeight = `min-h-[calc(${mobileImageHeight} + 1rem)]`;
+  const desktopContainerMinHeight = `min-h-[calc(${desktopGridHeight} + ${spaceForDotsAndMarginPx}px)]`;
+
+  const handlePrevButtonClick = () => {
+    goToPrevSlide();
+  };
+
+  const handleNextButtonClick = () => {
+    goToNextSlide();
+  };
+
+  return (
+    <div
+      className={`relative ${
+        isMobile ? mobileContainerMinHeight : desktopContainerMinHeight
+      }`}
+      ref={sliderRef}
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
+    >
+      <div
+        className="relative mx-4 rounded-md overflow-hidden bg-cover bg-center bg-no-repeat"
+        style={{
+          backgroundImage: `url(${backgroundImageUrl})`,
+          height: contentAreaHeight,
+        }}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+      >
+        <AnimatePresence mode="wait" initial={false}>
+          <motion.div
+            key={currentIndex}
+            initial={{
+              opacity: 0,
+              x: direction === "next" ? "100%" : "-100%",
+            }}
+            animate={{ opacity: 1, x: "0%" }}
+            exit={{
+              opacity: 0,
+              x: direction === "next" ? "-100%" : "100%",
+            }}
+            custom={direction}
+            transition={{ duration: 0.5 }}
+            className="absolute top-0 left-0 w-full h-full"
+          >
+            {renderContent()}
+          </motion.div>
+        </AnimatePresence>
+      </div>
+
+      <button
+        onClick={handlePrevButtonClick}
+        onPointerUp={isMobile ? handlePrevButtonClick : undefined}
+        className="absolute left-0 transform -translate-y-1/2 -translate-x-0 md:-translate-x-1/2 bg-accent text-white p-3 rounded-r-md md:rounded-full opacity-70 hover:opacity-100 transition duration-300 ease-in-out z-10 cursor-pointer"
+        style={{ top: buttonsTopOffset }}
+        aria-label={t("accessibility.previousSlide")}
+      >
+        <FaChevronLeft />
+      </button>
+
+      <button
+        onClick={handleNextButtonClick}
+        onPointerUp={isMobile ? handleNextButtonClick : undefined}
+        className="absolute right-0 transform -translate-y-1/2 translate-x-0 md:translate-x-1/2 bg-accent text-white p-3 rounded-l-md md:rounded-full opacity-70 hover:opacity-100 transition duration-300 ease-in-out z-10 cursor-pointer"
+        style={{ top: buttonsTopOffset }}
+        aria-label={t("accessibility.nextSlide")}
+      >
+        <FaChevronRight />
+      </button>
+
+      {!isMobile && (
+        <div className="flex justify-center items-center mt-6 gap-2">
+          {renderDots()}
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default GallerySlider;
+
+
+-------------------------------------
+
+import { useState, useEffect, useRef, useCallback } from "react";
+import { useTranslation } from "react-i18next";
+import { motion, AnimatePresence } from "framer-motion";
+import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
+import { useGalleryModal } from "@/context/GalleryContext";
+import { galleryData } from "@/data/galleryData";
+import { useIsMobile } from "@/hooks/use-mobile";
+
+const GallerySlider = () => {
+  const { t } = useTranslation();
+  const { openGalleryModal } = useGalleryModal();
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [touchStart, setTouchStart] = useState(0);
+  const [touchEnd, setTouchEnd] = useState(0);
+  const [direction, setDirection] = useState<"next" | "prev">("next");
+  const sliderRef = useRef<HTMLDivElement>(null);
+  const isMobile = useIsMobile();
+  const [isPaused, setIsPaused] = useState(false);
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const resumeAutoplayTimerRef = useRef<NodeJS.Timeout | null>(null);
+
+  const flattenedImages = galleryData.flatMap((slide) => slide.images);
+  const desktopTotalSlides = galleryData.length;
+  const mobileTotalSlides = flattenedImages.length;
+  const currentViewTotalItems = isMobile
+    ? mobileTotalSlides
+    : desktopTotalSlides;
+
+  const mobileSliderAreaHeightClass = "h-96"; // Tailwind class for 24rem
+  const desktopSliderAreaHeightClass = "h-[450px]";
+
+  const mobileMinHeightClass = "min-h-[25rem]"; // Example: 24rem + 1rem
+  const desktopMinHeightClass = "min-h-[506px]"; // Example: 450px + 56px (dots+margin)
+
+  const goToNextSlideStable = useCallback(() => {
+    setDirection("next");
+    setCurrentIndex((prev) => (prev + 1) % currentViewTotalItems);
+  }, [currentViewTotalItems]);
+
+  const pauseAutoplay = (resumeAfterMs?: number) => {
+    setIsPaused(true);
+    if (resumeAutoplayTimerRef.current) {
+      clearTimeout(resumeAutoplayTimerRef.current);
+    }
+    if (resumeAfterMs) {
+      resumeAutoplayTimerRef.current = setTimeout(() => {
+        setIsPaused(false);
+      }, resumeAfterMs);
+    }
+  };
+
+  const resumeAutoplay = () => {
+    if (resumeAutoplayTimerRef.current) {
+      clearTimeout(resumeAutoplayTimerRef.current);
+    }
+    setIsPaused(false);
+  };
+
+  useEffect(() => {
+    const clearAutoplayInterval = () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
+      }
+    };
+
+    if (!isPaused && currentViewTotalItems > 1) {
+      clearAutoplayInterval();
+      intervalRef.current = setInterval(goToNextSlideStable, 5000);
+    } else {
+      clearAutoplayInterval();
+    }
+    return () => {
+      clearAutoplayInterval();
+      if (resumeAutoplayTimerRef.current) {
+        clearTimeout(resumeAutoplayTimerRef.current);
+      }
+    };
+  }, [isPaused, currentViewTotalItems, goToNextSlideStable]);
+
+  const goToSlide = (slideIndex: number, newDirection?: "next" | "prev") => {
+    pauseAutoplay(isMobile ? 8000 : undefined);
+    let newIndex = slideIndex;
+    if (newIndex < 0) newIndex = currentViewTotalItems - 1;
+    if (newIndex >= currentViewTotalItems) newIndex = 0;
+
+    if (newDirection) {
+      setDirection(newDirection);
+    } else {
+      if (newIndex > currentIndex) {
+        if (currentIndex === 0 && newIndex === currentViewTotalItems - 1) {
+          setDirection("prev");
+        } else {
+          setDirection("next");
+        }
+      } else if (newIndex < currentIndex) {
+        if (currentIndex === currentViewTotalItems - 1 && newIndex === 0) {
+          setDirection("next");
+        } else {
+          setDirection("prev");
+        }
+      }
+    }
+    setCurrentIndex(newIndex);
+  };
+
+  const goToPrevSlide = () => {
+    pauseAutoplay(isMobile ? 8000 : undefined);
+    setDirection("prev");
+    setCurrentIndex(
+      (prev) => (prev - 1 + currentViewTotalItems) % currentViewTotalItems
+    );
+  };
+
+  const goToNextSlide = () => {
+    pauseAutoplay(isMobile ? 8000 : undefined);
+    setDirection("next");
+    setCurrentIndex((prev) => (prev + 1) % currentViewTotalItems);
+  };
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    if (isMobile) {
+      pauseAutoplay();
+    }
+    if (e.targetTouches && e.targetTouches.length > 0) {
+      setTouchStart(e.targetTouches[0].clientX);
+      setTouchEnd(e.targetTouches[0].clientX);
+    }
+  };
+
+  const memorizedHandleTouchMove = useCallback(
+    (event: Event) => {
+      const touchEvent = event as TouchEvent;
+      if (touchEvent.targetTouches && touchEvent.targetTouches.length > 0) {
+        setTouchEnd(touchEvent.targetTouches[0].clientX);
+      }
+    },
+    [setTouchEnd]
+  );
+
+  useEffect(() => {
+    const node = sliderRef.current;
+    if (node) {
+      const eventOptions = { passive: true } as AddEventListenerOptions;
+      const listener = memorizedHandleTouchMove as EventListener;
+      node.addEventListener("touchmove", listener, eventOptions);
+      return () => {
+        node.removeEventListener("touchmove", listener, eventOptions);
+      };
+    }
+  }, [memorizedHandleTouchMove]);
+
+  const handleTouchEnd = () => {
+    const swipeThreshold = 50;
+    let swiped = false;
+    if (touchStart !== 0 && touchEnd !== 0) {
+      if (touchStart - touchEnd > swipeThreshold) {
+        goToNextSlide();
+        swiped = true;
+      } else if (touchStart - touchEnd < -swipeThreshold) {
+        goToPrevSlide();
+        swiped = true;
+      }
+    }
+    if (isMobile && !swiped && touchStart !== 0) {
+      if (resumeAutoplayTimerRef.current)
+        clearTimeout(resumeAutoplayTimerRef.current);
+      resumeAutoplayTimerRef.current = setTimeout(() => {
+        setIsPaused(false);
+      }, 3000);
+    }
+    setTouchStart(0);
+    setTouchEnd(0);
+  };
+
+  const handleImageClick = (imageData: {
+    src: string;
+    fullSrc?: string;
+    alt: string;
+  }) => {
+    pauseAutoplay();
+    openGalleryModal(imageData.fullSrc || imageData.src, imageData.alt);
+  };
+
+  const backgroundImageUrl = "/assets/62.jfif";
+
+  const renderContent = (): JSX.Element | null => {
+    if (isMobile) {
+      const currentImage = flattenedImages[currentIndex];
+      if (!currentImage) return null;
+      return (
+        <div
+          className={`w-full ${mobileSliderAreaHeightClass} flex items-center justify-center p-0.5`}
+        >
+          <div
+            className="gallery-item cursor-pointer overflow-hidden rounded-md shadow-md w-full max-w-full aspect-video max-h-full bg-neutral-800"
+            onClick={() => handleImageClick(currentImage)}
+          >
+            <img
+              src={currentImage.src}
+              alt={currentImage.alt}
+              className="w-full h-full object-cover transition duration-300 ease-in-out hover:scale-105 rounded-md"
+              loading="lazy"
+            />
+          </div>
+        </div>
+      );
+    }
+
+    const currentSlideData = galleryData[currentIndex];
+    if (!currentSlideData || !currentSlideData.images) return null;
+
+    return (
+      <div className={`grid grid-cols-3 gap-4 w-full h-full p-px`}>
+        {currentSlideData.images.map((image, index) => (
+          <div
+            key={`image-${currentIndex}-${index}`}
+            className="gallery-item cursor-pointer overflow-hidden rounded-md shadow-md h-full"
+            onClick={() => handleImageClick(image)}
+          >
+            <img
+              src={image.src}
+              alt={image.alt}
+              className="w-full h-full object-cover transition duration-300 ease-in-out hover:scale-105 rounded-md"
+              loading="lazy"
+            />
+          </div>
+        ))}
+      </div>
+    );
+  };
+
+  const handleMouseEnter = () => {
+    if (!isMobile) {
+      pauseAutoplay();
+    }
+  };
+
+  const handleMouseLeave = () => {
+    if (!isMobile) {
+      resumeAutoplay();
+    }
+  };
+
+  const renderDots = (): JSX.Element[] => {
+    const dots = [];
+    const itemsToIterate = currentViewTotalItems;
+    for (let i = 0; i < itemsToIterate; i++) {
+      dots.push(
+        <button
+          key={`dot-${i}`}
+          onClick={() => goToSlide(i)}
+          className={`w-3 h-3 rounded-full transition duration-300 ease-in-out ${
+            currentIndex === i
+              ? "bg-accent"
+              : "bg-neutral dark:bg-gray-600 hover:bg-accent dark:hover:bg-accent"
+          }`}
+          aria-label={t("accessibility.goToSlide", { number: i + 1 })}
+        />
+      );
+    }
+    return dots;
+  };
+
+  const buttonsTopOffsetValue = isMobile
+    ? `calc(theme(spacing.96)_/_2)`
+    : `calc(450px_/_2)`;
+
+  const handlePrevButtonClick = () => {
+    goToPrevSlide();
+  };
+
+  const handleNextButtonClick = () => {
+    goToNextSlide();
+  };
+
+  return (
+    <div
+      className={`relative ${
+        isMobile ? mobileMinHeightClass : desktopMinHeightClass
+      }`}
+      ref={sliderRef}
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
+    >
+      <div
+        className={`relative mx-4 rounded-md overflow-hidden bg-cover bg-center bg-no-repeat ${
+          isMobile ? mobileSliderAreaHeightClass : desktopSliderAreaHeightClass
+        }`}
+        style={{
+          backgroundImage: `url(${backgroundImageUrl})`,
+        }}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+      >
+        <AnimatePresence mode="wait" initial={false}>
+          <motion.div
+            key={currentIndex}
+            initial={{
+              opacity: 0,
+              x: direction === "next" ? "100%" : "-100%",
+            }}
+            animate={{ opacity: 1, x: "0%" }}
+            exit={{
+              opacity: 0,
+              x: direction === "next" ? "-100%" : "100%",
+            }}
+            custom={direction}
+            transition={{ duration: 0.5 }}
+            className="absolute top-0 left-0 w-full h-full"
+          >
+            {renderContent()}
+          </motion.div>
+        </AnimatePresence>
+      </div>
+
+      <button
+        onClick={handlePrevButtonClick}
+        onPointerUp={isMobile ? handlePrevButtonClick : undefined}
+        className="absolute left-0 transform -translate-y-1/2 -translate-x-0 md:-translate-x-1/2 bg-accent text-white p-3 rounded-r-md md:rounded-full opacity-70 hover:opacity-100 transition duration-300 ease-in-out z-10 cursor-pointer"
+        style={{ top: buttonsTopOffsetValue }}
+        aria-label={t("accessibility.previousSlide")}
+      >
+        <FaChevronLeft />
+      </button>
+
+      <button
+        onClick={handleNextButtonClick}
+        onPointerUp={isMobile ? handleNextButtonClick : undefined}
+        className="absolute right-0 transform -translate-y-1/2 translate-x-0 md:translate-x-1/2 bg-accent text-white p-3 rounded-l-md md:rounded-full opacity-70 hover:opacity-100 transition duration-300 ease-in-out z-10 cursor-pointer"
+        style={{ top: buttonsTopOffsetValue }}
+        aria-label={t("accessibility.nextSlide")}
+      >
+        <FaChevronRight />
+      </button>
+
+      {!isMobile && (
+        <div className="flex justify-center items-center mt-6 gap-2">
+          {renderDots()}
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default GallerySlider;
+

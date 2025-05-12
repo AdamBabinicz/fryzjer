@@ -102,7 +102,7 @@ const ServiceModal = () => {
             initial="hidden"
             animate="visible"
             exit="exit"
-            className="relative bg-white dark:bg-[#1e1e1e] rounded-lg max-w-2xl w-full"
+            className="relative bg-white dark:bg-[#1e1e1e] rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto"
             onClick={(e) => e.stopPropagation()}
             role="dialog"
             aria-modal="true"
