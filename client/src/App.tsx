@@ -1,12 +1,11 @@
-import React, { useRef, useEffect } from "react"; // <-- Dodaj import useEffect
+import React, { useRef, useEffect, useCallback } from "react";
 import { Helmet } from "react-helmet-async";
 import { useTranslation } from "react-i18next";
-import { Switch, Route, useLocation, Link } from "wouter"; // <-- Dodaj import Link
+import { Switch, Route, useLocation, Link } from "wouter";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-// Importuj komponenty sekcji, upewnij się, że akceptują ref przez forwardRef
 import Home from "@/pages/Home";
-import About from "@/pages/About"; // Zakładam, że About, Services itd. używają forwardRef
+import About from "@/pages/About";
 import Services from "@/pages/Services";
 import Gallery from "@/pages/Gallery";
 import Contact from "@/pages/Contact";
@@ -17,14 +16,14 @@ import GalleryModal from "@/components/GalleryModal";
 import ServiceModal from "@/components/ServiceModal";
 import { useLanguage } from "@/context/LanguageContext";
 import { ServiceProvider } from "@/context/ServiceContext";
-import ScrollToTop from "@/components/ScrollToTop";
+import ScrollToTop from "@/components/ScrollToTop"; // Ten komponent prawdopodobnie używa top: 0
 import { HelmetProvider } from "react-helmet-async";
 import { SchemaOrg } from "./components/SchemaOrg";
 
 function App() {
   const { t } = useTranslation();
   const { language } = useLanguage();
-  const [location] = useLocation(); // Tylko odczyt lokalizacji
+  const [location] = useLocation();
 
   const homeRef = useRef<HTMLDivElement>(null);
   const aboutRef = useRef<HTMLDivElement>(null);
@@ -32,93 +31,112 @@ function App() {
   const galleryRef = useRef<HTMLDivElement>(null);
   const contactRef = useRef<HTMLDivElement>(null);
 
-  // --- Funkcja do płynnego przewijania ---
-  const scrollToSection = (
-    ref: React.RefObject<HTMLDivElement>,
-    behavior: ScrollBehavior = "smooth" // Domyślnie smooth
-  ) => {
-    if (ref?.current) {
-      const offset = 80; // Dostosuj offset
-      const topPos = ref.current.offsetTop - offset;
-      console.log(
-        `Scrolling to ref ${
-          ref === aboutRef ? "About" : ref === servicesRef ? "Services" : "..."
-        } at top: ${topPos}`
-      );
-      window.scrollTo({ top: topPos, behavior });
-    } else {
-      console.warn("Scroll target ref is not available.");
-      // Fallback - próba przewinięcia do góry jeśli ref jest homeRef lub nieznany
+  const refIdMap = useCallback(
+    () =>
+      new Map<React.RefObject<HTMLDivElement>, string>([
+        [homeRef, ""],
+        [aboutRef, "about"],
+        [servicesRef, "services"],
+        [galleryRef, "gallery"],
+        [contactRef, "contact"],
+      ]),
+    []
+  );
+
+  const scrollToSection = useCallback(
+    (
+      ref: React.RefObject<HTMLDivElement>,
+      behavior: ScrollBehavior = "smooth"
+    ) => {
+      const currentRefIdMap = refIdMap();
+      const targetId = currentRefIdMap.get(ref); // Pobierz ID od razu
+
+      // --- SPECJALNA OBSŁUGA DLA HOME ---
       if (ref === homeRef) {
-        window.scrollTo({ top: 0, behavior });
+        console.log(`Scrolling to TOP (Home)`);
+        window.scrollTo({ top: 0, behavior }); // Bezpośrednio do zera
+
+        // Aktualizuj hash (usuń go) jeśli jesteśmy na home page
+        if (location === "/") {
+          console.log("Replacing state, removing hash for home");
+          history.replaceState(null, "", window.location.pathname);
+        }
+        // --- KONIEC SPECJALNEJ OBSŁUGI DLA HOME ---
+      } else if (ref?.current) {
+        // Obsługa pozostałych sekcji
+        const offset = 80;
+        const topPos = ref.current.offsetTop - offset;
+
+        console.log(
+          `Scrolling to ref for ID ${targetId ?? "unknown"} at top: ${topPos}`
+        );
+        window.scrollTo({ top: topPos, behavior });
+
+        // Aktualizuj hash tylko jeśli jesteśmy na stronie głównej ('/')
+        if (location === "/") {
+          if (targetId !== undefined && targetId !== "") {
+            console.log(`Replacing state with hash: #${targetId}`);
+            history.replaceState(null, "", `#${targetId}`);
+          }
+          // Nie potrzebujemy 'else' tutaj, bo przypadek home (pusty hash) jest obsłużony wyżej
+        }
+      } else {
+        console.warn("Scroll target ref is not available for ID:", targetId);
       }
-    }
-  };
+    },
+    [location, refIdMap]
+  ); // Zależności
 
-  // --- Logika obsługi hasha po zmianie lokalizacji ---
   useEffect(() => {
-    const currentPath = location; // Aktualna ścieżka z wouter
-    const hash = window.location.hash; // Hash z natywnego obiektu location
+    const currentPath = location;
+    const hash = window.location.hash;
+    const currentRefIdMap = refIdMap();
 
-    console.log(`Location changed: Path=${currentPath}, Hash=${hash}`);
+    console.log(`Effect: Location=${currentPath}, Hash=${hash}`);
 
-    // Sprawdzamy hash TYLKO jeśli jesteśmy na ścieżce głównej '/'
-    // i jeśli hash faktycznie istnieje
     if (currentPath === "/" && hash) {
-      // Krótkie opóźnienie dla pewności, że DOM jest gotowy
       const timer = setTimeout(() => {
         const id = hash.substring(1);
-        console.log(`Processing hash on '/' route: ${id}`);
-        let targetRef: React.RefObject<HTMLDivElement> | null = null;
+        console.log(`Effect: Processing initial hash: ${id}`);
 
-        // Mapowanie ID na Ref
-        switch (id) {
-          case "about":
-            targetRef = aboutRef;
-            break;
-          case "services":
-            targetRef = servicesRef;
-            break;
-          case "gallery":
-            targetRef = galleryRef;
-            break;
-          case "contact":
-            targetRef = contactRef;
-            break;
-          case "home":
-            targetRef = homeRef;
-            break; // lub przewiń do 0
-          // Obsłuż podsekcje usług, jeśli mają własne ID
-          case "services-haircut": // Zakładając, że masz ID 'services-haircut' w komponencie Services
-          case "services-styling":
-          case "services-coloring":
-            targetRef = servicesRef; // Najpierw przewiń do głównej sekcji usług
-            // Możesz dodać bardziej precyzyjne przewijanie do pod-ID, jeśli istnieją
-            break;
-          default:
-            console.warn(`No ref mapping found for hash: ${id}`);
+        let targetRef: React.RefObject<HTMLDivElement> | null = null;
+        currentRefIdMap.forEach((refId, ref) => {
+          if (refId === id) targetRef = ref;
+        });
+
+        if (
+          !targetRef &&
+          (id === "services-haircut" ||
+            id === "services-styling" ||
+            id === "services-coloring")
+        ) {
+          targetRef = servicesRef;
         }
 
         if (targetRef) {
-          scrollToSection(targetRef, "auto"); // Użyj 'auto' dla natychmiastowego skoku po załadowaniu
+          // Wywołaj scrollToSection, aby obsłużyć logikę przewijania i *potencjalnie* hash
+          // Użyj 'auto', bo to inicjalny skok
+          scrollToSection(targetRef, "auto");
         } else {
-          // Opcjonalny fallback na getElementById, jeśli mapowanie refów zawiedzie
           const element = document.getElementById(id);
           if (element) {
-            console.log(`Fallback: Scrolling to element ID: ${id}`);
+            console.log(`Effect Fallback: Scrolling to element ID: ${id}`);
             window.scrollTo({ top: element.offsetTop - 80, behavior: "auto" });
+          } else {
+            console.warn(
+              `Effect: Element/Ref for initial hash ${id} not found.`
+            );
           }
         }
-      }, 150); // Zwiększono lekko opóźnienie na wszelki wypadek
+      }, 150);
 
-      return () => clearTimeout(timer); // Cleanup
+      return () => clearTimeout(timer);
     }
-  }, [location]); // Uruchom ten efekt, gdy zmieni się `location` z woutera
+    // Zaktualizowano zależności, aby zawierały funkcję scrollToSection
+  }, [location, scrollToSection, refIdMap]);
 
-  // Komponent renderujący główne sekcje
   const MainContent = () => (
     <>
-      {/* Upewnij się, że komponenty Home, About itd. przyjmują ref (forwardRef) */}
       <Home ref={homeRef} onContactClick={() => scrollToSection(contactRef)} />
       <About ref={aboutRef} />
       <Services ref={servicesRef} />
@@ -130,21 +148,13 @@ function App() {
   return (
     <ServiceProvider>
       <HelmetProvider>
-        <Helmet>
-          {/* ... meta tagi ... */}
-          <html lang={language} />
-          <title>{t("meta.title")}</title>
-          <meta name="description" content={t("meta.description")} />
-        </Helmet>
+        <Helmet> {/* ... meta tagi ... */} </Helmet>
         <SchemaOrg />
-
         <a href="#main-content" className="sr-only ...">
           {" "}
           {/* ... skip link ... */}{" "}
         </a>
 
-        {/* Navbar przekazuje teraz TYLKO funkcje przewijania.
-            Logika warunkowa isHomePage/isSpecialPage jest w Navbar.tsx */}
         <Navbar
           onHomeClick={() => scrollToSection(homeRef)}
           onAboutClick={() => scrollToSection(aboutRef)}
@@ -154,10 +164,7 @@ function App() {
         />
 
         <main id="main-content">
-          {" "}
-          {/* Usunięto klasy Tailwind z main, aby sekcje mogły zajmować całą szerokość */}
           <Switch>
-            {/* Główna trasa renderuje MainContent */}
             <Route path="/" component={MainContent} />
             <Route path="/privacy-policy" component={PrivacyPolicy} />
             <Route path="/terms" component={Terms} />
@@ -165,7 +172,6 @@ function App() {
           </Switch>
         </main>
 
-        {/* Footer przekazuje teraz TYLKO funkcje przewijania */}
         <Footer
           onHomeClick={() => scrollToSection(homeRef)}
           onAboutClick={() => scrollToSection(aboutRef)}
@@ -177,6 +183,7 @@ function App() {
         <GalleryModal />
         <ServiceModal />
         <ScrollToTop />
+        {/* Ten komponent działa poprawnie, bo używa top: 0 */}
       </HelmetProvider>
     </ServiceProvider>
   );

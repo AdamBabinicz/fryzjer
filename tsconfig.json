@@ -2,6 +2,10 @@
   "include": ["client/src/**/*", "shared/**/*", "server/**/*"],
   "exclude": ["node_modules", "build", "dist", "**/*.test.ts"],
   "compilerOptions": {
+    // --- DODAJ TĘ LINIĘ ---
+    "target": "es2015", // lub "es2017", "esnext" itp.
+    // --------------------
+
     "incremental": true,
     "tsBuildInfoFile": "./node_modules/typescript/tsbuildinfo",
     "noEmit": true,
