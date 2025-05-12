@@ -18,14 +18,12 @@ export const galleryData: GallerySlide[] = [
       },
       {
         src: "/assets/3.avif",
-        fullSrc:
-          "https://images.unsplash.com/photo-1492106087820-71f1a00d2b11?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&h=900&q=90",
+        fullSrc: "/assets/3.avif",
         alt: "Upięcie wieczorowe",
       },
       {
         src: "/assets/5.avif",
-        fullSrc:
-          "https://images.unsplash.com/photo-1622296089863-eb7fc530ddb9?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=90",
+        fullSrc: "/assets/5.avif",
         alt: "Męskie klasyczne cięcie",
       },
     ],
@@ -34,20 +32,17 @@ export const galleryData: GallerySlide[] = [
     images: [
       {
         src: "/assets/8.avif",
-        fullSrc:
-          "https://images.unsplash.com/photo-1562572766-953b8ab55ae1?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&h=900&q=90",
+        fullSrc: "/assets/8.avif",
         alt: "Koloryzacja - balayage",
       },
       {
         src: "/assets/11.avif",
-        fullSrc:
-          "https://images.unsplash.com/photo-1594515254690-2247055f4d86?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&h=900&q=90",
+        fullSrc: "/assets/11.avif",
         alt: "Koloryzacja - rude",
       },
       {
         src: "/assets/12.avif",
-        fullSrc:
-          "https://images.unsplash.com/photo-1621605815971-fbc98d665033?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&h=900&q=90",
+        fullSrc: "/assets/12.avif",
         alt: "Męskie cięcie - undercut",
       },
     ],
@@ -56,20 +51,17 @@ export const galleryData: GallerySlide[] = [
     images: [
       {
         src: "/assets/14.avif",
-        fullSrc:
-          "https://images.unsplash.com/photo-1579123261459-a1e8fc66b5c3?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&h=900&q=90",
+        fullSrc: "/assets/14.avif",
         alt: "Fryzura ślubna",
       },
       {
         src: "/assets/16.avif",
-        fullSrc:
-          "https://images.unsplash.com/photo-1588516903720-8ceb67f9ef84?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&h=900&q=90",
+        fullSrc: "/assets/16.avif",
         alt: "Krótkie cięcie damskie",
       },
       {
         src: "/assets/18.avif",
-        fullSrc:
-          "https://images.unsplash.com/photo-1517832606299-7ae9b720a186?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&h=900&q=90",
+        fullSrc: "/assets/18.avif",
         alt: "Stylizacja brody",
       },
     ],
@@ -78,20 +70,17 @@ export const galleryData: GallerySlide[] = [
     images: [
       {
         src: "/assets/57.avif",
-        fullSrc:
-          "https://images.unsplash.com/photo-1579123261459-a1e8fc66b5c3?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&h=900&q=90",
+        fullSrc: "/assets/57.avif",
         alt: "Fryzura ślubna",
       },
       {
         src: "/assets/61.avif",
-        fullSrc:
-          "https://images.unsplash.com/photo-1588516903720-8ceb67f9ef84?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&h=900&q=90",
+        fullSrc: "/assets/61.avif",
         alt: "Krótkie cięcie damskie",
       },
       {
         src: "/assets/59.avif",
-        fullSrc:
-          "https://images.unsplash.com/photo-1517832606299-7ae9b720a186?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&h=900&q=90",
+        fullSrc: "/assets/59.avif",
         alt: "Stylizacja brody",
       },
     ],
@@ -100,20 +89,17 @@ export const galleryData: GallerySlide[] = [
     images: [
       {
         src: "/assets/24.avif",
-        fullSrc:
-          "https://images.unsplash.com/photo-1579123261459-a1e8fc66b5c3?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&h=900&q=90",
+        fullSrc: "/assets/24.avif",
         alt: "Fryzura ślubna",
       },
       {
         src: "/assets/26.avif",
-        fullSrc:
-          "https://images.unsplash.com/photo-1588516903720-8ceb67f9ef84?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&h=900&q=90",
+        fullSrc: "/assets/26.avif",
         alt: "Krótkie cięcie damskie",
       },
       {
         src: "/assets/27.avif",
-        fullSrc:
-          "https://images.unsplash.com/photo-1517832606299-7ae9b720a186?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&h=900&q=90",
+        fullSrc: "/assets/27.avif",
         alt: "Stylizacja brody",
       },
     ],
@@ -122,20 +108,17 @@ export const galleryData: GallerySlide[] = [
     images: [
       {
         src: "/assets/28.avif",
-        fullSrc:
-          "https://images.unsplash.com/photo-1579123261459-a1e8fc66b5c3?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&h=900&q=90",
+        fullSrc: "/assets/28.avif",
         alt: "Fryzura ślubna",
       },
       {
         src: "/assets/30.avif",
-        fullSrc:
-          "https://images.unsplash.com/photo-1588516903720-8ceb67f9ef84?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&h=900&q=90",
+        fullSrc: "/assets/30.avif",
         alt: "Krótkie cięcie damskie",
       },
       {
         src: "/assets/31.avif",
-        fullSrc:
-          "https://images.unsplash.com/photo-1517832606299-7ae9b720a186?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&h=900&q=90",
+        fullSrc: "/assets/31.avif",
         alt: "Stylizacja brody",
       },
     ],
@@ -144,20 +127,17 @@ export const galleryData: GallerySlide[] = [
     images: [
       {
         src: "/assets/56.avif",
-        fullSrc:
-          "https://images.unsplash.com/photo-1579123261459-a1e8fc66b5c3?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&h=900&q=90",
+        fullSrc: "/assets/56.avif",
         alt: "Fryzura ślubna",
       },
       {
         src: "/assets/42.avif",
-        fullSrc:
-          "https://images.unsplash.com/photo-1588516903720-8ceb67f9ef84?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&h=900&q=90",
+        fullSrc: "/assets/42.avif",
         alt: "Krótkie cięcie damskie",
       },
       {
         src: "/assets/48.avif",
-        fullSrc:
-          "https://images.unsplash.com/photo-1517832606299-7ae9b720a186?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&h=900&q=90",
+        fullSrc: "/assets/48.avif",
         alt: "Stylizacja brody",
       },
     ],
