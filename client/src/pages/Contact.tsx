@@ -3,18 +3,13 @@ import { useTranslation } from "react-i18next";
 import { motion } from "framer-motion";
 import { useToast } from "@/hooks/use-toast";
 import { FaMapMarkerAlt, FaPhoneAlt, FaEnvelope } from "react-icons/fa";
-import { validateEmail, validatePhone } from "@/lib/utils";
+import { validateEmail } from "@/lib/utils"; // Zakładam, że validatePhone nie jest już potrzebne
 import { useForm, ValidationError } from "@formspree/react";
 
 const Contact = forwardRef<HTMLDivElement, {}>((_, ref) => {
   const { t } = useTranslation();
   const { toast } = useToast();
-
-  // Formspree form hook - replace with your form ID
   const [formState, handleFormspreeSubmit] = useForm("xdkgzprr");
-
-  // Console log formState to debug
-  console.log("Contact form state:", formState);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -34,8 +29,6 @@ const Contact = forwardRef<HTMLDivElement, {}>((_, ref) => {
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
-
-    // Clear error when typing
     if (errors[name as keyof typeof errors]) {
       setErrors((prev) => ({ ...prev, [name]: false }));
     }
@@ -47,14 +40,12 @@ const Contact = forwardRef<HTMLDivElement, {}>((_, ref) => {
       email: !formData.email.trim() || !validateEmail(formData.email),
       message: !formData.message.trim(),
     };
-
     setErrors(newErrors);
     return !Object.values(newErrors).some((error) => error);
   };
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
     if (!validateForm()) {
       toast({
         title: t("toast.error"),
@@ -63,29 +54,16 @@ const Contact = forwardRef<HTMLDivElement, {}>((_, ref) => {
       });
       return;
     }
-
-    // Submit to Formspree
     handleFormspreeSubmit(e);
   };
 
-  // Reset form and show success message when form is successfully submitted
   useEffect(() => {
-    // Show console logs for debugging
-    console.log(
-      "Contact form useEffect running, succeeded:",
-      formState.succeeded
-    );
-
     if (formState.succeeded) {
-      console.log("Form succeeded, showing toast");
-
       toast({
         title: t("toast.success"),
         description: t("toast.messageSent"),
         variant: "default",
       });
-
-      // Reset form after successful submission
       setFormData({
         name: "",
         email: "",
@@ -140,7 +118,6 @@ const Contact = forwardRef<HTMLDivElement, {}>((_, ref) => {
                 </p>
               </div>
             </div>
-
             <div className="flex items-start space-x-4">
               <div className="text-accent">
                 <FaPhoneAlt size={24} />
@@ -152,7 +129,6 @@ const Contact = forwardRef<HTMLDivElement, {}>((_, ref) => {
                 </p>
               </div>
             </div>
-
             <div className="flex items-start space-x-4">
               <div className="text-accent">
                 <FaEnvelope size={24} />
@@ -164,7 +140,6 @@ const Contact = forwardRef<HTMLDivElement, {}>((_, ref) => {
                 </p>
               </div>
             </div>
-
             <div className="mt-12 p-6 bg-white/50 dark:bg-[#253754]/50 rounded-lg backdrop-blur-sm">
               <h3 className="font-semibold mb-4 text-center">
                 {t("contact.certifications")}
@@ -320,6 +295,7 @@ const Contact = forwardRef<HTMLDivElement, {}>((_, ref) => {
                   type="text"
                   id="name"
                   name="name"
+                  autoComplete="name"
                   value={formData.name}
                   onChange={handleInputChange}
                   className={`w-full px-4 py-2 border ${
@@ -350,6 +326,7 @@ const Contact = forwardRef<HTMLDivElement, {}>((_, ref) => {
                   type="email"
                   id="email"
                   name="email"
+                  autoComplete="email"
                   value={formData.email}
                   onChange={handleInputChange}
                   className={`w-full px-4 py-2 border ${
@@ -380,6 +357,7 @@ const Contact = forwardRef<HTMLDivElement, {}>((_, ref) => {
                   type="tel"
                   id="phone"
                   name="phone"
+                  autoComplete="tel"
                   value={formData.phone}
                   onChange={handleInputChange}
                   className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-accent dark:bg-[#1e2e44] dark:text-white"
@@ -398,6 +376,7 @@ const Contact = forwardRef<HTMLDivElement, {}>((_, ref) => {
                 <textarea
                   id="message"
                   name="message"
+                  autoComplete="off"
                   value={formData.message}
                   onChange={handleInputChange}
                   rows={4}
@@ -462,5 +441,7 @@ const Contact = forwardRef<HTMLDivElement, {}>((_, ref) => {
     </section>
   );
 });
+
+Contact.displayName = "Contact";
 
 export default Contact;
