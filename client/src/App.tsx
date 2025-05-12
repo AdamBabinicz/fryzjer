@@ -16,7 +16,7 @@ import GalleryModal from "@/components/GalleryModal";
 import ServiceModal from "@/components/ServiceModal";
 import { useLanguage } from "@/context/LanguageContext";
 import { ServiceProvider } from "@/context/ServiceContext";
-import ScrollToTop from "@/components/ScrollToTop"; // Ten komponent prawdopodobnie używa top: 0
+import ScrollToTop from "@/components/ScrollToTop";
 import { HelmetProvider } from "react-helmet-async";
 import { SchemaOrg } from "./components/SchemaOrg";
 
@@ -49,21 +49,15 @@ function App() {
       behavior: ScrollBehavior = "smooth"
     ) => {
       const currentRefIdMap = refIdMap();
-      const targetId = currentRefIdMap.get(ref); // Pobierz ID od razu
-
-      // --- SPECJALNA OBSŁUGA DLA HOME ---
+      const targetId = currentRefIdMap.get(ref);
       if (ref === homeRef) {
         console.log(`Scrolling to TOP (Home)`);
-        window.scrollTo({ top: 0, behavior }); // Bezpośrednio do zera
-
-        // Aktualizuj hash (usuń go) jeśli jesteśmy na home page
+        window.scrollTo({ top: 0, behavior });
         if (location === "/") {
           console.log("Replacing state, removing hash for home");
           history.replaceState(null, "", window.location.pathname);
         }
-        // --- KONIEC SPECJALNEJ OBSŁUGI DLA HOME ---
       } else if (ref?.current) {
-        // Obsługa pozostałych sekcji
         const offset = 80;
         const topPos = ref.current.offsetTop - offset;
 
@@ -72,20 +66,18 @@ function App() {
         );
         window.scrollTo({ top: topPos, behavior });
 
-        // Aktualizuj hash tylko jeśli jesteśmy na stronie głównej ('/')
         if (location === "/") {
           if (targetId !== undefined && targetId !== "") {
             console.log(`Replacing state with hash: #${targetId}`);
             history.replaceState(null, "", `#${targetId}`);
           }
-          // Nie potrzebujemy 'else' tutaj, bo przypadek home (pusty hash) jest obsłużony wyżej
         }
       } else {
         console.warn("Scroll target ref is not available for ID:", targetId);
       }
     },
     [location, refIdMap]
-  ); // Zależności
+  );
 
   useEffect(() => {
     const currentPath = location;
@@ -114,8 +106,6 @@ function App() {
         }
 
         if (targetRef) {
-          // Wywołaj scrollToSection, aby obsłużyć logikę przewijania i *potencjalnie* hash
-          // Użyj 'auto', bo to inicjalny skok
           scrollToSection(targetRef, "auto");
         } else {
           const element = document.getElementById(id);
@@ -132,7 +122,6 @@ function App() {
 
       return () => clearTimeout(timer);
     }
-    // Zaktualizowano zależności, aby zawierały funkcję scrollToSection
   }, [location, scrollToSection, refIdMap]);
 
   const MainContent = () => (
@@ -148,12 +137,15 @@ function App() {
   return (
     <ServiceProvider>
       <HelmetProvider>
-        <Helmet> {/* ... meta tagi ... */} </Helmet>
+        <Helmet>
+          <html lang={language} />
+          <title>{t("meta.title")}</title>{" "}
+        </Helmet>
         <SchemaOrg />
-        <a href="#main-content" className="sr-only ...">
-          {" "}
-          {/* ... skip link ... */}{" "}
-        </a>
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:absolute focus:p-4 focus:bg-accent focus:text-white focus:z-50"
+        ></a>
 
         <Navbar
           onHomeClick={() => scrollToSection(homeRef)}
