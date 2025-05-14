@@ -1,4 +1,3 @@
-// Services.tsx
 import { forwardRef, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { motion } from "framer-motion";
@@ -15,12 +14,17 @@ import {
   coloringServices as coloringServicesEN,
 } from "@/data/serviceDataEn";
 import { useServiceModal } from "@/context/ServiceContext";
+import { PAGE_KEYS } from "@/config/slugs"; // Zaimportuj
 
-const Services = forwardRef<HTMLDivElement, {}>((_, ref) => {
+// Definiujemy interfejs propsów
+interface ServicesProps {
+  // Możesz dodać inne propsy tutaj, jeśli będą potrzebne
+}
+
+const Services = forwardRef<HTMLDivElement, ServicesProps>((_props, ref) => {
   const { t, i18n } = useTranslation();
   const { openServiceModal } = useServiceModal();
 
-  // Use appropriate service data based on the current language
   const haircutServices = useMemo(() => {
     return i18n.language === "en" ? haircutServicesEN : haircutServicesPL;
   }, [i18n.language]);
@@ -33,7 +37,6 @@ const Services = forwardRef<HTMLDivElement, {}>((_, ref) => {
     return i18n.language === "en" ? coloringServicesEN : coloringServicesPL;
   }, [i18n.language]);
 
-  // Animation variants
   const serviceVariants = {
     hidden: { opacity: 0, y: 50 },
     visible: {
@@ -44,13 +47,13 @@ const Services = forwardRef<HTMLDivElement, {}>((_, ref) => {
   };
 
   const handleServiceCardClick = (service: ServiceType) => {
-    openServiceModal(service); // Otwórz modal dla konkretnej usługi
+    openServiceModal(service);
   };
 
   return (
     <section
       ref={ref}
-      id="services"
+      id={PAGE_KEYS.SERVICES} // Użyj kanonicznego klucza jako ID dla całej sekcji
       className="py-20 bg-neutral dark:bg-transparent section-services"
     >
       <div className="container mx-auto px-4">
@@ -73,7 +76,10 @@ const Services = forwardRef<HTMLDivElement, {}>((_, ref) => {
           />
         </div>
 
-        <div id="services-haircut" className="mb-20">
+        {/* Podsekcja Strzyżenie */}
+        <div id={PAGE_KEYS.SERVICES_HAIRCUT} className="mb-20">
+          {" "}
+          {/* Kanoniczne ID */}
           <motion.h3
             initial={{ opacity: 0, x: -20 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -95,14 +101,17 @@ const Services = forwardRef<HTMLDivElement, {}>((_, ref) => {
               >
                 <ServiceCard
                   service={service}
-                  onClick={() => handleServiceCardClick(service)} // Przekazujemy funkcję onClick
+                  onClick={() => handleServiceCardClick(service)}
                 />
               </motion.div>
             ))}
           </div>
         </div>
 
-        <div id="services-styling" className="mb-20">
+        {/* Podsekcja Stylizacja */}
+        <div id={PAGE_KEYS.SERVICES_STYLING} className="mb-20">
+          {" "}
+          {/* Kanoniczne ID */}
           <motion.h3
             initial={{ opacity: 0, x: -20 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -124,14 +133,17 @@ const Services = forwardRef<HTMLDivElement, {}>((_, ref) => {
               >
                 <ServiceCard
                   service={service}
-                  onClick={() => handleServiceCardClick(service)} // Przekazujemy funkcję onClick
+                  onClick={() => handleServiceCardClick(service)}
                 />
               </motion.div>
             ))}
           </div>
         </div>
 
-        <div id="services-coloring">
+        {/* Podsekcja Koloryzacja */}
+        <div id={PAGE_KEYS.SERVICES_COLORING}>
+          {" "}
+          {/* Kanoniczne ID */}
           <motion.h3
             initial={{ opacity: 0, x: -20 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -153,7 +165,7 @@ const Services = forwardRef<HTMLDivElement, {}>((_, ref) => {
               >
                 <ServiceCard
                   service={service}
-                  onClick={() => handleServiceCardClick(service)} // Przekazujemy funkcję onClick
+                  onClick={() => handleServiceCardClick(service)}
                 />
               </motion.div>
             ))}

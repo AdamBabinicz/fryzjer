@@ -2,6 +2,7 @@ import { forwardRef } from "react";
 import { useTranslation } from "react-i18next";
 import { motion } from "framer-motion";
 import HeroBackground from "../components/HeroBackground";
+import { PAGE_KEYS, getLocalizedSlug } from "@/config/slugs"; // Poprawiony import - dodano getLocalizedSlug
 
 interface HomeProps {
   onContactClick: () => void;
@@ -9,12 +10,13 @@ interface HomeProps {
 
 const Home = forwardRef<HTMLDivElement, HomeProps>(
   ({ onContactClick }, ref) => {
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
+    const currentLang = i18n.language;
 
     return (
       <section
         ref={ref}
-        id="home"
+        id={PAGE_KEYS.HOME} // Użyj kanonicznego klucza jako ID
         className="mt-24 md:mt-32 relative bg-white dark:bg-transparent section-home"
       >
         <div className="w-full h-[85vh] relative overflow-hidden">
@@ -45,14 +47,15 @@ const Home = forwardRef<HTMLDivElement, HomeProps>(
               transition={{ duration: 0.8, delay: 0.4 }}
               className="flex flex-col sm:flex-row gap-4"
             >
+              {/* Link do "O nas" - teraz musi być dynamiczny */}
               <a
-                href="#about"
+                href={`#${getLocalizedSlug(PAGE_KEYS.ABOUT, currentLang)}`}
                 className="px-8 py-3 bg-accent text-white font-medium hover:bg-opacity-90 transition duration-300 ease-in-out shadow-lg"
               >
                 {t("home.knowUs")}
               </a>
               <button
-                onClick={onContactClick}
+                onClick={onContactClick} // onContactClick przekaże kanoniczny ID do scrollToSectionByCanonicalId
                 className="px-8 py-3 bg-transparent border-2 border-white text-white font-medium hover:bg-white hover:bg-opacity-10 transition duration-300 ease-in-out shadow-lg"
               >
                 {t("home.bookAppointment")}

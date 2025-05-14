@@ -3,10 +3,16 @@ import { useTranslation } from "react-i18next";
 import { motion } from "framer-motion";
 import { useToast } from "@/hooks/use-toast";
 import { FaMapMarkerAlt, FaPhoneAlt, FaEnvelope } from "react-icons/fa";
-import { validateEmail } from "@/lib/utils"; // Zakładam, że validatePhone nie jest już potrzebne
+import { validateEmail } from "@/lib/utils";
 import { useForm, ValidationError } from "@formspree/react";
+import { PAGE_KEYS } from "@/config/slugs"; // Zaimportuj
 
-const Contact = forwardRef<HTMLDivElement, {}>((_, ref) => {
+// Definiujemy interfejs propsów
+interface ContactProps {
+  // Możesz dodać inne propsy tutaj, jeśli będą potrzebne
+}
+
+const Contact = forwardRef<HTMLDivElement, ContactProps>((_props, ref) => {
   const { t } = useTranslation();
   const { toast } = useToast();
   const [formState, handleFormspreeSubmit] = useForm("xdkgzprr");
@@ -76,7 +82,7 @@ const Contact = forwardRef<HTMLDivElement, {}>((_, ref) => {
   return (
     <section
       ref={ref}
-      id="contact"
+      id={PAGE_KEYS.CONTACT} // Użyj kanonicznego klucza jako ID
       className="py-20 bg-neutral dark:bg-transparent section-contact"
     >
       <div className="container mx-auto px-4">
@@ -317,7 +323,6 @@ const Contact = forwardRef<HTMLDivElement, {}>((_, ref) => {
                   errors={formState.errors}
                 />
               </div>
-
               <div className="mb-6">
                 <label htmlFor="email" className="block mb-2 font-medium">
                   {t("contact.emailLabel")}
@@ -339,16 +344,16 @@ const Contact = forwardRef<HTMLDivElement, {}>((_, ref) => {
                 />
                 {errors.email && (
                   <p id="email-error" className="mt-1 text-red-500 text-sm">
-                    {t("contact.emailInvalid")}
+                    {t("contact.validEmailRequired")}
                   </p>
-                )}
+                )}{" "}
+                {/* Poprawiony klucz tłumaczenia */}
                 <ValidationError
                   prefix="Email"
                   field="email"
                   errors={formState.errors}
                 />
               </div>
-
               <div className="mb-6">
                 <label htmlFor="phone" className="block mb-2 font-medium">
                   {t("contact.phoneLabel")}
@@ -368,7 +373,6 @@ const Contact = forwardRef<HTMLDivElement, {}>((_, ref) => {
                   errors={formState.errors}
                 />
               </div>
-
               <div className="mb-6">
                 <label htmlFor="message" className="block mb-2 font-medium">
                   {t("contact.messageLabel")}
@@ -401,7 +405,6 @@ const Contact = forwardRef<HTMLDivElement, {}>((_, ref) => {
                   errors={formState.errors}
                 />
               </div>
-
               <div>
                 <button
                   type="submit"

@@ -12,6 +12,7 @@ export default {
     "text-sky-300",
     "hover:bg-sky-200",
     "hover:bg-sky-300",
+    "dark:bg-[#544228]", // 👈 nowy ciemny kolor
   ],
   theme: {
     extend: {

@@ -4,6 +4,7 @@ import { Link } from "wouter";
 import { FaFacebookF, FaInstagram, FaTwitter } from "react-icons/fa";
 import { getCurrentYear } from "@/lib/utils";
 import { useTheme } from "@/context/ThemeContext";
+import { PAGE_KEYS, getLocalizedSlug } from "@/config/slugs"; // Zaimportuj
 
 interface FooterProps {
   onHomeClick: () => void;
@@ -20,7 +21,8 @@ const Footer = ({
   onGalleryClick,
   onContactClick,
 }: FooterProps) => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation(); // Pobierz i18n
+  const currentLang = i18n.language;
   const { theme } = useTheme();
   const isDark = theme === "dark";
 
@@ -44,6 +46,8 @@ const Footer = ({
     yearDisplay = startYear.toString();
     console.error("Invalid year received from getCurrentYear:", currentYearRaw);
   }
+
+  const homePageLink = `/${getLocalizedSlug(PAGE_KEYS.HOME, currentLang)}`;
 
   return (
     <footer className="bg-background/95 text-foreground dark:bg-[#1a1a1a] dark:text-white py-12">
@@ -163,13 +167,16 @@ const Footer = ({
           </p>
           <div className="flex space-x-4">
             <Link
-              href="/privacy-policy"
+              href={`/${getLocalizedSlug(
+                PAGE_KEYS.PRIVACY_POLICY,
+                currentLang
+              )}`}
               className="text-gray-500 dark:text-gray-300 hover:text-accent text-sm transition duration-300 ease-in-out"
             >
               {t("footer.privacyPolicy")}
             </Link>
             <Link
-              href="/terms"
+              href={`/${getLocalizedSlug(PAGE_KEYS.TERMS, currentLang)}`}
               className="text-gray-500 dark:text-gray-300 hover:text-accent text-sm transition duration-300 ease-in-out"
             >
               {t("footer.terms")}

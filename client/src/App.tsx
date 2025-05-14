@@ -1,7 +1,7 @@
 import React, { useRef, useEffect, useCallback } from "react";
 import { Helmet } from "react-helmet-async";
 import { useTranslation } from "react-i18next";
-import { Switch, Route, useLocation, Link } from "wouter";
+import { Switch, Route, useLocation, Link as WouterLink } from "wouter";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import Home from "@/pages/Home";
@@ -14,121 +14,159 @@ import Terms from "@/pages/Terms";
 import NotFound from "@/pages/not-found";
 import GalleryModal from "@/components/GalleryModal";
 import ServiceModal from "@/components/ServiceModal";
-import { useLanguage } from "@/context/LanguageContext";
+import { useLanguage } from "@/context/LanguageContext"; // Zakładam, że to nadal używane do <html lang>
 import { ServiceProvider } from "@/context/ServiceContext";
 import ScrollToTop from "@/components/ScrollToTop";
 import { HelmetProvider } from "react-helmet-async";
 import { SchemaOrg } from "./components/SchemaOrg";
+import {
+  PAGE_KEYS,
+  getLocalizedSlug,
+  getCanonicalKeyFromSlug,
+  PageKey,
+  localizedSlugs,
+} from "@/config/slugs";
+
+const NAVBAR_HEIGHT = 80;
 
 function App() {
-  const { t } = useTranslation();
-  const { language } = useLanguage();
-  const [location] = useLocation();
+  const { t, i18n } = useTranslation();
+  const currentLang = i18n.language;
+  const [locationPath, setLocation] = useLocation();
+  const previousLangRef = useRef(currentLang);
 
-  const homeRef = useRef<HTMLDivElement>(null);
+  const homeRef = useRef<HTMLDivElement>(null); // Ref dla sekcji Home
+  // Refy dla innych sekcji, jeśli są potrzebne do bezpośredniego przewijania z App
   const aboutRef = useRef<HTMLDivElement>(null);
   const servicesRef = useRef<HTMLDivElement>(null);
   const galleryRef = useRef<HTMLDivElement>(null);
   const contactRef = useRef<HTMLDivElement>(null);
 
-  const refIdMap = useCallback(
-    () =>
-      new Map<React.RefObject<HTMLDivElement>, string>([
-        [homeRef, ""],
-        [aboutRef, "about"],
-        [servicesRef, "services"],
-        [galleryRef, "gallery"],
-        [contactRef, "contact"],
-      ]),
-    []
-  );
-
-  const scrollToSection = useCallback(
+  const scrollToSectionByCanonicalId = useCallback(
     (
-      ref: React.RefObject<HTMLDivElement>,
-      behavior: ScrollBehavior = "smooth"
+      canonicalId: PageKey,
+      behavior: ScrollBehavior = "smooth",
+      updateHashLang: string | null = currentLang
     ) => {
-      const currentRefIdMap = refIdMap();
-      const targetId = currentRefIdMap.get(ref);
-      if (ref === homeRef) {
-        window.scrollTo({ top: 0, behavior });
-        if (location === "/") {
-          history.replaceState(null, "", window.location.pathname);
-        }
-      } else if (ref?.current) {
-        const offset = 80;
-        const topPos = ref.current.offsetTop - offset;
-        window.scrollTo({ top: topPos, behavior });
-        if (location === "/") {
-          if (targetId !== undefined && targetId !== "") {
-            history.replaceState(null, "", `#${targetId}`);
-          }
-        }
-      } else {
-        console.warn("Scroll target ref is not available for ID:", targetId);
-      }
-    },
-    [location, refIdMap]
-  );
+      const elementToScroll = document.getElementById(canonicalId);
+      const localizedHashForURL =
+        updateHashLang && canonicalId !== PAGE_KEYS.HOME
+          ? getLocalizedSlug(canonicalId, updateHashLang)
+          : null;
 
-  const scrollToSubSection = useCallback(
-    (id: string, behavior: ScrollBehavior = "smooth") => {
-      const element = document.getElementById(id);
-      if (element) {
-        const offset = 80;
-        const topPos = element.offsetTop - offset;
+      if (canonicalId === PAGE_KEYS.HOME) {
+        window.scrollTo({ top: 0, behavior });
+        if (updateHashLang && window.location.pathname === "/") {
+          history.replaceState(
+            null,
+            "",
+            `/${getLocalizedSlug(PAGE_KEYS.HOME, updateHashLang)}`
+          );
+        }
+      } else if (elementToScroll) {
+        const topPos = elementToScroll.offsetTop - NAVBAR_HEIGHT;
         window.scrollTo({ top: topPos, behavior });
-        if (location === "/") {
-          history.replaceState(null, "", `#${id}`);
+        if (localizedHashForURL && window.location.pathname === "/") {
+          history.replaceState(null, "", `#${localizedHashForURL}`);
+        } else if (localizedHashForURL && window.location.pathname !== "/") {
+          // Jeśli jesteśmy na innej stronie, a chcemy tylko zaktualizować hash po przewinięciu (rzadki przypadek)
+          // history.replaceState(null, "", `${window.location.pathname}#${localizedHashForURL}`);
         }
       } else {
-        console.warn(`Sub-section element with ID ${id} not found.`);
-        scrollToSection(servicesRef, behavior);
+        console.warn("Scroll target for canonical ID not found:", canonicalId);
       }
     },
-    [location, scrollToSection, servicesRef]
+    [currentLang]
   );
 
   useEffect(() => {
-    const currentPath = location;
-    const hash = window.location.hash;
-    const currentRefIdMap = refIdMap();
+    const previousLang = previousLangRef.current;
+    if (previousLang !== currentLang) {
+      const pathSegments = locationPath.substring(1).split("#");
+      const currentBaseSlug = pathSegments[0] || "";
+      const currentHashSlug = pathSegments[1] || "";
 
-    if (currentPath === "/" && hash) {
-      const timer = setTimeout(() => {
-        const id = hash.substring(1);
-        let targetRef: React.RefObject<HTMLDivElement> | null = null;
-        currentRefIdMap.forEach((refId, ref) => {
-          if (refId === id) targetRef = ref;
-        });
+      let canonicalPageKey: PageKey | undefined;
+      if (currentBaseSlug === "" && !currentHashSlug) {
+        canonicalPageKey = PAGE_KEYS.HOME;
+      } else {
+        canonicalPageKey = getCanonicalKeyFromSlug(
+          currentBaseSlug,
+          previousLang
+        );
+      }
 
-        const isSubService =
-          id === "services-haircut" ||
-          id === "services-styling" ||
-          id === "services-coloring";
+      if (canonicalPageKey) {
+        const newLocalizedBaseSlug = getLocalizedSlug(
+          canonicalPageKey,
+          currentLang
+        );
+        let newPath = newLocalizedBaseSlug ? `/${newLocalizedBaseSlug}` : "/";
 
-        if (!targetRef && isSubService) {
-          scrollToSubSection(id, "auto"); // Przewiń do podsekcji
-        } else if (targetRef) {
-          scrollToSection(targetRef, "auto");
-        } else {
-          const element = document.getElementById(id);
-          if (element) {
-            window.scrollTo({ top: element.offsetTop - 80, behavior: "auto" });
-          } else {
-            console.warn(
-              `Effect: Element/Ref for initial hash ${id} not found.`
+        if (currentHashSlug) {
+          const canonicalHashKey = getCanonicalKeyFromSlug(
+            currentHashSlug,
+            previousLang
+          );
+          if (canonicalHashKey) {
+            const newLocalizedHash = getLocalizedSlug(
+              canonicalHashKey,
+              currentLang
             );
+            if (newLocalizedHash) {
+              newPath += `#${newLocalizedHash}`;
+            }
+          } else {
+            // Jeśli hash nie jest zlokalizowany, próbujemy go zachować
+            // To może wymagać bardziej zaawansowanej logiki jeśli hash też jest dynamiczny
+            newPath += `#${currentHashSlug}`;
           }
         }
-      }, 150);
-      return () => clearTimeout(timer);
+        if (newPath !== locationPath) {
+          setLocation(newPath, { replace: true });
+        }
+      }
+      previousLangRef.current = currentLang;
     }
-  }, [location, scrollToSection, scrollToSubSection, refIdMap]);
+  }, [currentLang, locationPath, setLocation]);
+
+  useEffect(() => {
+    if (locationPath === "/" && window.location.hash) {
+      const localizedHashValue = window.location.hash.substring(1);
+      const canonicalKey = getCanonicalKeyFromSlug(
+        localizedHashValue,
+        currentLang
+      );
+
+      if (canonicalKey) {
+        const attemptScroll = (attempt = 0) => {
+          const element = document.getElementById(canonicalKey);
+          if (element) {
+            scrollToSectionByCanonicalId(canonicalKey, "auto", null);
+          } else if (attempt < 15) {
+            setTimeout(() => attemptScroll(attempt + 1), 150); // Zwiększone opóźnienie
+          } else {
+            console.warn(
+              `App.tsx: Element for canonical key '${canonicalKey}' (from hash '${localizedHashValue}') not found.`
+            );
+          }
+        };
+        const timer = setTimeout(attemptScroll, 150); // Zwiększone opóźnienie
+        return () => clearTimeout(timer);
+      } else {
+        console.warn(
+          `App.tsx: No canonical key for localized hash '${localizedHashValue}' in lang '${currentLang}'.`
+        );
+      }
+    }
+  }, [locationPath, currentLang, scrollToSectionByCanonicalId]);
 
   const MainContent = () => (
     <>
-      <Home ref={homeRef} onContactClick={() => scrollToSection(contactRef)} />
+      <Home
+        ref={homeRef}
+        onContactClick={() => scrollToSectionByCanonicalId(PAGE_KEYS.CONTACT)}
+      />
       <About ref={aboutRef} />
       <Services ref={servicesRef} />
       <Gallery ref={galleryRef} />
@@ -140,8 +178,8 @@ function App() {
     <ServiceProvider>
       <HelmetProvider>
         <Helmet>
-          <html lang={language} />
-          <title>{t("meta.title")}</title>{" "}
+          <html lang={currentLang} /> {/* Używamy currentLang z i18n */}
+          <title>{t("meta.title")}</title>
         </Helmet>
         <SchemaOrg />
         <a
@@ -150,29 +188,62 @@ function App() {
           aria-label={t("accessibility.skipToContent")}
         ></a>
         <Navbar
-          onHomeClick={() => scrollToSection(homeRef)}
-          onAboutClick={() => scrollToSection(aboutRef)}
-          onServicesClick={() => scrollToSection(servicesRef)}
-          onGalleryClick={() => scrollToSection(galleryRef)}
-          onContactClick={() => scrollToSection(contactRef)}
-          onHaircutClick={() => scrollToSubSection("services-haircut")}
-          onStylingClick={() => scrollToSubSection("services-styling")}
-          onColoringClick={() => scrollToSubSection("services-coloring")}
+          onHomeClick={() => scrollToSectionByCanonicalId(PAGE_KEYS.HOME)}
+          onAboutClick={() => scrollToSectionByCanonicalId(PAGE_KEYS.ABOUT)}
+          onServicesClick={() =>
+            scrollToSectionByCanonicalId(PAGE_KEYS.SERVICES)
+          }
+          onGalleryClick={() => scrollToSectionByCanonicalId(PAGE_KEYS.GALLERY)}
+          onContactClick={() => scrollToSectionByCanonicalId(PAGE_KEYS.CONTACT)}
+          onHaircutClick={() =>
+            scrollToSectionByCanonicalId(PAGE_KEYS.SERVICES_HAIRCUT)
+          }
+          onStylingClick={() =>
+            scrollToSectionByCanonicalId(PAGE_KEYS.SERVICES_STYLING)
+          }
+          onColoringClick={() =>
+            scrollToSectionByCanonicalId(PAGE_KEYS.SERVICES_COLORING)
+          }
         />
         <main id="main-content">
           <Switch>
-            <Route path="/" component={MainContent} />
-            <Route path="/privacy-policy" component={PrivacyPolicy} />
-            <Route path="/terms" component={Terms} />
+            <Route
+              path={`/${getLocalizedSlug(PAGE_KEYS.HOME, "en")}`}
+              component={MainContent}
+            />
+            <Route
+              path={`/${getLocalizedSlug(PAGE_KEYS.HOME, "pl")}`}
+              component={MainContent}
+            />
+            <Route path="/" component={MainContent} />{" "}
+            {/* Fallback dla strony głównej */}
+            <Route
+              path={`/${getLocalizedSlug(PAGE_KEYS.PRIVACY_POLICY, "en")}`}
+              component={PrivacyPolicy}
+            />
+            <Route
+              path={`/${getLocalizedSlug(PAGE_KEYS.PRIVACY_POLICY, "pl")}`}
+              component={PrivacyPolicy}
+            />
+            <Route
+              path={`/${getLocalizedSlug(PAGE_KEYS.TERMS, "en")}`}
+              component={Terms}
+            />
+            <Route
+              path={`/${getLocalizedSlug(PAGE_KEYS.TERMS, "pl")}`}
+              component={Terms}
+            />
             <Route component={NotFound} />
           </Switch>
         </main>
         <Footer
-          onHomeClick={() => scrollToSection(homeRef)}
-          onAboutClick={() => scrollToSection(aboutRef)}
-          onServicesClick={() => scrollToSection(servicesRef)}
-          onGalleryClick={() => scrollToSection(galleryRef)}
-          onContactClick={() => scrollToSection(contactRef)}
+          onHomeClick={() => scrollToSectionByCanonicalId(PAGE_KEYS.HOME)}
+          onAboutClick={() => scrollToSectionByCanonicalId(PAGE_KEYS.ABOUT)}
+          onServicesClick={() =>
+            scrollToSectionByCanonicalId(PAGE_KEYS.SERVICES)
+          }
+          onGalleryClick={() => scrollToSectionByCanonicalId(PAGE_KEYS.GALLERY)}
+          onContactClick={() => scrollToSectionByCanonicalId(PAGE_KEYS.CONTACT)}
         />
         <GalleryModal />
         <ServiceModal />

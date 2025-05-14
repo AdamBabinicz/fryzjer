@@ -3,8 +3,14 @@ import { useTranslation } from "react-i18next";
 import { motion } from "framer-motion";
 import { teamData as teamDataPL } from "@/data/teamData";
 import { teamData as teamDataEN } from "@/data/teamDataEn";
+import { PAGE_KEYS } from "@/config/slugs"; // Zaimportuj
 
-const About = forwardRef<HTMLDivElement, {}>((_, ref) => {
+// Definiujemy interfejs propsów, jeśli chcesz przekazywać inne propsy w przyszłości
+interface AboutProps {
+  // Możesz dodać inne propsy tutaj, jeśli będą potrzebne
+}
+
+const About = forwardRef<HTMLDivElement, AboutProps>((_props, ref) => {
   const { t, i18n } = useTranslation();
 
   const teamMembers = useMemo(() => {
@@ -39,8 +45,8 @@ const About = forwardRef<HTMLDivElement, {}>((_, ref) => {
   return (
     <section
       ref={ref}
-      id="about"
-      className="py-20 px-0 mt-8 sm:py-20 sm:px-8 md:py-24 md:px-12 bg-white  section-about"
+      id={PAGE_KEYS.ABOUT} // Użyj kanonicznego klucza jako ID
+      className="py-20 px-0 mt-8 sm:py-20 sm:px-8 md:py-24 md:px-12 bg-white section-about"
     >
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">

@@ -4,9 +4,9 @@ import { cn } from "@/lib/utils";
 import LanguageSelector from "./LanguageSelector";
 import ThemeToggle from "./ThemeToggle";
 import { FaBars, FaChevronDown } from "react-icons/fa";
-import { useLanguage } from "@/context/LanguageContext";
 import { useTheme } from "@/context/ThemeContext";
 import { useLocation, Link } from "wouter";
+import { PAGE_KEYS, getLocalizedSlug } from "@/config/slugs";
 
 interface NavbarProps {
   onHomeClick: () => void;
@@ -14,11 +14,9 @@ interface NavbarProps {
   onServicesClick: () => void;
   onGalleryClick: () => void;
   onContactClick: () => void;
-  // --- DODANE BRAKUJĄCE PROPSY ---
   onHaircutClick: () => void;
   onStylingClick: () => void;
   onColoringClick: () => void;
-  // ---------------------------------
 }
 
 const Navbar = ({
@@ -27,20 +25,22 @@ const Navbar = ({
   onServicesClick,
   onGalleryClick,
   onContactClick,
-  // --- DODANE BRAKUJĄCE PROPSY ---
   onHaircutClick,
   onStylingClick,
   onColoringClick,
-}: // ---------------------------------
-NavbarProps) => {
-  const { t } = useTranslation();
-  const { language } = useLanguage();
+}: NavbarProps) => {
+  const { t, i18n } = useTranslation();
+  const currentLang = i18n.language;
   const { theme } = useTheme();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isServicesDropdownOpen, setIsServicesDropdownOpen] = useState(false);
-  const [location] = useLocation();
-  const isHomePage = location === "/";
+  const [isDesktopServicesDropdownOpen, setIsDesktopServicesDropdownOpen] =
+    useState(false);
+  const [locationPath] = useLocation();
+  const isHomePage =
+    locationPath === "/" ||
+    locationPath === `/${getLocalizedSlug(PAGE_KEYS.HOME, currentLang)}`;
 
   const closeMobileMenu = () => {
     setIsMobileMenuOpen(false);
@@ -49,7 +49,8 @@ NavbarProps) => {
 
   useEffect(() => {
     closeMobileMenu();
-  }, [language, theme, location]);
+    setIsDesktopServicesDropdownOpen(false);
+  }, [currentLang, theme, locationPath]); // Dodano currentLang do zależności
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 10);
@@ -62,6 +63,8 @@ NavbarProps) => {
   const mobileNavLinkBaseClasses =
     "block w-full text-left px-3 py-2 text-primary dark:text-white hover:bg-neutral dark:hover:bg-gray-700 rounded-md";
   const flexAlignCenterClasses = "flex items-center";
+  const desktopSubMenuLinkClasses =
+    "block w-full text-left px-4 py-2 text-sm text-primary dark:text-white hover:bg-gray-100 dark:hover:bg-[hsl(40,35%,35%)] hover:text-accent dark:hover:text-amber-300";
 
   const handleMobileLinkClick = (scrollFunc: () => void) => {
     scrollFunc();
@@ -70,14 +73,45 @@ NavbarProps) => {
 
   const handleMobileServicesClick = () => {
     if (isServicesDropdownOpen) {
-      onServicesClick();
-      closeMobileMenu();
+      if (isHomePage) {
+        onServicesClick();
+        closeMobileMenu();
+      } else {
+        // Nawigacja do strony głównej z hashem do sekcji usług
+        const homeSlug = getLocalizedSlug(PAGE_KEYS.HOME, currentLang);
+        const servicesSlug = getLocalizedSlug(PAGE_KEYS.SERVICES, currentLang);
+        const targetPath = homeSlug
+          ? `/${homeSlug}#${servicesSlug}`
+          : `/#${servicesSlug}`;
+
+        const link = document.createElement("a");
+        link.href = targetPath;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        closeMobileMenu();
+      }
     } else {
       setIsServicesDropdownOpen(true);
     }
   };
 
-  // Usunięto handleMobileSubServiceClick - nie jest już potrzebna
+  const handleDesktopServicesClick = () => {
+    if (isDesktopServicesDropdownOpen) {
+      if (isHomePage) {
+        onServicesClick();
+      }
+      setIsDesktopServicesDropdownOpen(false);
+    } else {
+      setIsDesktopServicesDropdownOpen(true);
+    }
+  };
+
+  const closeDesktopDropdown = () => {
+    setIsDesktopServicesDropdownOpen(false);
+  };
+
+  const homePageLink = `/${getLocalizedSlug(PAGE_KEYS.HOME, currentLang)}`;
 
   return (
     <header
@@ -115,7 +149,7 @@ NavbarProps) => {
               </span>
             </button>
           ) : (
-            <Link href="/" className={flexAlignCenterClasses}>
+            <Link href={homePageLink} className={flexAlignCenterClasses}>
               <img
                 src={
                   theme === "dark"
@@ -153,7 +187,7 @@ NavbarProps) => {
               {t("nav.home")}
             </button>
           ) : (
-            <Link href="/" className={navLinkBaseClasses}>
+            <Link href={homePageLink} className={navLinkBaseClasses}>
               {t("nav.home")}
             </Link>
           )}
@@ -162,33 +196,121 @@ NavbarProps) => {
               {t("nav.about")}
             </button>
           ) : (
-            <Link href="/#about" className={navLinkBaseClasses}>
+            <Link
+              href={`${homePageLink}#${getLocalizedSlug(
+                PAGE_KEYS.ABOUT,
+                currentLang
+              )}`}
+              className={navLinkBaseClasses}
+            >
               {t("nav.about")}
             </Link>
           )}
           <div className="relative">
-            {isHomePage ? (
-              <button
-                onClick={onServicesClick}
-                className={cn(navLinkBaseClasses, flexAlignCenterClasses)}
-              >
-                {t("nav.services")}
-              </button>
-            ) : (
-              <Link
-                href="/#services"
-                className={cn(navLinkBaseClasses, flexAlignCenterClasses)}
-              >
-                {t("nav.services")}
-              </Link>
-            )}
+            <button
+              onClick={handleDesktopServicesClick}
+              className={cn(navLinkBaseClasses, flexAlignCenterClasses)}
+            >
+              {t("nav.services")}
+              <FaChevronDown
+                className={cn(
+                  "ml-1 h-3 w-3 transition-transform duration-300",
+                  isDesktopServicesDropdownOpen ? "rotate-180" : "rotate-0"
+                )}
+              />
+            </button>
+            <div
+              className={cn(
+                "absolute top-full left-0 mt-2 w-48 rounded-md shadow-lg bg-white dark:bg-[hsl(40,35%,30%)] ring-1 ring-black dark:ring-amber-500 ring-opacity-5 focus:outline-none py-1 z-20",
+                "overflow-hidden transition-all duration-300 ease-in-out",
+                isDesktopServicesDropdownOpen
+                  ? "max-h-96 opacity-100"
+                  : "max-h-0 opacity-0"
+              )}
+              style={{
+                pointerEvents: isDesktopServicesDropdownOpen ? "auto" : "none",
+              }}
+            >
+              {isHomePage ? (
+                <button
+                  onClick={() => {
+                    onHaircutClick();
+                    closeDesktopDropdown();
+                  }}
+                  className={desktopSubMenuLinkClasses}
+                >
+                  {t("services.haircut")}
+                </button>
+              ) : (
+                <Link
+                  href={`${homePageLink}#${getLocalizedSlug(
+                    PAGE_KEYS.SERVICES_HAIRCUT,
+                    currentLang
+                  )}`}
+                  onClick={closeDesktopDropdown}
+                  className={desktopSubMenuLinkClasses}
+                >
+                  {t("services.haircut")}
+                </Link>
+              )}
+              {isHomePage ? (
+                <button
+                  onClick={() => {
+                    onStylingClick();
+                    closeDesktopDropdown();
+                  }}
+                  className={desktopSubMenuLinkClasses}
+                >
+                  {t("services.styling")}
+                </button>
+              ) : (
+                <Link
+                  href={`${homePageLink}#${getLocalizedSlug(
+                    PAGE_KEYS.SERVICES_STYLING,
+                    currentLang
+                  )}`}
+                  onClick={closeDesktopDropdown}
+                  className={desktopSubMenuLinkClasses}
+                >
+                  {t("services.styling")}
+                </Link>
+              )}
+              {isHomePage ? (
+                <button
+                  onClick={() => {
+                    onColoringClick();
+                    closeDesktopDropdown();
+                  }}
+                  className={desktopSubMenuLinkClasses}
+                >
+                  {t("services.coloring")}
+                </button>
+              ) : (
+                <Link
+                  href={`${homePageLink}#${getLocalizedSlug(
+                    PAGE_KEYS.SERVICES_COLORING,
+                    currentLang
+                  )}`}
+                  onClick={closeDesktopDropdown}
+                  className={desktopSubMenuLinkClasses}
+                >
+                  {t("services.coloring")}
+                </Link>
+              )}
+            </div>
           </div>
           {isHomePage ? (
             <button onClick={onGalleryClick} className={navLinkBaseClasses}>
               {t("nav.gallery")}
             </button>
           ) : (
-            <Link href="/#gallery" className={navLinkBaseClasses}>
+            <Link
+              href={`${homePageLink}#${getLocalizedSlug(
+                PAGE_KEYS.GALLERY,
+                currentLang
+              )}`}
+              className={navLinkBaseClasses}
+            >
               {t("nav.gallery")}
             </Link>
           )}
@@ -197,7 +319,13 @@ NavbarProps) => {
               {t("nav.contact")}
             </button>
           ) : (
-            <Link href="/#contact" className={navLinkBaseClasses}>
+            <Link
+              href={`${homePageLink}#${getLocalizedSlug(
+                PAGE_KEYS.CONTACT,
+                currentLang
+              )}`}
+              className={navLinkBaseClasses}
+            >
               {t("nav.contact")}
             </Link>
           )}
@@ -224,7 +352,7 @@ NavbarProps) => {
             </button>
           ) : (
             <Link
-              href="/"
+              href={homePageLink}
               onClick={closeMobileMenu}
               className={mobileNavLinkBaseClasses}
             >
@@ -240,73 +368,102 @@ NavbarProps) => {
             </button>
           ) : (
             <Link
-              href="/#about"
+              href={`${homePageLink}#${getLocalizedSlug(
+                PAGE_KEYS.ABOUT,
+                currentLang
+              )}`}
               onClick={closeMobileMenu}
               className={mobileNavLinkBaseClasses}
             >
               {t("nav.about")}
             </Link>
           )}
-          {isHomePage ? (
-            <button
-              onClick={handleMobileServicesClick}
-              className="flex justify-between items-center w-full px-3 py-2 text-primary dark:text-white hover:bg-neutral dark:hover:bg-gray-700 rounded-md"
-            >
-              {t("nav.services")}
-              <FaChevronDown
-                className={cn(
-                  "text-xs transition-transform duration-300",
-                  isServicesDropdownOpen ? "rotate-180" : "rotate-0"
-                )}
-              />
-            </button>
-          ) : (
-            <Link
-              href="/#services"
-              onClick={closeMobileMenu}
-              className={mobileNavLinkBaseClasses}
-            >
-              {t("nav.services")}
-            </Link>
-          )}
-          {isHomePage && (
-            <div
+          <button
+            onClick={handleMobileServicesClick}
+            className="flex justify-between items-center w-full px-3 py-2 text-primary dark:text-white hover:bg-neutral dark:hover:bg-gray-700 rounded-md"
+          >
+            {t("nav.services")}
+            <FaChevronDown
               className={cn(
-                "overflow-hidden transition-all duration-300 ease-in-out pl-4",
-                isServicesDropdownOpen
-                  ? "max-h-[200px] opacity-100"
-                  : "max-h-0 opacity-0"
+                "text-xs transition-transform duration-300",
+                isServicesDropdownOpen ? "rotate-180" : "rotate-0"
               )}
-            >
-              <button
-                onClick={() => {
-                  onHaircutClick();
-                  closeMobileMenu();
-                }}
-                className={mobileNavLinkBaseClasses}
-              >
-                {t("services.haircut")}
-              </button>
-              <button
-                onClick={() => {
-                  onStylingClick();
-                  closeMobileMenu();
-                }}
-                className={mobileNavLinkBaseClasses}
-              >
-                {t("services.styling")}
-              </button>
-              <button
-                onClick={() => {
-                  onColoringClick();
-                  closeMobileMenu();
-                }}
-                className={mobileNavLinkBaseClasses}
-              >
-                {t("services.coloring")}
-              </button>
-            </div>
-          )}
+            />
+          </button>
+          <div
+            className={cn(
+              "overflow-hidden transition-all duration-300 ease-in-out pl-4",
+              isServicesDropdownOpen
+                ? "max-h-[200px] opacity-100"
+                : "max-h-0 opacity-0"
+            )}
+            style={{ pointerEvents: isServicesDropdownOpen ? "auto" : "none" }}
+          >
+            {isHomePage ? (
+              <>
+                <button
+                  onClick={() => {
+                    onHaircutClick();
+                    closeMobileMenu();
+                  }}
+                  className={mobileNavLinkBaseClasses}
+                >
+                  {t("services.haircut")}
+                </button>
+                <button
+                  onClick={() => {
+                    onStylingClick();
+                    closeMobileMenu();
+                  }}
+                  className={mobileNavLinkBaseClasses}
+                >
+                  {t("services.styling")}
+                </button>
+                <button
+                  onClick={() => {
+                    onColoringClick();
+                    closeMobileMenu();
+                  }}
+                  className={mobileNavLinkBaseClasses}
+                >
+                  {t("services.coloring")}
+                </button>
+              </>
+            ) : (
+              <>
+                <Link
+                  href={`${homePageLink}#${getLocalizedSlug(
+                    PAGE_KEYS.SERVICES_HAIRCUT,
+                    currentLang
+                  )}`}
+                  onClick={closeMobileMenu}
+                  className={mobileNavLinkBaseClasses}
+                >
+                  {t("services.haircut")}
+                </Link>
+                <Link
+                  href={`${homePageLink}#${getLocalizedSlug(
+                    PAGE_KEYS.SERVICES_STYLING,
+                    currentLang
+                  )}`}
+                  onClick={closeMobileMenu}
+                  className={mobileNavLinkBaseClasses}
+                >
+                  {t("services.styling")}
+                </Link>
+                <Link
+                  href={`${homePageLink}#${getLocalizedSlug(
+                    PAGE_KEYS.SERVICES_COLORING,
+                    currentLang
+                  )}`}
+                  onClick={closeMobileMenu}
+                  className={mobileNavLinkBaseClasses}
+                >
+                  {t("services.coloring")}
+                </Link>
+              </>
+            )}
+          </div>
           {isHomePage ? (
             <button
               onClick={() => handleMobileLinkClick(onGalleryClick)}
@@ -316,7 +473,10 @@ NavbarProps) => {
             </button>
           ) : (
             <Link
-              href="/#gallery"
+              href={`${homePageLink}#${getLocalizedSlug(
+                PAGE_KEYS.GALLERY,
+                currentLang
+              )}`}
               onClick={closeMobileMenu}
               className={mobileNavLinkBaseClasses}
             >
@@ -332,7 +492,10 @@ NavbarProps) => {
             </button>
           ) : (
             <Link
-              href="/#contact"
+              href={`${homePageLink}#${getLocalizedSlug(
+                PAGE_KEYS.CONTACT,
+                currentLang
+              )}`}
               onClick={closeMobileMenu}
               className={mobileNavLinkBaseClasses}
             >

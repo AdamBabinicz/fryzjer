@@ -2,15 +2,21 @@ import { forwardRef } from "react";
 import { useTranslation } from "react-i18next";
 import { motion } from "framer-motion";
 import GallerySlider from "@/components/GallerySlider";
+import { PAGE_KEYS } from "@/config/slugs"; // Zaimportuj
 
-const Gallery = forwardRef<HTMLDivElement, {}>((_, ref) => {
+// Definiujemy interfejs propsów
+interface GalleryProps {
+  // Możesz dodać inne propsy tutaj, jeśli będą potrzebne
+}
+
+const Gallery = forwardRef<HTMLDivElement, GalleryProps>((_props, ref) => {
   const { t } = useTranslation();
 
   return (
     <section
       ref={ref}
-      id="gallery"
-      className="py-20 px-0 sm:py-20 sm:px-8 md:py-24 md:px-12 bg-white  section-gallery"
+      id={PAGE_KEYS.GALLERY} // Użyj kanonicznego klucza jako ID
+      className="py-20 px-0 sm:py-20 sm:px-8 md:py-24 md:px-12 bg-white section-gallery"
     >
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
