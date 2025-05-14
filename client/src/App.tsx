@@ -14,7 +14,6 @@ import Terms from "@/pages/Terms";
 import NotFound from "@/pages/not-found";
 import GalleryModal from "@/components/GalleryModal";
 import ServiceModal from "@/components/ServiceModal";
-import { useLanguage } from "@/context/LanguageContext"; // Zakładam, że to nadal używane do <html lang>
 import { ServiceProvider } from "@/context/ServiceContext";
 import ScrollToTop from "@/components/ScrollToTop";
 import { HelmetProvider } from "react-helmet-async";
@@ -24,7 +23,6 @@ import {
   getLocalizedSlug,
   getCanonicalKeyFromSlug,
   PageKey,
-  localizedSlugs,
 } from "@/config/slugs";
 
 const NAVBAR_HEIGHT = 80;
@@ -35,8 +33,7 @@ function App() {
   const [locationPath, setLocation] = useLocation();
   const previousLangRef = useRef(currentLang);
 
-  const homeRef = useRef<HTMLDivElement>(null); // Ref dla sekcji Home
-  // Refy dla innych sekcji, jeśli są potrzebne do bezpośredniego przewijania z App
+  const homeRef = useRef<HTMLDivElement>(null);
   const aboutRef = useRef<HTMLDivElement>(null);
   const servicesRef = useRef<HTMLDivElement>(null);
   const galleryRef = useRef<HTMLDivElement>(null);
@@ -56,7 +53,12 @@ function App() {
 
       if (canonicalId === PAGE_KEYS.HOME) {
         window.scrollTo({ top: 0, behavior });
-        if (updateHashLang && window.location.pathname === "/") {
+        if (
+          updateHashLang &&
+          (window.location.pathname === "/" ||
+            window.location.pathname ===
+              `/${getLocalizedSlug(PAGE_KEYS.HOME, updateHashLang)}`)
+        ) {
           history.replaceState(
             null,
             "",
@@ -66,11 +68,13 @@ function App() {
       } else if (elementToScroll) {
         const topPos = elementToScroll.offsetTop - NAVBAR_HEIGHT;
         window.scrollTo({ top: topPos, behavior });
-        if (localizedHashForURL && window.location.pathname === "/") {
+        if (
+          localizedHashForURL &&
+          (window.location.pathname === "/" ||
+            window.location.pathname ===
+              `/${getLocalizedSlug(PAGE_KEYS.HOME, currentLang)}`)
+        ) {
           history.replaceState(null, "", `#${localizedHashForURL}`);
-        } else if (localizedHashForURL && window.location.pathname !== "/") {
-          // Jeśli jesteśmy na innej stronie, a chcemy tylko zaktualizować hash po przewinięciu (rzadki przypadek)
-          // history.replaceState(null, "", `${window.location.pathname}#${localizedHashForURL}`);
         }
       } else {
         console.warn("Scroll target for canonical ID not found:", canonicalId);
@@ -87,7 +91,10 @@ function App() {
       const currentHashSlug = pathSegments[1] || "";
 
       let canonicalPageKey: PageKey | undefined;
-      if (currentBaseSlug === "" && !currentHashSlug) {
+      if (
+        currentBaseSlug === getLocalizedSlug(PAGE_KEYS.HOME, previousLang) &&
+        !currentHashSlug
+      ) {
         canonicalPageKey = PAGE_KEYS.HOME;
       } else {
         canonicalPageKey = getCanonicalKeyFromSlug(
@@ -117,8 +124,6 @@ function App() {
               newPath += `#${newLocalizedHash}`;
             }
           } else {
-            // Jeśli hash nie jest zlokalizowany, próbujemy go zachować
-            // To może wymagać bardziej zaawansowanej logiki jeśli hash też jest dynamiczny
             newPath += `#${currentHashSlug}`;
           }
         }
@@ -131,7 +136,11 @@ function App() {
   }, [currentLang, locationPath, setLocation]);
 
   useEffect(() => {
-    if (locationPath === "/" && window.location.hash) {
+    const homePath = `/${getLocalizedSlug(PAGE_KEYS.HOME, currentLang)}`;
+    if (
+      (locationPath === "/" || locationPath === homePath) &&
+      window.location.hash
+    ) {
       const localizedHashValue = window.location.hash.substring(1);
       const canonicalKey = getCanonicalKeyFromSlug(
         localizedHashValue,
@@ -144,14 +153,14 @@ function App() {
           if (element) {
             scrollToSectionByCanonicalId(canonicalKey, "auto", null);
           } else if (attempt < 15) {
-            setTimeout(() => attemptScroll(attempt + 1), 150); // Zwiększone opóźnienie
+            setTimeout(() => attemptScroll(attempt + 1), 150);
           } else {
             console.warn(
               `App.tsx: Element for canonical key '${canonicalKey}' (from hash '${localizedHashValue}') not found.`
             );
           }
         };
-        const timer = setTimeout(attemptScroll, 150); // Zwiększone opóźnienie
+        const timer = setTimeout(attemptScroll, 150);
         return () => clearTimeout(timer);
       } else {
         console.warn(
@@ -174,11 +183,24 @@ function App() {
     </>
   );
 
+  const homePathEn = `/${getLocalizedSlug(PAGE_KEYS.HOME, "en")}`;
+  const homePathPl = `/${getLocalizedSlug(PAGE_KEYS.HOME, "pl")}`;
+  const privacyPolicyPathEn = `/${getLocalizedSlug(
+    PAGE_KEYS.PRIVACY_POLICY,
+    "en"
+  )}`;
+  const privacyPolicyPathPl = `/${getLocalizedSlug(
+    PAGE_KEYS.PRIVACY_POLICY,
+    "pl"
+  )}`;
+  const termsPathEn = `/${getLocalizedSlug(PAGE_KEYS.TERMS, "en")}`;
+  const termsPathPl = `/${getLocalizedSlug(PAGE_KEYS.TERMS, "pl")}`;
+
   return (
     <ServiceProvider>
       <HelmetProvider>
         <Helmet>
-          <html lang={currentLang} /> {/* Używamy currentLang z i18n */}
+          <html lang={currentLang} />
           <title>{t("meta.title")}</title>
         </Helmet>
         <SchemaOrg />
@@ -205,37 +227,29 @@ function App() {
             scrollToSectionByCanonicalId(PAGE_KEYS.SERVICES_COLORING)
           }
         />
-        <main id="main-content">
-          <Switch>
-            <Route
-              path={`/${getLocalizedSlug(PAGE_KEYS.HOME, "en")}`}
-              component={MainContent}
-            />
-            <Route
-              path={`/${getLocalizedSlug(PAGE_KEYS.HOME, "pl")}`}
-              component={MainContent}
-            />
-            <Route path="/" component={MainContent} />{" "}
-            {/* Fallback dla strony głównej */}
-            <Route
-              path={`/${getLocalizedSlug(PAGE_KEYS.PRIVACY_POLICY, "en")}`}
-              component={PrivacyPolicy}
-            />
-            <Route
-              path={`/${getLocalizedSlug(PAGE_KEYS.PRIVACY_POLICY, "pl")}`}
-              component={PrivacyPolicy}
-            />
-            <Route
-              path={`/${getLocalizedSlug(PAGE_KEYS.TERMS, "en")}`}
-              component={Terms}
-            />
-            <Route
-              path={`/${getLocalizedSlug(PAGE_KEYS.TERMS, "pl")}`}
-              component={Terms}
-            />
-            <Route component={NotFound} />
-          </Switch>
-        </main>
+
+        <div className="max-w-screen-xl mx-auto sm:px-6 lg:px-8">
+          <main id="main-content">
+            <Switch>
+              {homePathEn !== "/" && (
+                <Route path={homePathEn} component={MainContent} />
+              )}
+              {homePathPl !== "/" && (
+                <Route path={homePathPl} component={MainContent} />
+              )}
+              <Route path="/" component={MainContent} />
+
+              <Route path={privacyPolicyPathEn} component={PrivacyPolicy} />
+              <Route path={privacyPolicyPathPl} component={PrivacyPolicy} />
+
+              <Route path={termsPathEn} component={Terms} />
+              <Route path={termsPathPl} component={Terms} />
+
+              <Route component={NotFound} />
+            </Switch>
+          </main>
+        </div>
+
         <Footer
           onHomeClick={() => scrollToSectionByCanonicalId(PAGE_KEYS.HOME)}
           onAboutClick={() => scrollToSectionByCanonicalId(PAGE_KEYS.ABOUT)}
